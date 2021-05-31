@@ -7,11 +7,7 @@ import { AuthContext } from '../../contexts/Auth.Context'
 
 const StudentHome = () => {
     const router = useRouter()
-    const { auth } = useContext(AuthContext)
-
-    useEffect(() => {
-        if (!auth.isAuthenticated) router.push('/student/login')
-    }, [auth])
+    const { auth, setAuth } = useContext(AuthContext)
 
     return (
         <div>

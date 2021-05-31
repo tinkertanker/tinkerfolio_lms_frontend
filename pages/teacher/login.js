@@ -5,31 +5,25 @@ import axios from 'axios'
 
 import { AuthContext } from '../../contexts/Auth.Context'
 
-const StudentLogin = () => {
+const TeacherLogin = () => {
     const router = useRouter()
 
     const {auth, setAuth} = useContext(AuthContext)
-    const [code, setCode] = useState()
-    const [index, setIndex] = useState()
+    const [username, setUsername] = useState()
+    const [password, setPassword] = useState()
 
     const [invalidInput, setInvalidInput] = useState(false)
 
     const loginUser = (e) => {
         e.preventDefault()
-        // Validation
-        if ((code.length !== 6) | (isNaN(index))) {
-            setInvalidInput(true)
-            return
-        } else setInvalidInput(false)
-
         setAuth({...auth, loading: true})
 
         console.log('ran')
         axios.post(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE+'auth/token/', {
-            "username":code+'_'+index, "password":index
+            username, password
         }, { headers: {'Content-Type': 'application/json'}})
         .then(res => {
-            setAuth({ loading: false, isAuthenticated: true, tokens: res.data, userType: "student" })
+            setAuth({ loading: false, isAuthenticated: true, tokens: res.data, userType: "teacher" })
         })
         .catch(res => {
             console.log('login failed')
@@ -37,7 +31,7 @@ const StudentLogin = () => {
     }
 
     useEffect(() => {
-        if (auth.isAuthenticated) router.push('/student/')
+        if (auth.isAuthenticated) router.push('/teacher/')
     }, [auth])
 
     return (
@@ -51,19 +45,19 @@ const StudentLogin = () => {
             <main className="mt-8 mx-8">
                 { invalidInput && <p className="py-2 px-2 border-2 border-red-500 rounded-lg font-bold text-red-500">Invalid inputs.</p>}
 
-                <h1 className="text-5xl my-6">Login for Students</h1>
+                <h1 className="text-5xl my-6">Login for Teachers</h1>
 
                 <form onSubmit={e => loginUser(e)}>
                     <label>
-                        <p>Classroom Code:</p>
-                        <input className="border-2" type="text" name="code" onChange={e => setCode(e.target.value)} />
+                        <p>Username:</p>
+                        <input className="border-2" type="text" name="code" onChange={e => setUsername(e.target.value)} />
                     </label>
                     <label>
-                        <p>Index:</p>
-                        <input className="border-2" type="text" name="index" onChange={e => setIndex(e.target.value)} />
+                        <p>Password:</p>
+                        <input className="border-2" type="password" name="index" onChange={e => setPassword(e.target.value)} />
                     </label>
                     <br />
-                    <button type="submit" className="bg-gray-500 text-white mt-2 py-2 px-2 rounded-lg">Submit</button>
+                    <button type="submit" className="bg-gray-500 text-white mt-4 py-1 px-2 rounded-lg">Submit</button>
                 </form>
             </main>
 
@@ -73,4 +67,4 @@ const StudentLogin = () => {
     )
 }
 
-export default StudentLogin
+export default TeacherLogin

@@ -11,12 +11,12 @@ const Home = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="mx-4">
-        <h1 className="text-7xl mb-8">LMS</h1>
+      <main className="mx-8">
+        <h1 className="text-5xl my-8">Welcome to LMS!</h1>
 
-        <Link href="/student"><button className="py-2 px-2 mb-4 bg-gray-500 rounded text-white">I am a student.</button></Link>
+        <Link href="/student/login"><button className="py-2 px-2 mb-4 bg-gray-500 rounded text-white">I am a student.</button></Link>
         <br />
-        <Link href="/teacher"><button className="py-2 px-2 bg-gray-500 rounded text-white">I am a teacher.</button></Link>
+        <Link href="/teacher/login"><button className="py-2 px-2 bg-gray-500 rounded text-white">I am a teacher.</button></Link>
       </main>
 
       <footer>

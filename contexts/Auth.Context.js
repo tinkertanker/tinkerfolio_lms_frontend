@@ -4,20 +4,24 @@ import axios from "axios"
 export const AuthContext = createContext();
 
 const AuthContextProvider = (props) => {
-    const [auth, setAuth] = useState({ loading: false, isAuthenticated: false, tokens: null })
+    const [auth, setAuth] = useState({ loading: true, isAuthenticated: false, tokens: null, userType: null })
 
     useEffect(() => {
         console.log('starting')
         if (localStorage.getItem('tokens') !== null) {
             const tokens = JSON.parse(localStorage.getItem('tokens'))
+            const userType = JSON.parse(localStorage.getItem('userType'))
             validateRefreshToken(tokens).then((isValid) => {
+                console.log('here')
                 if (isValid) {
                     setAuth({
                         loading: false, isAuthenticated: true,
-                        tokens: tokens
+                        tokens: tokens, userType: userType
                     })
                 } else {
                     setAuth({loading: false, isAuthenticated: false, tokens: null})
+                    localStorage.removeItem('tokens')
+                    localStorage.removeItem('userType')
                 }
             })
         } else {
@@ -29,10 +33,14 @@ const AuthContextProvider = (props) => {
         if (auth.tokens) localStorage.setItem('tokens', JSON.stringify(auth.tokens))
     }, [auth.tokens])
 
+    useEffect(() => {
+        if (auth.userType) localStorage.setItem('userType', JSON.stringify(auth.userType))
+    }, [auth.userType])
+
     const getNewAccessToken = async () => {
         let accessToken = null
 
-        await axios.post('https://menu-carlo.herokuapp.com/api/accounts/token/refresh/', {
+        await axios.post(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE+'auth/token/refresh/', {
             refresh: auth.tokens.refresh
         }, { headers: { "Content-Type": "application/json" } })
         .then(res => {
@@ -51,7 +59,7 @@ const AuthContextProvider = (props) => {
     const validateRefreshToken = async (tokens) => {
         let isValid = null
 
-        await axios.post('https://menu-carlo.herokuapp.com/api/accounts/token/verify/',{
+        await axios.post(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE+'auth/token/verify/',{
             token: tokens.refresh
         }, { headers: { "Content-Type": "application/json" } })
         .then((res) => {
@@ -69,7 +77,7 @@ const AuthContextProvider = (props) => {
     const getAccessToken = async () => {
         let accessToken = null
 
-        await axios.post('https://menu-carlo.herokuapp.com/api/accounts/token/verify/',{
+        await axios.post(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE+'auth/token/verify/',{
             token: auth.tokens.access
         }, { headers: { "Content-Type": "application/json" } })
         .then(res => {
