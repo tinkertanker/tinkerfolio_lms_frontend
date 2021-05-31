@@ -69,7 +69,9 @@ const Classroom = () => {
 
     const addStudent = () => {
         // New student will have the largest index number
-        const newClassroom = {...classroom, student_indexes: [...classroom.student_indexes, Math.max(...classroom.student_indexes)+1]}
+        const newIndex = Math.max(...classroom.student_indexes)+1
+        const newClassroom = {...classroom, student_indexes: [...classroom.student_indexes, newIndex]}
+        setNames([...names, {index:newIndex, name:""}])
         updateClassroom(newClassroom)
     }
 

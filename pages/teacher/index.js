@@ -81,7 +81,10 @@ const Classroom = ({classroom}) => {
     return (
         <Link href={"/teacher/class/"+classroom.code}>
             <div className="py-2 px-2 border-b-2 hover:bg-gray-100 cursor-pointer">
-                <p className="text-lg font-semibold">{classroom.name}</p>
+                <div className="flex flex-row items-center">
+                    <p className="text-lg font-semibold mr-4">{classroom.name}</p>
+                    {!classroom.status && <p className="py-0.5 px-1 text-sm text-white bg-red-500 rounded">Archived</p>}
+                </div>
                 <p className="text-gray-500">Code: {classroom.code}</p>
             </div>
         </Link>
