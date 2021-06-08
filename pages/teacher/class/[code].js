@@ -7,12 +7,16 @@ import axios from 'axios'
 import { AuthContext } from '../../../contexts/Auth.Context'
 import { ClassroomsContext } from '../../../contexts/Classrooms.Context'
 
+import Dashboard from '../../../components/Dashboard'
+import Settings from '../../../components/Settings'
+
 const Classroom = () => {
     const router = useRouter()
     const { auth, setAuth, getAccessToken } = useContext(AuthContext)
     const { classrooms, setClassrooms } = useContext(ClassroomsContext)
 
     const [classroom, setClassroom] = useState()
+    const [tasks, setTasks] = useState([])
     const [isDashboard, setIsDashboard] = useState(true)
     const [names, setNames] = useState()
 
@@ -21,6 +25,7 @@ const Classroom = () => {
         if (!code) return
 
         if (!classrooms) {
+            // Get classroom data if user went directly to classroom link
             getAccessToken().then((accessToken) => {
                 axios.get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE+'core/classrooms/'+code+'/', {
                     headers: {'Authorization': 'Bearer '+accessToken},
@@ -37,11 +42,27 @@ const Classroom = () => {
             const classroom = classrooms.filter(classroom => classroom.code === code)[0]
             setClassroom(classroom)
         }
+
+        // Get all task data
+        getAccessToken().then((accessToken) => {
+            axios.get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE+'core/tasks/', {
+                headers: {'Authorization': 'Bearer '+accessToken},
+                params: {'code': code}
+            })
+            .then(res => {
+                console.log(res.data)
+                setTasks(res.data)
+            })
+            .catch(res => {
+                console.log(res)
+            })
+        })
     }, [router.query])
 
     useEffect(() => {
         if (!classroom) return
 
+        // Get student profiles
         getAccessToken().then((accessToken) => {
             axios.get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE+'core/student_profiles/', {
                 headers: {'Authorization': 'Bearer '+accessToken},
@@ -124,7 +145,11 @@ const Classroom = () => {
                     </div>
                     <div className="bg-gray-100 w-full pt-8 px-8">
                         { isDashboard ?
-                            <Dashboard classroom={classroom} removeIndex={removeIndex} addStudent={addStudent} names={names} updateName={updateName} /> :
+                            <Dashboard
+                                classroom={classroom} removeIndex={removeIndex}
+                                addStudent={addStudent} names={names} updateName={updateName}
+                                tasks={tasks} setTasks={setTasks}
+                            /> :
                             <Settings classroom={classroom} changeStatus={changeStatus} />
                         }
                     </div>
@@ -138,58 +163,3 @@ const Classroom = () => {
 }
 
 export default Classroom
-
-const Dashboard = ({ classroom, names, removeIndex, addStudent, updateName }) => {
-    const [tableNames, setTableNames] = useState()
-
-    useEffect(() => {
-        setTableNames(names)
-    }, [names])
-
-    if (!tableNames) return <h1></h1>
-
-    return (
-        <>
-            <h1 className="text-5xl font-semibold mb-8">Dashboard</h1>
-            <table>
-                <thead>
-                    <tr className="border-2">
-                        <th className="border-r-2 px-2 py-2 "><p>Index</p></th>
-                        <th className="border-r-2 px-2 py-2 "><p>Name</p></th>
-                        <th className="border-r-2 px-2 py-2 "><p>Actions</p></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    { classroom.student_indexes.map((index, i) => {
-                        return (
-                            <tr className="border-2" key={i}>
-                                <td className="border-r-2 px-2 py-2 "><p>{index}</p></td>
-                                <td className="border-r-2 px-2 py-2"><input
-                                    onChange={e => setTableNames([...tableNames.filter(n => n.index !== index), {index:index, name: e.target.value}])}
-                                    onBlur={e => updateName(index, tableNames.filter(n => n.index === index)[0].name)}
-                                    className="outline-none focus:border-gray-500 border-b-2 border-gray-300 bg-gray-100"
-                                    value={tableNames.filter(name => name.index === index)[0].name}
-                                /></td>
-                                <td className="px-2 py-2"><button value={index} className="py-1 px-2 bg-red-500 text-white rounded" onClick={e => removeIndex(e.target.value)}>Delete</button></td>
-                            </tr>
-                        )
-                    })}
-                </tbody>
-            </table>
-            <button className="mt-8 py-1 px-2 border-2 border-gray-500 text-sm text-gray-500 rounded hover:bg-gray-500 hover:text-white" onClick={addStudent}>Add Student</button>
-        </>
-    )
-}
-
-const Settings = ({ classroom, changeStatus }) => {
-    return (
-        <>
-            <h1 className="text-5xl font-semibold mb-8">Settings</h1>
-            {classroom.status ? (
-                <button className="py-1 px-2 bg-red-500 text-white font-bold" onClick={changeStatus}>Archive</button>
-            ) : (
-                <button className="py-1 px-2 bg-green-600 text-white font-bold" onClick={changeStatus}>Activate</button>
-            )}
-        </>
-    )
-}
