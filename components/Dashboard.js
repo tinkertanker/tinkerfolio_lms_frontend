@@ -139,7 +139,7 @@ const TaskDetails = ({task, setOneTask, setIsCloseOnDocClick}) => {
             onOpen={() => setIsCloseOnDocClick(false)} onClose={() => setIsCloseOnDocClick(true)}
             modal
         >
-            <div className="flex flex-col px-4 py-4 bg-white rounded-lg w-72 sm:w-96">
+            <div className="flex flex-col px-4 py-4 bg-white rounded-lg w-72 sm:w-96 shadow-md">
                 <input
                     onChange={e => setNewTask({...newTask, [e.target.name]:e.target.value})}
                     onBlur={() => setOneTask(newTask)}
@@ -190,7 +190,7 @@ const NewTask = ({addTask}) => {
         >
             { close => (
                 <form
-                    className="flex flex-col px-4 py-4 bg-white rounded-lg w-72 sm:w-96"
+                    className="flex flex-col px-4 py-4 bg-white rounded-lg w-72 sm:w-96 shadow-md"
                     onSubmit={e => {
                         e.preventDefault()
                         addTask(task)

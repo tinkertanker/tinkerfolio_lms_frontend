@@ -49,7 +49,7 @@ const Layout = ({children}) => {
                     )}
                     { auth.isAuthenticated &&
                         <div className="ml-auto">
-                            <button onClick={logout} className="border-2 border-white text-white py-0.5 px-2 rounded hover:bg-white hover:text-black">Logout</button>
+                            <button onClick={logout} className="border-2 border-white text-sm text-white py-0.5 px-2 rounded hover:bg-white hover:text-black">Logout</button>
                         </div>
                     }
                 </nav>

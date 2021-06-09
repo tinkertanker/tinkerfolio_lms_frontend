@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useState, useEffect, useContext } from 'react'
 import axios from 'axios'
+import Popup from 'reactjs-popup'
 
 import { AuthContext } from '../../../contexts/Auth.Context'
 import { ClassroomsContext } from '../../../contexts/Classrooms.Context'
@@ -79,7 +80,9 @@ const Classroom = () => {
     }
 
     const changeStatus = () => {
-        const newClassroom = {...classroom, status: !classroom.status ? 1 : 0}
+        console.log(classroom.status)
+        const newClassroom = {...classroom, status: classroom.status === 1 ? 2 : 1}
+        console.log(newClassroom)
         updateClassroom(newClassroom)
     }
 
@@ -133,14 +136,11 @@ const Classroom = () => {
                 <div className="flex sm:flex-row flex-col min-h-screen w-full">
                     <div className="pt-10 px-4">
                         <h1 className="text-3xl font-bold px-2">{classroom.name}</h1>
-                        <p className={`${classroom.status ? "text-green-600" : "text-red-500"} px-2 mb-4 font-bold`}>{classroom.status ? 'Active' : 'Archived'}</p>
+                        <p className={`${classroom.status === 1 ? "text-green-600" : "text-red-500"} px-2 mb-4 font-bold`}>{classroom.status === 1 ? 'Active' : 'Archived'}</p>
                         <button className={`${isDashboard ? "bg-gray-200" : "hover:bg-gray-200"} text-lg font-semibold px-2 py-1 my-1 w-full text-left rounded-lg`} onClick={changePage}>Dashboard</button>
                         <button className={`${(!isDashboard) ? "bg-gray-200" : "hover:bg-gray-200"} text-lg font-semibold px-2 py-1 my-1 w-full text-left rounded-lg`} onClick={changePage}>Settings</button>
 
-                        <div className="flex flex-col mt-8 px-2 py-2 text-lg bg-black rounded-lg text-white">
-                            <div><p className="text-base pb-1">Your class code is</p></div>
-                            <div><p className="text-center py-1 font-mono bg-white text-black rounded">{classroom.code}</p></div>
-                        </div>
+                        <ClassCode code={classroom.code} />
 
                     </div>
                     <div className="bg-gray-100 w-full pt-8 px-8">
@@ -163,3 +163,28 @@ const Classroom = () => {
 }
 
 export default Classroom
+
+const ClassCode = ({code}) => {
+    return (
+        <Popup
+            trigger={
+                <div className="flex flex-col mt-8 px-2 py-2 text-lg bg-black rounded-lg text-white">
+                    <div><p className="text-base pb-1">Your class code is</p></div>
+                    <div><p className="text-center py-1 font-mono bg-white text-black rounded cursor-pointer hover:bg-gray-100">{code}</p></div>
+                </div>
+            }
+            modal
+        >
+            { close => (
+                <div className="flex flex-col px-4 py-4 bg-white rounded-lg shadow-md">
+                    <h1 className="text-xl sm:text-2xl font-bold text-center">Classroom Code</h1>
+                    <div className="flex flex-row mt-4">
+                        { [...code].map((char, i) => (
+                            <p className="font-mono text-5xl sm:text-7xl text-white py-2 px-2 bg-black ml-1">{char}</p>
+                        ))}
+                    </div>
+                </div>
+            )}
+        </Popup>
+    )
+}
