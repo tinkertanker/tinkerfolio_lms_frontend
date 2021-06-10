@@ -1,3 +1,14 @@
 @tailwind base;
 @tailwind components;
+
+.popup {
+    width: 36rem
+}
+
+@media screen and (max-width: 800px) {
+    .popup {
+        @apply w-72
+    }
+}
+
 @tailwind utilities;

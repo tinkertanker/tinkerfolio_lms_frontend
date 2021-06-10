@@ -8,8 +8,8 @@ import Popup from 'reactjs-popup'
 import { AuthContext } from '../../../contexts/Auth.Context'
 import { ClassroomsContext } from '../../../contexts/Classrooms.Context'
 
-import Dashboard from '../../../components/Dashboard'
-import Settings from '../../../components/Settings'
+import Dashboard from '../../../components/teacher/Dashboard'
+import Settings from '../../../components/teacher/Settings'
 
 const Classroom = () => {
     const router = useRouter()
@@ -26,19 +26,20 @@ const Classroom = () => {
         if (!code) return
 
         if (!classrooms) {
-            // Get classroom data if user went directly to classroom link
+            // Get classrooms data if user went directly to classroom link
             getAccessToken().then((accessToken) => {
-                axios.get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE+'core/classrooms/'+code+'/', {
+                axios.get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE+'core/classrooms/', {
                     headers: {'Authorization': 'Bearer '+accessToken},
                 })
                 .then(res => {
-                    setClassroom(res.data)
-                    setClassrooms([res.data])
+                    setClassroom(res.data.filter(cr => cr.code === code)[0])
+                    setClassrooms(res.data)
                 })
                 .catch(res => {
                     console.log(res)
                 })
             })
+
         } else {
             const classroom = classrooms.filter(classroom => classroom.code === code)[0]
             setClassroom(classroom)
@@ -137,7 +138,7 @@ const Classroom = () => {
                     <div className="pt-10 px-4">
                         <h1 className="text-3xl font-bold px-2">{classroom.name}</h1>
                         <p className={`${classroom.status === 1 ? "text-green-600" : "text-red-500"} px-2 mb-4 font-bold`}>{classroom.status === 1 ? 'Active' : 'Archived'}</p>
-                        <button className={`${isDashboard ? "bg-gray-200" : "hover:bg-gray-200"} text-lg font-semibold px-2 py-1 my-1 w-full text-left rounded-lg`} onClick={changePage}>Dashboard</button>
+                        <button className={`${isDashboard ? "bg-gray-200" : "hover:bg-gray-200"} text-lg font-semibold px-2 py-1 mt-1 w-full text-left rounded-lg`} onClick={changePage}>Dashboard</button>
                         <button className={`${(!isDashboard) ? "bg-gray-200" : "hover:bg-gray-200"} text-lg font-semibold px-2 py-1 my-1 w-full text-left rounded-lg`} onClick={changePage}>Settings</button>
 
                         <ClassCode code={classroom.code} />

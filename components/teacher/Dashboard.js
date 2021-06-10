@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from 'react'
 import axios from 'axios'
 import Popup from 'reactjs-popup';
 
-import { AuthContext } from '../contexts/Auth.Context'
+import { AuthContext } from '../../contexts/Auth.Context'
 
 const contentStyle = { paddingLeft: '0.5rem', paddingRight: '0.5rem' };
 const arrowStyle = { color: '#000' }; // style for an svg element
@@ -63,7 +63,7 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, updateName, task
 
             <div className="flex flex-row">
                 <NewTask addTask={addTask} />
-                <button className="mt-8 py-1 px-2 bg-gray-400 text-sm text-white rounded hover:bg-gray-600" onClick={addStudent}>Add Student</button>
+                <button className="mt-8 py-1 px-2 bg-gray-400 text-sm text-white rounded hover:bg-gray-500" onClick={addStudent}>Add Student</button>
             </div>
 
             <table className="mt-6" style={{ display:"block", overflowX:"auto", whiteSpace:"nowrap"}}>
@@ -139,7 +139,7 @@ const TaskDetails = ({task, setOneTask, setIsCloseOnDocClick}) => {
             onOpen={() => setIsCloseOnDocClick(false)} onClose={() => setIsCloseOnDocClick(true)}
             modal
         >
-            <div className="flex flex-col px-4 py-4 bg-white rounded-lg w-72 sm:w-96 shadow-md">
+            <div className="flex flex-col px-4 py-4 bg-white rounded-lg shadow-md popup">
                 <input
                     onChange={e => setNewTask({...newTask, [e.target.name]:e.target.value})}
                     onBlur={() => setOneTask(newTask)}
@@ -150,7 +150,7 @@ const TaskDetails = ({task, setOneTask, setIsCloseOnDocClick}) => {
                     onChange={e => setNewTask({...newTask, [e.target.name]:e.target.value})}
                     onBlur={() => setOneTask(newTask)}
                     className=" outline-none text-sm border-2 border-gray-100 focus:border-gray-300 py-2 px-2 my-2 mx-2 rounded-lg"
-                    value={newTask.description} name="description"
+                    rows="4" value={newTask.description} name="description"
                 />
                 <div className="flex flex-row">
                     <div>
@@ -190,7 +190,7 @@ const NewTask = ({addTask}) => {
         >
             { close => (
                 <form
-                    className="flex flex-col px-4 py-4 bg-white rounded-lg w-72 sm:w-96 shadow-md"
+                    className="flex flex-col px-4 py-4 bg-white rounded-lg shadow-md popup"
                     onSubmit={e => {
                         e.preventDefault()
                         addTask(task)
@@ -199,13 +199,13 @@ const NewTask = ({addTask}) => {
                 >
                     <input
                         onChange={e => setTask({...task, [e.target.name]:e.target.value})}
-                        className="outline-none text-2xl border-b-2 border-white focus:border-gray-300 my-2 mx-2 w-min"
+                        className="outline-none text-2xl border-b-2 border-white focus:border-gray-300 my-2 mx-2"
                         value={task.name} name="name" placeholder="Task Name"
                     />
                     <textarea
                         onChange={e => setTask({...task, [e.target.name]:e.target.value})}
                         className="outline-none text-sm border-2 border-gray-100 focus:border-gray-300 py-2 px-2 my-2 mx-2 rounded-lg"
-                        value={task.description} name="description" placeholder="Task Description"
+                        rows="4" value={task.description} name="description" placeholder="Task Description"
                     />
                     <label htmlFor="max_stars" className="px-2 pt-2">Max. Stars</label>
                     <input

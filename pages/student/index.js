@@ -1,13 +1,38 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { useEffect, useContext } from 'react'
+import { useState, useEffect, useContext } from 'react'
+import axios from 'axios'
 
 import { AuthContext } from '../../contexts/Auth.Context'
 
+import Dashboard from '../../components/student/Dashboard'
+import Leaderboard from '../../components/student/Leaderboard'
+
 const StudentHome = () => {
     const router = useRouter()
-    const { auth, setAuth } = useContext(AuthContext)
+    const { auth, setAuth, getAccessToken } = useContext(AuthContext)
+
+    const [isTasks, setIsTasks] = useState(true)
+
+    const [profile, setProfile] = useState()
+    const [classroom, setClassroom] = useState()
+    const [tasks, setTasks] = useState()
+    const [submissions, setSubmissions] = useState()
+
+    useEffect(() => {
+        getAccessToken().then((accessToken) => {
+            axios.get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE+'student/initial/', {
+                headers: {'Authorization': 'Bearer '+accessToken},
+            })
+            .then(res => {
+                setProfile(res.data.profile)
+                setClassroom(res.data.classroom)
+                setTasks(res.data.tasks)
+                setSubmissions(res.data.submissions)
+            })
+        })
+    }, [])
 
     return (
         <div>
@@ -17,9 +42,17 @@ const StudentHome = () => {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 
-            <main className="mt-8 mx-8">
-                <h1 className="text-5xl mb-8">Student Dashboard</h1>
-                <p>You are authenticated!</p>
+            <main className="flex sm:flex-row flex-col min-h-screen">
+                <div className="mt-8 ml-4 mr-2 min-w">
+                    { classroom && <h1 className="text-3xl font-bold px-2 mb-4">{classroom.name}</h1>}
+
+                    <button className={`${isTasks ? "bg-gray-300" : "hover:bg-gray-200"} focus:outline-none text-lg font-semibold px-2 py-1 mt-1 w-full text-left rounded-lg`} onClick={() => setIsTasks(!isTasks)}>Tasks</button>
+                    <button className={`${(!isTasks) ? "bg-gray-300" : "hover:bg-gray-200"} focus:outline-none text-lg font-semibold px-2 py-1 my-1 w-full text-left rounded-lg`} onClick={() => setIsTasks(!isTasks)}>Leaderboad</button>
+
+                </div>
+                <div className="bg-gray-100 w-full pt-8 px-8">
+                    { isTasks ? <Dashboard {...{tasks, submissions}}/> : <Leaderboard />}
+                </div>
             </main>
 
             <footer>
