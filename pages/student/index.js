@@ -51,7 +51,7 @@ const StudentHome = () => {
 
                 </div>
                 <div className="bg-gray-100 w-full pt-8 px-8">
-                    { isTasks ? <Dashboard {...{tasks, submissions}}/> : <Leaderboard />}
+                    { isTasks ? <Dashboard {...{tasks, submissions, setSubmissions}}/> : <Leaderboard />}
                 </div>
             </main>
 
