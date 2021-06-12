@@ -39,7 +39,7 @@ const Layout = ({children}) => {
             <Head>
                 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter" />
             </Head>
-            <div>
+            <div className="bg-gray-100">
                 <nav className="flex flex-row bg-gray-700 px-8 py-2 flex-wrap items-center justify-items-end">
                     <div><h1 className="text-2xl font-bold font-serif text-white">LMS</h1></div>
                     { auth.userType === 'teacher' && (

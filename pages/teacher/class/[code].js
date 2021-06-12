@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import { useState, useEffect, useContext } from 'react'
 import axios from 'axios'
 import Popup from 'reactjs-popup'
+import useWebSocket from 'react-use-websocket'
 
 import { AuthContext } from '../../../contexts/Auth.Context'
 import { ClassroomsContext } from '../../../contexts/Classrooms.Context'
@@ -18,12 +19,24 @@ const Classroom = () => {
 
     const [classroom, setClassroom] = useState()
     const [tasks, setTasks] = useState([])
+    const [submissions, setSubmissions] = useState()
     const [isDashboard, setIsDashboard] = useState(true)
     const [names, setNames] = useState()
+
+    const [wsURL, setWSURL] = useState(null)
+    const {
+        sendMessage, lastMessage, readyState,
+    } = useWebSocket(wsURL, {
+        onOpen: () => console.log('opened'),
+        onMessage: (msg) => handleMessage(JSON.parse(msg.data)),
+        shouldReconnect: () => false
+    })
 
     useEffect(() => {
         const { code } = router.query
         if (!code) return
+
+        setWSURL(process.env.NEXT_PUBLIC_BACKEND_WS_BASE+'ws/teacher/?token='+auth.tokens.access+'&code='+code)
 
         if (!classrooms) {
             // Get classrooms data if user went directly to classroom link
@@ -52,7 +65,6 @@ const Classroom = () => {
                 params: {'code': code}
             })
             .then(res => {
-                console.log(res.data)
                 setTasks(res.data)
             })
             .catch(res => {
@@ -76,14 +88,33 @@ const Classroom = () => {
         })
     }, [classroom])
 
+    useEffect(() => {
+        if ((tasks) && (classroom) && (!submissions)) {
+            getAccessToken().then((accessToken) => {
+                axios.get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE+'core/submissions/', {
+                    headers: {'Authorization': 'Bearer '+accessToken},
+                    params: {'code': classroom.code}
+                })
+                .then(res => {
+                    console.log(res.data)
+                    setSubmissions(res.data)
+                })
+            })
+        }
+    }, [tasks, classroom, submissions])
+
+    const handleMessage = (msg) => {
+        if (Object.keys(msg)[0] === 'submission') {
+            setSubmissions([...submissions.filter(sub => sub.id !== msg.submission.id), msg.submission])
+        }
+    }
+
     const changePage = () => {
         setIsDashboard(!isDashboard)
     }
 
     const changeStatus = () => {
-        console.log(classroom.status)
         const newClassroom = {...classroom, status: classroom.status === 1 ? 2 : 1}
-        console.log(newClassroom)
         updateClassroom(newClassroom)
     }
 
@@ -112,7 +143,7 @@ const Classroom = () => {
         })
     }
 
-    const updateName = (index, name) => {
+    const updateName = (index, name, id) => {
         getAccessToken().then((accessToken) => {
             axios.put(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE+'core/student_profiles/'+classroom.id+'/', {
                 code: classroom.code, index, name
@@ -120,7 +151,7 @@ const Classroom = () => {
                 headers: {'Authorization': 'Bearer '+accessToken},
             })
             .then(res => {
-                setNames([...names.filter(n => n.index !== index), {index, name}])
+                setNames([...names.filter(n => n.index !== index), {index, name, id}])
             })
         })
     }
@@ -134,23 +165,23 @@ const Classroom = () => {
             </Head>
 
             { classroom && (
-                <div className="flex sm:flex-row flex-col min-h-screen w-full">
-                    <div className="pt-10 px-4">
+                <div className="flex sm:flex-row flex-col min-h-screen">
+                    <div className="flex flex-col pt-10 px-4 bg-white whitespace-nowrap">
                         <h1 className="text-3xl font-bold px-2">{classroom.name}</h1>
                         <p className={`${classroom.status === 1 ? "text-green-600" : "text-red-500"} px-2 mb-4 font-bold`}>{classroom.status === 1 ? 'Active' : 'Archived'}</p>
-                        <button className={`${isDashboard ? "bg-gray-200" : "hover:bg-gray-200"} text-lg font-semibold px-2 py-1 mt-1 w-full text-left rounded-lg`} onClick={changePage}>Dashboard</button>
-                        <button className={`${(!isDashboard) ? "bg-gray-200" : "hover:bg-gray-200"} text-lg font-semibold px-2 py-1 my-1 w-full text-left rounded-lg`} onClick={changePage}>Settings</button>
+                        <button className={`${isDashboard ? "bg-gray-200" : "hover:bg-gray-200"} text-lg font-semibold px-2 py-1 mt-1 text-left rounded-lg`} onClick={changePage}>Dashboard</button>
+                        <button className={`${(!isDashboard) ? "bg-gray-200" : "hover:bg-gray-200"} text-lg font-semibold px-2 py-1 my-1 text-left rounded-lg`} onClick={changePage}>Settings</button>
 
                         <ClassCode code={classroom.code} />
 
                     </div>
-                    <div className="bg-gray-100 w-full pt-8 px-8">
+                    <div className="pt-8 px-8">
                         { isDashboard ?
-                            <Dashboard
-                                classroom={classroom} removeIndex={removeIndex}
-                                addStudent={addStudent} names={names} updateName={updateName}
-                                tasks={tasks} setTasks={setTasks}
-                            /> :
+                            <Dashboard {...{
+                                classroom, removeIndex, addStudent,names,
+                                updateName, tasks, setTasks,
+                                submissions, setSubmissions
+                            }} /> :
                             <Settings classroom={classroom} changeStatus={changeStatus} />
                         }
                     </div>
@@ -174,14 +205,14 @@ const ClassCode = ({code}) => {
                     <div><p className="text-center py-1 font-mono bg-white text-black rounded cursor-pointer hover:bg-gray-100">{code}</p></div>
                 </div>
             }
-            modal
+            modal overlayStyle={{ background: 'rgba(0,0,0,0.4)' }}
         >
             { close => (
                 <div className="flex flex-col px-4 py-4 bg-white rounded-lg shadow-md">
                     <h1 className="text-xl sm:text-2xl font-bold text-center">Classroom Code</h1>
                     <div className="flex flex-row mt-4">
                         { [...code].map((char, i) => (
-                            <p className="font-mono text-5xl sm:text-7xl text-white py-2 px-2 bg-black ml-1">{char}</p>
+                            <p className="font-mono text-5xl sm:text-7xl text-white py-2 px-2 bg-black ml-1" key={i}>{char}</p>
                         ))}
                     </div>
                 </div>

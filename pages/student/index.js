@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useState, useEffect, useContext } from 'react'
 import axios from 'axios'
+import useWebSocket from 'react-use-websocket'
 
 import { AuthContext } from '../../contexts/Auth.Context'
 
@@ -11,7 +12,7 @@ import Leaderboard from '../../components/student/Leaderboard'
 
 const StudentHome = () => {
     const router = useRouter()
-    const { auth, setAuth, getAccessToken } = useContext(AuthContext)
+    const { auth, getAccessToken } = useContext(AuthContext)
 
     const [isTasks, setIsTasks] = useState(true)
 
@@ -20,7 +21,16 @@ const StudentHome = () => {
     const [tasks, setTasks] = useState()
     const [submissions, setSubmissions] = useState()
 
+    const {
+        sendMessage, lastMessage, readyState,
+    } = useWebSocket(process.env.NEXT_PUBLIC_BACKEND_WS_BASE+'ws/student/?token='+auth.tokens.access, {
+        onOpen: () => console.log('opened'),
+        onMessage: (msg) => handleMessage(JSON.parse(msg.data)),
+        shouldReconnect: (closeEvent) => true
+    })
+
     useEffect(() => {
+        // Get initial data
         getAccessToken().then((accessToken) => {
             axios.get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE+'student/initial/', {
                 headers: {'Authorization': 'Bearer '+accessToken},
@@ -33,6 +43,14 @@ const StudentHome = () => {
             })
         })
     }, [])
+
+    const handleMessage = (msg) => {
+        if (Object.keys(msg)[0] === 'task') {
+            setTasks([...tasks.filter(t => t.id !== msg.task.id), msg.task])
+        } else if (Object.keys(msg)[0] === 'submission') {
+            setSubmissions([...submissions.filter(sub => sub.id !== msg.submission.id), msg.submission])
+        }
+    }
 
     return (
         <div>

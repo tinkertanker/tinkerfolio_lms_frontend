@@ -65,7 +65,7 @@ const TeacherHome = () => {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 
-            <main className="mt-8 mx-8">
+            <main className="pt-8 px-8 bg-white">
                 <h1 className="text-5xl">Teacher Dashboard</h1>
 
                 <div className="flex flex-row items-center">

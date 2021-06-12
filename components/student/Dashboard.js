@@ -75,7 +75,7 @@ const Task = ({task, sub, i, addSubmission, reloadSubmission}) => {
     return (
         <Popup
             trigger={
-                <div className="py-2 px-2 border-b-2 border-gray-300 cursor-pointer hover:bg-gray-200" key={i}>
+                <div className="py-2 px-2 border-b-2 border-gray-300 cursor-pointer hover:bg-gray-200">
                     <div className="flex flex-row items-center">
                         <h2 className="text-lg font-semibold mr-4">{task.name}</h2>
                         <p className={`${isSubmitted ? 'bg-green-600':'bg-red-500'} py-0.5 px-1 text-sm text-white rounded`}>{isSubmitted ? 'Done':'Not Done'}</p>
@@ -85,10 +85,11 @@ const Task = ({task, sub, i, addSubmission, reloadSubmission}) => {
                     <p className="text-gray-500">{ isGraded ? sub.stars : '-' }/{task.max_stars} ★</p>
                 </div>
             }
-            modal contentStyle={{ overflowY: 'auto', marginTop: 'min(100px, 100%)', marginBottom: 'min(100px, 100%)' }}
+            modal contentStyle={{ overflowY: 'auto', marginTop: 'min(60px, 100%)', marginBottom: 'min(60px, 100%)' }}
+            overlayStyle={{ background: 'rgba(0,0,0,0.4)' }}
         >
             { close => (
-                <div className="px-4 py-4 bg-white rounded-lg shadow-md popup" key={i}>
+                <div className="px-4 py-4 bg-white rounded-lg shadow-lg popup">
                     <h1 className="my-2 mx-2 text-2xl font-bold">{task.name}</h1>
                     <p className="my-2 mx-2 pb-4 border-b-2 border-gray-200">{task.description}</p>
 
@@ -130,7 +131,7 @@ const TeacherComment = ({isGraded, task, sub}) => {
             <h2 className="text-xl pl-2 pt-8">Teacher's Comments</h2>
             { isGraded ? (
                 <div className="pl-2 pt-1">
-                    <p className="text-lg">{'★'.repeat(sub.stars)+'☆'.repeat(task.max_stars - sub.stars)}</p>
+                    <p className="text-2xl">{'★'.repeat(sub.stars)+'☆'.repeat(task.max_stars - sub.stars)}</p>
                     <p className="italic">{sub.comments}</p>
                 </div>
             ): (

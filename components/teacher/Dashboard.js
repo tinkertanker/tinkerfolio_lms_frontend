@@ -7,7 +7,7 @@ import { AuthContext } from '../../contexts/Auth.Context'
 const contentStyle = { paddingLeft: '0.5rem', paddingRight: '0.5rem' };
 const arrowStyle = { color: '#000' }; // style for an svg element
 
-const Dashboard = ({ classroom, names, removeIndex, addStudent, updateName, tasks, setTasks }) => {
+const Dashboard = ({ classroom, names, removeIndex, addStudent, updateName, tasks, setTasks, submissions, setSubmissions }) => {
 
     const { getAccessToken } = useContext(AuthContext)
     const [tableNames, setTableNames] = useState()
@@ -19,7 +19,6 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, updateName, task
     if (!tableNames) return <h1></h1>
 
     const setOneTask = (newTask) => {
-        console.log(true)
         if (newTask !== tasks.find(t => t.id === newTask.id)) {
             // if task has been edited
             getAccessToken().then((accessToken) => {
@@ -57,6 +56,19 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, updateName, task
         })
     }
 
+    const addReview = (id, stars, comment) => {
+        getAccessToken().then((accessToken) => {
+            axios.put(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE+'core/submissions/'+id.toString()+'/', {
+                stars, comment
+            }, {
+                headers: {'Authorization': 'Bearer '+accessToken}
+            })
+            .then(res => {
+                setSubmissions([...submissions.filter(s => s.id !== res.data.id), res.data])
+            })
+        })
+    }
+
     return (
         <>
             <h1 className="text-5xl font-semibold">Dashboard</h1>
@@ -66,35 +78,44 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, updateName, task
                 <button className="mt-8 py-1 px-2 bg-gray-400 text-sm text-white rounded hover:bg-gray-500" onClick={addStudent}>Add Student</button>
             </div>
 
-            <table className="mt-6" style={{ display:"block", overflowX:"auto", whiteSpace:"nowrap"}}>
+            <table className="mt-6 block overflow-x-auto teacher-table align-top">
                 <thead>
                     <tr className="border-2">
                         <th className="border-r-2 px-2 py-2 "><p>Index</p></th>
                         <th className="border-r-2 px-2 py-2 "><p>Name</p></th>
                         <th className="border-r-2 px-2 py-2 "><p>Actions</p></th>
                         { tasks.map((task, i) => (
-                            <th className="border-r-2 px-2 py-2" key={i}>
+                            <th className="border-r-2 px-2 py-2 w-full" key={i}>
                                 <div className="flex flex-row items-center">
-                                    <p>{task.name}</p>
+                                    <p className="font-normal ml-1 mr-2 py-0.5 px-1 text-sm text-white bg-gray-700 rounded">Task</p>
+                                    <p className="whitespace-nowrap">{task.name}</p>
                                     <TaskMenu task={task} setOneTask={setOneTask} deleteTask={deleteTask} />
                                 </div>
                             </th>
                         ))}
                     </tr>
                 </thead>
-                <tbody>
-                    { classroom.student_indexes.map((index, i) => (
-                        <tr className="border-2" key={i}>
-                            <td className="border-r-2 px-2 py-2 "><p>{index}</p></td>
-                            <td className="border-r-2 px-2 py-2"><input
-                                onChange={e => setTableNames([...tableNames.filter(n => n.index !== index), {index:index, name: e.target.value}])}
-                                onBlur={e => updateName(index, tableNames.filter(n => n.index === index)[0].name)}
-                                className="outline-none focus:border-gray-500 border-b-2 border-gray-300 bg-gray-100"
-                                value={tableNames.filter(name => name.index === index)[0].name}
-                            /></td>
-                            <td className="px-2 py-2 border-r-2"><button value={index} className="py-1 px-2 bg-red-500 text-white rounded text-sm hover:bg-red-600" onClick={e => removeIndex(e.target.value)}>Delete</button></td>
-                        </tr>
-                    ))}
+                <tbody className="align-top">
+                    { classroom.student_indexes.map((index, i) => {
+                        const sp = tableNames.filter(tn => tn.index === index)[0]
+                        const student_id = sp.id
+                        return (
+                            <tr className="border-2" key={i}>
+                                <td className="border-r-2 px-2 py-2"><p>{index}</p></td>
+                                <td className="border-r-2 px-2 py-2"><input
+                                    onChange={e => setTableNames([...tableNames.filter(n => n.index !== index), {index:index, name: e.target.value, id: student_id}])}
+                                    onBlur={e => updateName(index, tableNames.filter(n => n.index === index)[0].name, tableNames.filter(n => n.index === index)[0].id)}
+                                    className="outline-none focus:border-gray-500 border-b-2 border-gray-300 bg-gray-100"
+                                    value={tableNames.filter(name => name.index === index)[0].name}
+                                /></td>
+                                <td className="px-2 py-2 border-r-2"><button value={index} className="py-1 px-2 bg-red-500 text-white rounded text-sm hover:bg-red-600" onClick={e => removeIndex(e.target.value)}>Delete</button></td>
+                                { submissions && tasks.map((task, i) => {
+                                    let sub = submissions.filter(s => ((s.task === task.id) && (s.student === student_id)))[0]
+                                    return sub ? <Submission {...{sub, sp, task, addReview}} key={i} /> : <td className="px-2 py-2 border-r-2" key={i}></td>
+                                })}
+                            </tr>
+                        )
+                    })}
                 </tbody>
             </table>
         </>
@@ -103,12 +124,110 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, updateName, task
 
 export default Dashboard
 
+const Submission = ({sub, sp, task, addReview}) => {
+
+    const shortened = (text) => {
+       if (text.length > 100) return text.substring(0, 100) + '...'
+       return text;
+    };
+
+    return (
+        <Popup
+            trigger={
+                <td className="px-2 py-2 border-r-2 min-w-48 cursor-pointer hover:bg-gray-200">
+                    { sub.text ? (
+                        <p className="text-xs align-text-top">{shortened(sub.text)}</p>
+                    ) : (
+                        <img src={sub.image} style={{maxHeight:"100px"}}/>
+                    )}
+                </td>
+            }
+            modal contentStyle={{ overflowY: 'auto', marginTop: 'min(100px, 100%)', marginBottom: 'min(100px, 100%)' }}
+            overlayStyle={{ background: 'rgba(0,0,0,0.4)' }}
+        >
+            <div className="flex flex-col px-4 py-4 bg-white rounded-lg popup">
+                <div className="flex flex-row text-xl">
+                    <p>Index:</p><p className="ml-2 font-bold">{sp.index}</p>
+                    { (sp.name !== "") && <><p className="ml-4">Name:</p><p className="ml-2 font-bold">{sp.name}</p></>}
+                </div>
+
+                <div className="flex flex-row mt-6 items-center">
+                    <h1 className="text-lg font-bold">Submission</h1>
+                    { sub.image && <a href={sub.image} className="text-sm text-white py-0.5 px-1 ml-4 bg-gray-500 hover:bg-gray-600 rounded" download="submission.png" target="_blank">Full Image</a>}
+                </div>
+
+                { sub.text ? (
+                    <p className="mt-4">{sub.text}</p>
+                ) : (
+                    <img className="mt-4" src={sub.image} style={{maxHeight:"400px"}}/>
+                )}
+                <p className="border-b-2 border-gray-200 mt-6"></p>
+
+                { sub.stars ? <Review sub={sub} task={task} /> : <ReviewForm sub={sub} task={task} addReview={addReview} />}
+            </div>
+        </Popup>
+
+    )
+}
+
+const Review = ({sub, task}) => {
+    return (
+        <>
+            <h1 className="text-lg font-bold mt-6">Leave a Review</h1>
+            <p className="text-2xl mt-2">{'★'.repeat(sub.stars)+'☆'.repeat(task.max_stars - sub.stars)}</p>
+            <p className="italic">{(sub.comments !== "") ? sub.comments : "No additonal comments." }</p>
+        </>
+    )
+}
+
+const ReviewForm = ({sub, task, addReview}) => {
+    const [isHover, setIsHover] = useState(false)
+    const [tempStars, setTempStars] = useState(0)
+    const [savedStars, setSavedStars] = useState(false)
+    const [comment, setComment] = useState("")
+
+    const starIsDark = (i) => {
+        if (isHover) {
+            if (tempStars >= i) return true
+        } else {
+            if (savedStars !== false) {
+                if (savedStars >= i) return true
+            }
+        }
+        return false
+    }
+
+    return (
+        <>
+            <h1 className="text-lg font-bold mt-6">Leave a Review</h1>
+            <form onSubmit={e => {e.preventDefault(); addReview(sub.id, savedStars+1, comment)}}>
+                <div className="flex flex-row">
+                    { Array.from(Array(task.max_stars).keys()).map((a,i) => (
+                        <p
+                            className="text-2xl cursor-pointer" key={i}
+                            onMouseEnter={() => {setIsHover(true); setTempStars(i)}}
+                            onMouseLeave={() => setIsHover(false)}
+                            onClick={() => setSavedStars(i)}
+                        >{ starIsDark(i) ? '★':'☆' }</p>
+                    ))}
+                </div>
+                <textarea
+                    onChange={e => setComment(e.target.value)}
+                    className="w-full outline-none border-2 border-gray-100 focus:border-gray-300 py-2 px-2 my-2 rounded-lg"
+                    rows="4" value={comment} name="description" placeholder="Leave a comment..."
+                />
+                <button type="submit" className="px-2 py-1 rounded text-white bg-gray-500 hover:bg-gray-600" disabled={savedStars === false}>Submit</button>
+            </form>
+        </>
+    )
+}
+
 const TaskMenu = ({task, setOneTask, deleteTask}) => {
     const [isCloseOnDocClick, setIsCloseOnDocClick] = useState(true)
 
     return (
         <Popup
-            trigger={<p className="ml-2 px-2 py-0.5 rounded hover:bg-gray-300 cursor-pointer">⋮</p>}
+            trigger={<p className="ml-auto px-2 py-0.5 rounded hover:bg-gray-300 cursor-pointer">⋮</p>}
             position="left top"
             arrow={false}
             closeOnDocumentClick={isCloseOnDocClick}
@@ -136,8 +255,9 @@ const TaskDetails = ({task, setOneTask, setIsCloseOnDocClick}) => {
     return (
         <Popup
             trigger={<p className="border-b-2 border-gray-500 py-1 hover:text-white cursor-pointer">Details</p>}
-            onOpen={() => setIsCloseOnDocClick(false)} onClose={() => setIsCloseOnDocClick(true)}
-            modal
+            onOpen={() => setIsCloseOnDocClick(false)}
+            onClose={() => {setIsCloseOnDocClick(true); setOneTask(newTask)}}
+            modal overlayStyle={{ background: 'rgba(0,0,0,0.4)' }}
         >
             <div className="flex flex-col px-4 py-4 bg-white rounded-lg shadow-md popup">
                 <input
@@ -186,7 +306,7 @@ const NewTask = ({addTask}) => {
     return (
         <Popup
             trigger={<button className="mt-8 mr-4 py-1 px-2 bg-gray-500 text-sm text-white rounded hover:bg-gray-600">Add Task</button>}
-            modal
+            modal overlayStyle={{ background: 'rgba(0,0,0,0.4)' }}
         >
             { close => (
                 <form

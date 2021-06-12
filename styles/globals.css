@@ -11,4 +11,44 @@
     }
 }
 
+.teacher-table {
+    width: 450px
+}
+
+@media screen and (max-width: 640px) {
+    .teacher-table {
+        width: 350px
+    }
+}
+@media screen and (min-width: 768px) {
+    .teacher-table {
+        width: 550px
+    }
+}
+@media screen and (min-width: 1024px) {
+    .teacher-table {
+        width: 750px
+    }
+}
+@media screen and (min-width: 1280px) {
+    .teacher-table {
+        width: 1000px
+    }
+}
+@media screen and (min-width: 1536px) {
+    .teacher-table {
+        width: 1200px
+    }
+}
+@media screen and (min-width: 1750px) {
+    .teacher-table {
+        width: 1500px
+    }
+}
+@media screen and (min-width: 1900px) {
+    .teacher-table {
+        width: 1650px
+    }
+}
+
 @tailwind utilities;
