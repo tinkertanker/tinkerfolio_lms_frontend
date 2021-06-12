@@ -276,10 +276,9 @@ const TaskDetails = ({task, setOneTask, setIsCloseOnDocClick}) => {
                     <div>
                         <label htmlFor="status" className="px-2 pt-2">Status</label>
                         <select
-                            onChange={e => setNewTask({...newTask, [e.target.name]: e.target.value})}
-                            onBlur={() => setOneTask(newTask)}
+                            onChange={e => {console.log(e.target.value); setOneTask({...newTask, [e.target.name]: e.target.value})}}
                             className="outline-none py-2 px-2 my-1 mx-2 rounded-lg bg-gray-100 w-min"
-                            id="status" name="status" value={newTask.status === 1}
+                            id="status" name="status" value={newTask.status}
                         >
                             <option value={1}>In Progress</option>
                             <option value={2}>Completed</option>
