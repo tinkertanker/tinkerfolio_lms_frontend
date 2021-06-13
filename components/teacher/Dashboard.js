@@ -7,7 +7,7 @@ import { AuthContext } from '../../contexts/Auth.Context'
 const contentStyle = { paddingLeft: '0.5rem', paddingRight: '0.5rem' };
 const arrowStyle = { color: '#000' }; // style for an svg element
 
-const Dashboard = ({ classroom, names, removeIndex, addStudent, updateName, tasks, setTasks, submissions, setSubmissions }) => {
+const Dashboard = ({ classroom, names, removeIndex, addStudent, updateName, tasks, setTasks, submissions, setSubmissions, sendJsonMessage  }) => {
 
     const { getAccessToken } = useContext(AuthContext)
     const [tableNames, setTableNames] = useState()
@@ -69,6 +69,10 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, updateName, task
         })
     }
 
+    const sortedTasks = () => {
+        return tasks.sort((a, b) => (a.id > b.id) ? 1 : -1)
+    }
+
     return (
         <>
             <h1 className="text-5xl font-semibold">Dashboard</h1>
@@ -84,12 +88,12 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, updateName, task
                         <th className="border-r-2 px-2 py-2 "><p>Index</p></th>
                         <th className="border-r-2 px-2 py-2 "><p>Name</p></th>
                         <th className="border-r-2 px-2 py-2 "><p>Actions</p></th>
-                        { tasks.map((task, i) => (
+                        { sortedTasks().map((task, i) => (
                             <th className="border-r-2 px-2 py-2 w-full" key={i}>
                                 <div className="flex flex-row items-center">
                                     <p className="font-normal ml-1 mr-2 py-0.5 px-1 text-sm text-white bg-gray-700 rounded">Task</p>
                                     <p className="whitespace-nowrap">{task.name}</p>
-                                    <TaskMenu task={task} setOneTask={setOneTask} deleteTask={deleteTask} />
+                                    <TaskMenu {...{task, setOneTask, deleteTask, submissions}} />
                                 </div>
                             </th>
                         ))}
@@ -109,9 +113,9 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, updateName, task
                                     value={tableNames.filter(name => name.index === index)[0].name}
                                 /></td>
                                 <td className="px-2 py-2 border-r-2"><button value={index} className="py-1 px-2 bg-red-500 text-white rounded text-sm hover:bg-red-600" onClick={e => removeIndex(e.target.value)}>Delete</button></td>
-                                { submissions && tasks.map((task, i) => {
+                                { submissions && sortedTasks().map((task, i) => {
                                     let sub = submissions.filter(s => ((s.task === task.id) && (s.student === student_id)))[0]
-                                    return sub ? <Submission {...{sub, sp, task, addReview}} key={i} /> : <td className="px-2 py-2 border-r-2" key={i}></td>
+                                    return sub ? <Submission {...{sub, sp, task, addReview, sendJsonMessage }} key={i} /> : <td className="px-2 py-2 border-r-2" key={i}></td>
                                 })}
                             </tr>
                         )
@@ -124,7 +128,7 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, updateName, task
 
 export default Dashboard
 
-const Submission = ({sub, sp, task, addReview}) => {
+const Submission = ({sub, sp, task, addReview, sendJsonMessage }) => {
 
     const shortened = (text) => {
        if (text.length > 100) return text.substring(0, 100) + '...'
@@ -135,10 +139,16 @@ const Submission = ({sub, sp, task, addReview}) => {
         <Popup
             trigger={
                 <td className="px-2 py-2 border-r-2 min-w-48 cursor-pointer hover:bg-gray-200">
-                    { sub.text ? (
-                        <p className="text-xs align-text-top">{shortened(sub.text)}</p>
+                    { sub.stars ? (
+                        <p className="text-lg">{'★'.repeat(sub.stars)+'☆'.repeat(task.max_stars - sub.stars)}</p>
                     ) : (
-                        <img src={sub.image} style={{maxHeight:"100px"}}/>
+                        <p className="italic text-xs mb-2">Not reviewed yet.</p>
+                    )}
+                    <p className="border-t-2 border-gray-400"></p>
+                    { sub.text ? (
+                        <p className="flex-none text-xs text-gray-700 mt-2">{shortened(sub.text)}</p>
+                    ) : (
+                        <img className="mt-2" src={sub.image} style={{maxHeight:"100px"}} onError={() => sendJsonMessage({'submission': sub.id})} />
                     )}
                 </td>
             }
@@ -159,7 +169,7 @@ const Submission = ({sub, sp, task, addReview}) => {
                 { sub.text ? (
                     <p className="mt-4">{sub.text}</p>
                 ) : (
-                    <img className="mt-4" src={sub.image} style={{maxHeight:"400px"}}/>
+                    <img className="mt-4" src={sub.image} style={{maxHeight:"400px"}} onError={() => sendJsonMessage({'submission': sub.id})} />
                 )}
                 <p className="border-b-2 border-gray-200 mt-6"></p>
 
@@ -173,7 +183,7 @@ const Submission = ({sub, sp, task, addReview}) => {
 const Review = ({sub, task}) => {
     return (
         <>
-            <h1 className="text-lg font-bold mt-6">Leave a Review</h1>
+            <h1 className="text-lg font-bold mt-6">My Review</h1>
             <p className="text-2xl mt-2">{'★'.repeat(sub.stars)+'☆'.repeat(task.max_stars - sub.stars)}</p>
             <p className="italic">{(sub.comments !== "") ? sub.comments : "No additonal comments." }</p>
         </>
@@ -222,8 +232,10 @@ const ReviewForm = ({sub, task, addReview}) => {
     )
 }
 
-const TaskMenu = ({task, setOneTask, deleteTask}) => {
+const TaskMenu = ({task, setOneTask, deleteTask, submissions}) => {
     const [isCloseOnDocClick, setIsCloseOnDocClick] = useState(true)
+
+    if (!submissions) return <h1></h1>
 
     return (
         <Popup
@@ -234,7 +246,7 @@ const TaskMenu = ({task, setOneTask, deleteTask}) => {
             {...{ contentStyle, arrowStyle }}
         >
             <div className="flex flex-col bg-gray-700 text-gray-300 py-1 px-3 bg-white rounded w-40">
-                <TaskDetails task={task} setOneTask={setOneTask} setIsCloseOnDocClick={setIsCloseOnDocClick} />
+                <TaskDetails task={task} setOneTask={setOneTask} setIsCloseOnDocClick={setIsCloseOnDocClick} subs={submissions.filter(s => s.task === task.id)} />
                 <p className="border-b-2 border-gray-500 py-1 hover:text-white cursor-pointer">Hide</p>
                 <DeleteTask id={task.id} setIsCloseOnDocClick={setIsCloseOnDocClick} deleteTask={deleteTask} />
             </div>
@@ -242,7 +254,7 @@ const TaskMenu = ({task, setOneTask, deleteTask}) => {
     )
 }
 
-const TaskDetails = ({task, setOneTask, setIsCloseOnDocClick}) => {
+const TaskDetails = ({task, setOneTask, setIsCloseOnDocClick, subs}) => {
 
     const [newTask, setNewTask] = useState()
 
@@ -251,6 +263,11 @@ const TaskDetails = ({task, setOneTask, setIsCloseOnDocClick}) => {
     }, [task])
 
     if (!newTask) return <h1></h1>
+
+    const minStars = () => {
+        const stars = subs.map((s, i) => s.stars)
+        return Math.max(...stars)
+    }
 
     return (
         <Popup
@@ -290,7 +307,7 @@ const TaskDetails = ({task, setOneTask, setIsCloseOnDocClick}) => {
                             onChange={e => setNewTask({...newTask, [e.target.name]: parseInt(e.target.value)})}
                             onBlur={() => setOneTask(newTask)}
                             className="outline-none py-1.5 px-2 bg-gray-100 rounded-lg my-1 mx-2 w-min"
-                            name="max_stars" id="max_stars" type="number" min="0" max="5" value={newTask.max_stars}
+                            name="max_stars" id="max_stars" type="number" min={minStars()} max="5" value={newTask.max_stars}
                         />
                     </div>
                 </div>

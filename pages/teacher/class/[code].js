@@ -25,7 +25,7 @@ const Classroom = () => {
 
     const [wsURL, setWSURL] = useState(null)
     const {
-        sendMessage, lastMessage, readyState,
+        sendJsonMessage , lastMessage, readyState,
     } = useWebSocket(wsURL, {
         onOpen: () => console.log('opened'),
         onMessage: (msg) => handleMessage(JSON.parse(msg.data)),
@@ -180,7 +180,7 @@ const Classroom = () => {
                             <Dashboard {...{
                                 classroom, removeIndex, addStudent,names,
                                 updateName, tasks, setTasks,
-                                submissions, setSubmissions
+                                submissions, setSubmissions, sendJsonMessage 
                             }} /> :
                             <Settings classroom={classroom} changeStatus={changeStatus} />
                         }
