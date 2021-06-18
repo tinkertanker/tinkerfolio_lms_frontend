@@ -21,15 +21,18 @@ const StudentHome = () => {
     const [tasks, setTasks] = useState()
     const [submissions, setSubmissions] = useState()
 
+    const [wsURL, setWSURL] = useState(null)
     const {
         sendMessage, lastMessage, readyState,
-    } = useWebSocket(process.env.NEXT_PUBLIC_BACKEND_WS_BASE+'ws/student/?token='+auth.tokens.access, {
+    } = useWebSocket(wsURL, {
         onOpen: () => console.log('opened'),
         onMessage: (msg) => handleMessage(JSON.parse(msg.data)),
         shouldReconnect: (closeEvent) => true
     })
 
     useEffect(() => {
+        setWSURL(process.env.NEXT_PUBLIC_BACKEND_WS_BASE+'ws/student/?token='+auth.tokens.access)
+
         // Get initial data
         getAccessToken().then((accessToken) => {
             axios.get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE+'student/initial/', {

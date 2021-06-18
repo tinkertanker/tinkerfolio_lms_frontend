@@ -48,7 +48,7 @@ const StudentLogin = () => {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 
-            <main className="mt-8 mx-8">
+            <main className="pt-8 px-8 bg-white">
                 { invalidInput && <p className="py-2 px-2 border-2 border-red-500 rounded-lg font-bold text-red-500">Invalid inputs.</p>}
 
                 <h1 className="text-5xl my-6">Login for Students</h1>

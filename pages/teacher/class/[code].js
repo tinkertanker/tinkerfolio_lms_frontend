@@ -5,6 +5,8 @@ import { useState, useEffect, useContext } from 'react'
 import axios from 'axios'
 import Popup from 'reactjs-popup'
 import useWebSocket from 'react-use-websocket'
+import { ClipboardOutline, CheckmarkSharp } from 'react-ionicons'
+import { CopyToClipboard } from 'react-copy-to-clipboard'
 
 import { AuthContext } from '../../../contexts/Auth.Context'
 import { ClassroomsContext } from '../../../contexts/Classrooms.Context'
@@ -180,7 +182,7 @@ const Classroom = () => {
                             <Dashboard {...{
                                 classroom, removeIndex, addStudent,names,
                                 updateName, tasks, setTasks,
-                                submissions, setSubmissions, sendJsonMessage 
+                                submissions, setSubmissions, sendJsonMessage
                             }} /> :
                             <Settings classroom={classroom} changeStatus={changeStatus} />
                         }
@@ -197,6 +199,14 @@ const Classroom = () => {
 export default Classroom
 
 const ClassCode = ({code}) => {
+
+    const [isCopied, setIsCopied] = useState(false)
+
+    const hasCopied = () => {
+        setIsCopied(true)
+        setTimeout(() => setIsCopied(false), 3000)
+    }
+
     return (
         <Popup
             trigger={
@@ -209,7 +219,16 @@ const ClassCode = ({code}) => {
         >
             { close => (
                 <div className="flex flex-col px-4 py-4 bg-white rounded-lg shadow-md">
-                    <h1 className="text-xl sm:text-2xl font-bold text-center">Classroom Code</h1>
+                    <div className="flex flex-row items-center justify-center">
+                        <h1 className="text-xl sm:text-2xl font-bold text-center">Classroom Code</h1>
+                        { isCopied ? (
+                            <CheckmarkSharp color={'#10B981'} cssClasses="ml-2" height="30px" width="30px" />
+                        ) : (
+                            <CopyToClipboard className="cursor-pointer" text={code} onCopy={hasCopied}>
+                                <ClipboardOutline beat cssClasses="ml-2" height="30px" width="30px" />
+                            </CopyToClipboard>
+                        )}
+                    </div>
                     <div className="flex flex-row mt-4">
                         { [...code].map((char, i) => (
                             <p className="font-mono text-5xl sm:text-7xl text-white py-2 px-2 bg-black ml-1" key={i}>{char}</p>
