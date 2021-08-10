@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import { useState, useEffect, useContext } from 'react'
 import axios from 'axios'
 import Popup from 'reactjs-popup'
-import useWebSocket from 'react-use-websocket'
+import useWebSocket, { ReadyState } from 'react-use-websocket'
 import { ClipboardOutline, CheckmarkSharp } from 'react-ionicons'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 
@@ -33,6 +33,14 @@ const Classroom = () => {
         onMessage: (msg) => handleMessage(JSON.parse(msg.data)),
         shouldReconnect: () => false
     })
+
+    const connectionStatus = {
+        [ReadyState.CONNECTING]: 'Connecting',
+        [ReadyState.OPEN]: 'Open',
+        [ReadyState.CLOSING]: 'Closing',
+        [ReadyState.CLOSED]: 'Closed',
+        [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
+    }[readyState];
 
     useEffect(() => {
         const { code } = router.query
@@ -176,6 +184,8 @@ const Classroom = () => {
 
                         <ClassCode code={classroom.code} />
 
+                        {connectionStatus}
+
                     </div>
                     <div className="pt-8 px-8">
                         { isDashboard ?
@@ -230,9 +240,7 @@ const ClassCode = ({code}) => {
                         )}
                     </div>
                     <div className="flex flex-row mt-4">
-                        { [...code].map((char, i) => (
-                            <p className="font-mono text-5xl sm:text-7xl text-white py-2 px-2 bg-black ml-1" key={i}>{char}</p>
-                        ))}
+                        <p className="font-mono text-5xl sm:text-7xl tracking-widest text-white py-2 px-2 bg-black ml-1">{code}</p>
                     </div>
                 </div>
             )}

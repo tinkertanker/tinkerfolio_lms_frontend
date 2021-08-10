@@ -1,5 +1,6 @@
 import { useState, useContext } from 'react'
 import Popup from 'reactjs-popup'
+import CustomPopup from '../CustomPopup'
 import axios from 'axios'
 
 import { AuthContext } from '../../contexts/Auth.Context'
@@ -13,8 +14,11 @@ const Dashboard = ({tasks, submissions, setSubmissions}) => {
     const addSubmission = (textInput, fileInput, id) => {
 
         const formData = new FormData()
-        formData.append("task_id", id);
-        textInput ? formData.append("text", textInput) : formData.append("image", fileInput)
+        formData.append("task_id", id)
+        console.log(textInput)
+        console.log(fileInput)
+        textInput && formData.append("text", textInput)
+        fileInput && formData.append("image", fileInput)
 
         getAccessToken().then((accessToken) => {
             axios.post(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE+'student/submission/', formData, {
@@ -73,7 +77,7 @@ const Task = ({task, sub, i, addSubmission, reloadSubmission}) => {
     const isGraded = sub ? (sub.stars ? true : false) : false
 
     return (
-        <Popup
+        <CustomPopup
             trigger={
                 <div className="py-2 px-2 border-b-2 border-gray-300 cursor-pointer hover:bg-gray-200">
                     <div className="flex flex-row items-center">
@@ -85,8 +89,7 @@ const Task = ({task, sub, i, addSubmission, reloadSubmission}) => {
                     <p className="text-gray-500">{ isGraded ? sub.stars : '-' }/{task.max_stars} ★</p>
                 </div>
             }
-            modal contentStyle={{ overflowY: 'auto', marginTop: 'min(60px, 100%)', marginBottom: 'min(60px, 100%)' }}
-            overlayStyle={{ background: 'rgba(0,0,0,0.4)' }}
+            contentStyle={{ overflowY: 'auto', marginTop: 'min(60px, 100%)', marginBottom: 'min(60px, 100%)' }}
         >
             { close => (
                 <div className="px-4 py-4 bg-white rounded-lg shadow-lg popup">
@@ -104,7 +107,7 @@ const Task = ({task, sub, i, addSubmission, reloadSubmission}) => {
 
                 </div>
             )}
-        </Popup>
+        </CustomPopup>
     )
 }
 
@@ -116,14 +119,19 @@ const Submission = ({sub, reloadSubmission}) => {
                 <h2 className="text-xl pt-4 pb-2 pl-2">My Submission</h2>
                 { sub.image && <a href={sub.image} className="text-sm text-white py-0.5 px-1 ml-2 bg-gray-500 hover:bg-gray-600 rounded" download="test.png" target="_blank">Full Image</a>}
             </div>
-            { sub.image ? (
-                <img src={sub.image} className="px-2 py-2 mx-auto" style={{ maxHeight:300 }} onError={() => reloadSubmission(sub.id)}/>
-            ):(
-                <p className="text-gray-700 ml-2 px-2 py-2 border-2 border-gray-300 rounded">{sub.text}</p>
-            )}
+            <div className="border-2 border-gray-300 rounded">
+                <p className="text-gray-700 ml-2 px-2 py-2">{sub.text}</p>
+                { sub.image && <img src={sub.image} className="px-2 py-2 mx-auto" style={{ maxHeight:300 }} onError={() => reloadSubmission(sub.id)}/>}
+            </div>
         </div>
     )
 }
+
+// { sub.image ? (
+//     <img src={sub.image} className="px-2 py-2 mx-auto" style={{ maxHeight:300 }} onError={() => reloadSubmission(sub.id)}/>
+// ):(
+//     <p className="text-gray-700 ml-2 px-2 py-2 border-2 border-gray-300 rounded">{sub.text}</p>
+// )}
 
 const TeacherComment = ({isGraded, task, sub}) => {
     return (

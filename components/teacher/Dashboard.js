@@ -1,11 +1,12 @@
 import { useState, useEffect, useContext } from 'react'
 import axios from 'axios'
-import Popup from 'reactjs-popup';
+import Popup from 'reactjs-popup'
+import CustomPopup from '../CustomPopup'
 
 import { AuthContext } from '../../contexts/Auth.Context'
 
-const contentStyle = { paddingLeft: '0.5rem', paddingRight: '0.5rem' };
-const arrowStyle = { color: '#000' }; // style for an svg element
+const contentStyle = { paddingLeft: '0.5rem', paddingRight: '0.5rem' }
+const arrowStyle = { color: '#000' } // style for an svg element
 
 const Dashboard = ({ classroom, names, removeIndex, addStudent, updateName, tasks, setTasks, submissions, setSubmissions, sendJsonMessage  }) => {
 
@@ -85,11 +86,13 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, updateName, task
             <table className="mt-6 block overflow-x-auto teacher-table align-top">
                 <thead>
                     <tr className="border-2">
-                        <th className="border-r-2 px-2 py-2 "><p>Index</p></th>
-                        <th className="border-r-2 px-2 py-2 "><p>Name</p></th>
-                        <th className="border-r-2 px-2 py-2 "><p>Actions</p></th>
+                        <th className="border-r-2 px-2 py-2"><p>Index</p></th>
+                        <th className="border-r-2 px-2 py-2"><p>Name</p></th>
+                        <th className="border-r-2 px-2 py-2"><p>Actions</p></th>
                         { sortedTasks().map((task, i) => (
-                            <th className="border-r-2 px-2 py-2 w-full" key={i}>
+                            <th className="border-r-2 px-2 py-2" key={i} style={{width:"200px"}}>
+                                // this image below is a quick fix to give HTML table a min-width property. DO NOT DELETE
+                                <img style={{float:"left",minWidth:"200px",visibility:"hidden",width:"0px"}} />
                                 <div className="flex flex-row items-center">
                                     <p className="font-normal ml-1 mr-2 py-0.5 px-1 text-sm text-white bg-gray-700 rounded">Task</p>
                                     <p className="whitespace-nowrap">{task.name}</p>
@@ -130,13 +133,13 @@ export default Dashboard
 
 const Submission = ({sub, sp, task, addReview, sendJsonMessage }) => {
 
-    const shortened = (text) => {
-       if (text.length > 100) return text.substring(0, 100) + '...'
+    const shortened = (text, maxLength) => {
+       if (text.length > maxLength) return text.substring(0, maxLength) + '...'
        return text;
     };
 
     return (
-        <Popup
+        <CustomPopup
             trigger={
                 <td className="px-2 py-2 border-r-2 min-w-48 cursor-pointer hover:bg-gray-200">
                     { sub.stars ? (
@@ -145,15 +148,12 @@ const Submission = ({sub, sp, task, addReview, sendJsonMessage }) => {
                         <p className="italic text-xs mb-2">Not reviewed yet.</p>
                     )}
                     <p className="border-t-2 border-gray-400"></p>
-                    { sub.text ? (
-                        <p className="flex-none text-xs text-gray-700 mt-2">{shortened(sub.text)}</p>
-                    ) : (
-                        <img className="mt-2" src={sub.image} style={{maxHeight:"100px"}} onError={() => sendJsonMessage({'submission': sub.id})} />
-                    )}
+                    { sub.text && <p className="flex-none text-xs text-gray-700 mt-2">{shortened(sub.text, (sub.text && sub.image) ? 40 : 100)}</p> }
+
+                    <img className="mt-2" src={sub.image} style={{maxHeight:"100px"}} onError={() => sendJsonMessage({'submission': sub.id})} />
                 </td>
             }
-            modal contentStyle={{ overflowY: 'auto', marginTop: 'min(100px, 100%)', marginBottom: 'min(100px, 100%)' }}
-            overlayStyle={{ background: 'rgba(0,0,0,0.4)' }}
+            contentStyle={{ overflowY: 'auto', marginTop: 'min(5%)', height: 'max(80%)' }}
         >
             <div className="flex flex-col px-4 py-4 bg-white rounded-lg popup">
                 <div className="flex flex-row text-xl">
@@ -166,19 +166,25 @@ const Submission = ({sub, sp, task, addReview, sendJsonMessage }) => {
                     { sub.image && <a href={sub.image} className="text-sm text-white py-0.5 px-1 ml-4 bg-gray-500 hover:bg-gray-600 rounded" download="submission.png" target="_blank">Full Image</a>}
                 </div>
 
-                { sub.text ? (
-                    <p className="mt-4">{sub.text}</p>
-                ) : (
-                    <img className="mt-4" src={sub.image} style={{maxHeight:"400px"}} onError={() => sendJsonMessage({'submission': sub.id})} />
-                )}
+                <div className="border-2 border-gray-300 rounded mt-4">
+                    <p className="text-gray-700 ml-2 px-2 py-2">{sub.text}</p>
+                    { sub.image && <img src={sub.image} className="px-2 py-2 mx-auto" style={{ maxHeight:300 }} onError={() => reloadSubmission(sub.id)}/>}
+                </div>
+
                 <p className="border-b-2 border-gray-200 mt-6"></p>
 
                 { sub.stars ? <Review sub={sub} task={task} /> : <ReviewForm sub={sub} task={task} addReview={addReview} />}
             </div>
-        </Popup>
+        </CustomPopup>
 
     )
 }
+
+// { sub.text ? (
+//     <p className="mt-4">{sub.text}</p>
+// ) : (
+//     <img className="mt-4" src={sub.image} style={{maxHeight:"400px"}} onError={() => sendJsonMessage({'submission': sub.id})} />
+// )}
 
 const Review = ({sub, task}) => {
     return (
@@ -270,11 +276,10 @@ const TaskDetails = ({task, setOneTask, setIsCloseOnDocClick, subs}) => {
     }
 
     return (
-        <Popup
+        <CustomPopup
             trigger={<p className="border-b-2 border-gray-500 py-1 hover:text-white cursor-pointer">Details</p>}
             onOpen={() => setIsCloseOnDocClick(false)}
             onClose={() => {setIsCloseOnDocClick(true); setOneTask(newTask)}}
-            modal overlayStyle={{ background: 'rgba(0,0,0,0.4)' }}
         >
             <div className="flex flex-col px-4 py-4 bg-white rounded-lg shadow-md popup">
                 <input
@@ -312,7 +317,7 @@ const TaskDetails = ({task, setOneTask, setIsCloseOnDocClick, subs}) => {
                     </div>
                 </div>
             </div>
-        </Popup>
+        </CustomPopup>
     )
 }
 
@@ -320,9 +325,8 @@ const NewTask = ({addTask}) => {
     const [task, setTask] = useState({name: "", description: "", max_stars: 5})
 
     return (
-        <Popup
+        <CustomPopup
             trigger={<button className="mt-8 mr-4 py-1 px-2 bg-gray-500 text-sm text-white rounded hover:bg-gray-600">Add Task</button>}
-            modal overlayStyle={{ background: 'rgba(0,0,0,0.4)' }}
         >
             { close => (
                 <form
@@ -330,6 +334,7 @@ const NewTask = ({addTask}) => {
                     onSubmit={e => {
                         e.preventDefault()
                         addTask(task)
+                        setTask({name: "", description: "", max_stars: 5}) // reset form fields
                         close()
                     }}
                 >
@@ -353,15 +358,15 @@ const NewTask = ({addTask}) => {
                     <button type="submit" className="mt-4 ml-2 px-2 py-1 w-min bg-gray-500 text-white rounded hover:bg-gray-600">Create</button>
                 </form>
             )}
-        </Popup>
+        </CustomPopup>
     )
 }
 
 const DeleteTask = ({id, deleteTask, setIsCloseOnDocClick}) => {
     return (
-        <Popup
+        <CustomPopup
             trigger={<p className="py-1 hover:text-white cursor-pointer">Delete</p>}
-            onOpen={() => setIsCloseOnDocClick(false)} onClose={() => setIsCloseOnDocClick(true)} modal
+            onOpen={() => setIsCloseOnDocClick(false)} onClose={() => setIsCloseOnDocClick(true)}
         >
             { close => (
                 <div className="flex flex-col px-4 py-4 bg-white rounded-lg w-72 sm:w-96">
@@ -373,6 +378,6 @@ const DeleteTask = ({id, deleteTask, setIsCloseOnDocClick}) => {
                     </div>
                 </div>
             )}
-        </Popup>
+        </CustomPopup>
     )
 }
