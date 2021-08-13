@@ -94,7 +94,7 @@ const Task = ({task, sub, i, addSubmission, reloadSubmission}) => {
             { close => (
                 <div className="px-4 py-4 bg-white rounded-lg shadow-lg popup">
                     <h1 className="my-2 mx-2 text-2xl font-bold">{task.name}</h1>
-                    <p className="my-2 mx-2 pb-4 border-b-2 border-gray-200">{task.description}</p>
+                    <p className="my-2 mx-2 pb-4 border-b-2 border-gray-200 whitespace-pre-wrap">{task.description}</p>
 
                     { isSubmitted ? (
                         <>
@@ -119,8 +119,8 @@ const Submission = ({sub, reloadSubmission}) => {
                 <h2 className="text-xl pt-4 pb-2 pl-2">My Submission</h2>
                 { sub.image && <a href={sub.image} className="text-sm text-white py-0.5 px-1 ml-2 bg-gray-500 hover:bg-gray-600 rounded" download="test.png" target="_blank">Full Image</a>}
             </div>
-            <div className="border-2 border-gray-300 rounded">
-                <p className="text-gray-700 ml-2 px-2 py-2">{sub.text}</p>
+            <div className="border-2 border-gray-300 rounded mx-2">
+                <p className="text-gray-700 px-2 py-2 whitespace-pre-wrap">{sub.text}</p>
                 { sub.image && <img src={sub.image} className="px-2 py-2 mx-auto" style={{ maxHeight:300 }} onError={() => reloadSubmission(sub.id)}/>}
             </div>
         </div>
@@ -136,11 +136,11 @@ const Submission = ({sub, reloadSubmission}) => {
 const TeacherComment = ({isGraded, task, sub}) => {
     return (
         <div className="w-full">
-            <h2 className="text-xl pl-2 pt-8">Teacher's Comments</h2>
+            <h2 className="text-xl pl-2 pt-6">Teacher's Comments</h2>
             { isGraded ? (
                 <div className="pl-2 pt-1">
                     <p className="text-2xl">{'★'.repeat(sub.stars)+'☆'.repeat(task.max_stars - sub.stars)}</p>
-                    <p className="italic">{sub.comments}</p>
+                    <p className="italic whitespace-pre-wrap">{sub.comments}</p>
                 </div>
             ): (
                 <p className="pl-2 pt-2 text-sm italic text-gray-500">Submission not reviewed yet.</p>

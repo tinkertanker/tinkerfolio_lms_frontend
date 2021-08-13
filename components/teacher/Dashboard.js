@@ -5,6 +5,7 @@ import CustomPopup from '../CustomPopup'
 
 import { AuthContext } from '../../contexts/Auth.Context'
 
+import { Filter as FilterIcon, AddCircleOutline } from 'react-ionicons'
 const contentStyle = { paddingLeft: '0.5rem', paddingRight: '0.5rem' }
 const arrowStyle = { color: '#374151', paddingBottom: '0.25rem' } // style for an svg element
 
@@ -12,6 +13,7 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
 
     const { getAccessToken } = useContext(AuthContext)
     const [tableNames, setTableNames] = useState()
+    const [tasksToHide, setTasksToHide] = useState([])
 
     useEffect(() => {
         console.log(names)
@@ -71,8 +73,11 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
         })
     }
 
-    const sortedTasks = () => {
-        return tasks.sort((a, b) => (a.id > b.id) ? 1 : -1)
+    const sortedTasks = () => tasks.sort((a, b) => (a.id > b.id) ? 1 : -1)
+
+    const sortTableTasks = () => {
+        let tasksToShow = tasks.filter(task => !(tasksToHide.includes(task.id)))
+        return tasksToShow.sort((a, b) => (a.id > b.id) ? 1 : -1)
     }
 
     return (
@@ -80,8 +85,12 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
             <h1 className="text-4xl sm:text-5xl font-semibold">Dashboard</h1>
 
             <div className="flex flex-row">
+                <Filter {...{tasks, tasksToHide, setTasksToHide}} />
                 <NewTask addTask={addTask} />
-                <button className="mt-8 py-1 px-2 bg-blue-600 text-sm text-white rounded hover:bg-blue-700 focus:outline-none" onClick={() => addStudent("")}>Add Student</button>
+                <button className="flex flex-row mt-8 py-1 px-2 bg-blue-600 text-sm text-white rounded hover:bg-blue-700 focus:outline-none" onClick={() => addStudent("")}>
+                    <AddCircleOutline color={'#00000'} title={"Add"} height="20px" width="20px" />
+                    <p className="pl-1">Student</p>
+                </button>
             </div>
 
             <table className="mt-6 mb-12 block overflow-x-auto teacher-table align-top">
@@ -89,7 +98,7 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                     <tr className="border-2">
                         <th className="border-r-2 px-2 py-2"><p>Index</p></th>
                         <th className="border-r-2 px-2 py-2"><p>Student</p></th>
-                        { sortedTasks().map((task, i) => (
+                        { sortTableTasks().map((task, i) => (
                             <th className="border-r-2 px-2 py-2" key={i} style={{width:"200px"}}>
                                 {/* this image below is a quick fix to give HTML table a min-width property. DO NOT DELETE */}
                                 <img style={{float:"left",minWidth:"200px",visibility:"hidden",width:"0px"}} />
@@ -117,7 +126,7 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                                     <p className="mt-4 text-sm text-gray-700">Submissions</p>
                                     <SubmissionSummary {...{student_id, tasks, sortedTasks, submissions}} />
                                 </td>
-                                { submissions && sortedTasks().map((task, i) => {
+                                { submissions && sortTableTasks().map((task, i) => {
                                     let sub = submissions.filter(s => ((s.task === task.id) && (s.student === student_id)))[0]
                                     return sub ? <Submission {...{sub, sp, task, addReview, sendJsonMessage }} key={i} /> : <td className="px-2 py-2 border-r-2" key={i}></td>
                                 })}
@@ -131,6 +140,61 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
 }
 
 export default Dashboard
+
+const Filter = ({tasks, tasksToHide, setTasksToHide}) => {
+
+    const handleCheck = (raw_id) => {
+        const id = parseInt(raw_id)
+        console.log(id)
+        console.log(tasksToHide)
+        if (tasksToHide.includes(id)) {
+            console.log('delete')
+            setTasksToHide(tasksToHide.filter(t => t != id))
+        } else {
+            console.log('add')
+            setTasksToHide([...tasksToHide, id])
+        }
+    }
+
+    return (
+        <Popup
+            trigger={
+                <button className="flex flex-row mt-8 mr-4 py-1 px-2 bg-blue-600 text-sm text-white rounded hover:bg-blue-700 focus:outline-none">
+                    <FilterIcon color={'#ffffff'} height="20px" width="20px" />
+                    <p className="pl-2">Filter ({tasks.length - tasksToHide.length})</p>
+                </button>
+            }
+            position="bottom left" arrow={false} contentStyle={{paddingTop: "0.5rem"}}
+        >
+            { close => (
+                <div className="px-4 py-4 bg-white shadow-md rounded">
+
+                    <p className="text-xl font-bold mb-0.5">Tasks</p>
+                    <div className="flex flex-row items-center mb-4 text-sm">
+                        <p
+                            className="text-blue-600 hover:underline cursor-pointer"
+                            onClick={() => setTasksToHide([])}
+                        >Select All</p>
+                        <p className="mx-2">|</p>
+                        <p
+                            className="text-blue-600 hover:underline cursor-pointer"
+                            onClick={() => setTasksToHide(tasks.map(t => t.id))}
+                        >Unselect All</p>
+                    </div>
+                    { tasks.map((task, i) => (
+                        <div className="flex flex-row items-center mb-2" key={i}>
+                            <input
+                                type="checkbox" id={task.id} value={task.id}
+                                onChange={(e) => handleCheck(e.target.value)} checked={(!(tasksToHide.includes(task.id)))}
+                            />
+                            <label className="ml-2" htmlFor={task.id}>{task.name}</label>
+                        </div>
+                    ))}
+                </div>
+            )}
+        </Popup>
+    )
+}
 
 const StudentName = ({index, student_id, tableNames, setTableNames, updateName, bulkAddStudents, removeIndex}) => {
 
@@ -255,7 +319,7 @@ const Submission = ({sub, sp, task, addReview, sendJsonMessage }) => {
                 </div>
 
                 <div className="border-2 border-gray-300 rounded mt-4">
-                    <p className="text-gray-700 ml-2 px-2 py-2">{sub.text}</p>
+                    <p className="text-gray-700 ml-2 px-2 py-2 whitespace-pre-wrap">{sub.text}</p>
                     { sub.image && <img src={sub.image} className="px-2 py-2 mx-auto" style={{ maxHeight:300 }} onError={() => reloadSubmission(sub.id)}/>}
                 </div>
 
@@ -273,7 +337,7 @@ const Review = ({sub, task}) => {
         <>
             <h1 className="text-lg font-bold mt-6">My Review</h1>
             <p className="text-2xl mt-2">{'★'.repeat(sub.stars)+'☆'.repeat(task.max_stars - sub.stars)}</p>
-            <p className="italic">{(sub.comments !== "") ? sub.comments : "No additonal comments." }</p>
+            <p className="italic whitespace-pre-wrap">{(sub.comments !== "") ? sub.comments : "No additonal comments." }</p>
         </>
     )
 }
@@ -407,7 +471,12 @@ const NewTask = ({addTask}) => {
 
     return (
         <CustomPopup
-            trigger={<button className="mt-8 mr-4 py-1 px-2 bg-blue-600 text-sm text-white rounded hover:bg-blue-700 focus:outline-none">Add Task</button>}
+            trigger={
+                <button className="flex flex-row mt-8 mr-4 py-1 px-2 bg-blue-600 text-sm text-white rounded hover:bg-blue-700 focus:outline-none">
+                    <AddCircleOutline color={'#00000'} title={"Add"} height="20px" width="20px" />
+                    <p className="pl-1">Task</p>
+                </button>
+            }
         >
             { close => (
                 <form
@@ -421,12 +490,12 @@ const NewTask = ({addTask}) => {
                 >
                     <input
                         onChange={e => setTask({...task, [e.target.name]:e.target.value})}
-                        className="outline-none text-2xl border-b-2 border-white focus:border-gray-300 my-2 mx-2"
+                        className="outline-none text-2xl border-b-2 border-gray-300 focus:border-gray-500 my-2 mx-2"
                         value={task.name} name="name" placeholder="Task Name"
                     />
                     <textarea
                         onChange={e => setTask({...task, [e.target.name]:e.target.value})}
-                        className="outline-none text-sm border-2 border-gray-100 focus:border-gray-300 py-2 px-2 my-2 mx-2 rounded-lg"
+                        className="outline-none resize-none text-sm border-2 border-gray-300 focus:border-gray-500 py-2 px-2 my-2 mx-2 rounded-lg"
                         rows="4" value={task.description} name="description" placeholder="Task Description"
                     />
                     <label htmlFor="max_stars" className="px-2 pt-2">Max. Stars</label>
@@ -436,7 +505,7 @@ const NewTask = ({addTask}) => {
                         name="max_stars" id="max_stars" type="number" min="0" max="5" value={task.max_stars}
                     />
                     <small className="ml-2 text-gray-500">Capped at 5 stars.</small>
-                    <button type="submit" className="mt-4 ml-2 px-2 py-1 w-min bg-gray-500 text-white rounded hover:bg-gray-600">Create</button>
+                    <button type="submit" className="mt-4 ml-2 px-2 py-1 w-min bg-blue-500 text-white rounded hover:bg-blue-600">Create</button>
                 </form>
             )}
         </CustomPopup>
