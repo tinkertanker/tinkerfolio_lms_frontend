@@ -66,7 +66,7 @@ const TeacherHome = () => {
             </Head>
 
             <main className="pt-8 px-8 bg-white">
-                <h1 className="text-5xl">Teacher Dashboard</h1>
+                <h1 className="text-5xl font-bold">Teacher Dashboard</h1>
 
                 <div className="flex flex-row items-center">
                     <h2 className="text-3xl mt-8 mb-4">Classrooms</h2>
@@ -76,8 +76,6 @@ const TeacherHome = () => {
                 { classrooms && sortClassrooms(classrooms).map((cr, i) => {
                     return (<Classroom classroom={cr} key={i} />)
                 })}
-
-
             </main>
 
             <footer>
@@ -91,7 +89,7 @@ export default TeacherHome
 const Classroom = ({classroom}) => {
     return (
         <Link href={"/teacher/class/"+classroom.code}>
-            <div className="py-2 px-2 border-b-2 hover:bg-gray-100 cursor-pointer">
+            <div className="py-2 px-2 border-b-2 border-gray-200 hover:bg-gray-100 cursor-pointer">
                 <div className="flex flex-row items-center">
                     <p className="text-lg font-semibold mr-4">{classroom.name}</p>
                     {classroom.status === 2 && <p className="py-0.5 px-1 text-sm text-white bg-red-500 rounded">Archived</p>}
@@ -109,17 +107,17 @@ const CreateClassForm = ({ createClass, setFormName, setFormStudents }) => {
             position="bottom right"
         >
             { close => (
-                <div className="px-4 py-4 bg-gray-100 max-w-min">
-                    <h2 className="text-xl mb-4">Create New Class</h2>
+                <div className="px-4 py-4 bg-gray-100 max-w-min shadow-lg">
+                    <h2 className="text-2xl mb-4 font-bold text-center">New Class</h2>
                     <label>
-                        <p>Name:</p>
-                        <input className="border-2 rounded" type="text" name="class_name" onChange={e => setFormName(e.target.value)} />
+                        <p>Name</p>
+                        <input className="outline-none border-2 rounded" type="text" name="class_name" onChange={e => setFormName(e.target.value)} />
                     </label>
                     <label>
-                        <p className="mt-2">No. of Students:</p>
-                        <input className="border-2 rounded" type="number" min="1" name="number_of_students" onChange={e => setFormStudents(e.target.value)} />
+                        <p className="mt-2">No. of Students</p>
+                        <input className="oueline-none border-2 rounded" type="number" min="1" name="number_of_students" onChange={e => setFormStudents(e.target.value)} />
                     </label><br />
-                    <button className="mt-4 py-1 px-2 bg-gray-500 text-white rounded" onClick={() => {createClass(); close()}}>Create</button>
+                    <button className="mt-4 py-1 px-2 bg-blue-500 hover:bg-blue-600 text-white rounded" onClick={() => {createClass(); close()}}>Create</button>
                 </div>
             )}
         </Popup>

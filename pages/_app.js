@@ -38,18 +38,19 @@ const Layout = ({children}) => {
         <>
             <Head>
                 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter" />
+                <link href="https://fonts.googleapis.com/css2?family=Staatliches&display=swap" rel="stylesheet" />
             </Head>
             <div className="bg-gray-100">
-                <nav className="flex flex-row bg-gray-700 px-8 py-2 flex-wrap items-center justify-items-end">
-                    <div><h1 className="text-2xl font-bold font-serif text-white">LMS</h1></div>
+                <nav className="flex flex-row bg-white border-b-2 px-8 py-2 flex-wrap items-center justify-items-end">
+                    <div><h1 className="text-2xl font-logo text-blue-700">EchoClass</h1></div>
                     { auth.userType === 'teacher' && (
                         <div><Link href='/teacher'>
-                            <p className="text-lg text-white px-8 cursor-pointer" >Classes</p>
+                            <p className=" text-gray-500 hover:text-gray-700 px-12 cursor-pointer" >Classes</p>
                         </Link></div>
                     )}
                     { auth.isAuthenticated &&
                         <div className="ml-auto">
-                            <button onClick={logout} className="border-2 border-white text-sm text-white py-0.5 px-2 rounded hover:bg-white hover:text-black">Logout</button>
+                            <button onClick={logout} className="border-2 border-gray-300 text-sm text-gray-500 py-0.5 px-2 rounded hover:bg-gray-100">Logout</button>
                         </div>
                     }
                 </nav>

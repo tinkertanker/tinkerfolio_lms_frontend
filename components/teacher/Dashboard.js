@@ -6,14 +6,15 @@ import CustomPopup from '../CustomPopup'
 import { AuthContext } from '../../contexts/Auth.Context'
 
 const contentStyle = { paddingLeft: '0.5rem', paddingRight: '0.5rem' }
-const arrowStyle = { color: '#000' } // style for an svg element
+const arrowStyle = { color: '#374151', paddingBottom: '0.25rem' } // style for an svg element
 
-const Dashboard = ({ classroom, names, removeIndex, addStudent, updateName, tasks, setTasks, submissions, setSubmissions, sendJsonMessage  }) => {
+const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents, updateName, tasks, setTasks, submissions, setSubmissions, sendJsonMessage  }) => {
 
     const { getAccessToken } = useContext(AuthContext)
     const [tableNames, setTableNames] = useState()
 
     useEffect(() => {
+        console.log(names)
         setTableNames(names)
     }, [names])
 
@@ -76,22 +77,21 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, updateName, task
 
     return (
         <>
-            <h1 className="text-5xl font-semibold">Dashboard</h1>
+            <h1 className="text-4xl sm:text-5xl font-semibold">Dashboard</h1>
 
             <div className="flex flex-row">
                 <NewTask addTask={addTask} />
-                <button className="mt-8 py-1 px-2 bg-gray-400 text-sm text-white rounded hover:bg-gray-500" onClick={addStudent}>Add Student</button>
+                <button className="mt-8 py-1 px-2 bg-blue-600 text-sm text-white rounded hover:bg-blue-700 focus:outline-none" onClick={() => addStudent("")}>Add Student</button>
             </div>
 
-            <table className="mt-6 block overflow-x-auto teacher-table align-top">
+            <table className="mt-6 mb-12 block overflow-x-auto teacher-table align-top">
                 <thead>
                     <tr className="border-2">
                         <th className="border-r-2 px-2 py-2"><p>Index</p></th>
-                        <th className="border-r-2 px-2 py-2"><p>Name</p></th>
-                        <th className="border-r-2 px-2 py-2"><p>Actions</p></th>
+                        <th className="border-r-2 px-2 py-2"><p>Student</p></th>
                         { sortedTasks().map((task, i) => (
                             <th className="border-r-2 px-2 py-2" key={i} style={{width:"200px"}}>
-                                // this image below is a quick fix to give HTML table a min-width property. DO NOT DELETE
+                                {/* this image below is a quick fix to give HTML table a min-width property. DO NOT DELETE */}
                                 <img style={{float:"left",minWidth:"200px",visibility:"hidden",width:"0px"}} />
                                 <div className="flex flex-row items-center">
                                     <p className="font-normal ml-1 mr-2 py-0.5 px-1 text-sm text-white bg-gray-700 rounded">Task</p>
@@ -109,13 +109,14 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, updateName, task
                         return (
                             <tr className="border-2" key={i}>
                                 <td className="border-r-2 px-2 py-2"><p>{index}</p></td>
-                                <td className="border-r-2 px-2 py-2"><input
-                                    onChange={e => setTableNames([...tableNames.filter(n => n.index !== index), {index:index, name: e.target.value, id: student_id}])}
-                                    onBlur={e => updateName(index, tableNames.filter(n => n.index === index)[0].name, tableNames.filter(n => n.index === index)[0].id)}
-                                    className="outline-none focus:border-gray-500 border-b-2 border-gray-300 bg-gray-100"
-                                    value={tableNames.filter(name => name.index === index)[0].name}
-                                /></td>
-                                <td className="px-2 py-2 border-r-2"><button value={index} className="py-1 px-2 bg-red-500 text-white rounded text-sm hover:bg-red-600" onClick={e => removeIndex(e.target.value)}>Delete</button></td>
+                                <td className="border-r-2 px-2 py-2">
+                                    <div className="flex flex-row">
+                                        <StudentName {...{index, student_id, tableNames, setTableNames, updateName, bulkAddStudents, removeIndex}}/>
+                                        <StudentMenu index={index} removeIndex={removeIndex} />
+                                    </div>
+                                    <p className="mt-4 text-sm text-gray-700">Submissions</p>
+                                    <SubmissionSummary {...{student_id, tasks, sortedTasks, submissions}} />
+                                </td>
                                 { submissions && sortedTasks().map((task, i) => {
                                     let sub = submissions.filter(s => ((s.task === task.id) && (s.student === student_id)))[0]
                                     return sub ? <Submission {...{sub, sp, task, addReview, sendJsonMessage }} key={i} /> : <td className="px-2 py-2 border-r-2" key={i}></td>
@@ -130,6 +131,93 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, updateName, task
 }
 
 export default Dashboard
+
+const StudentName = ({index, student_id, tableNames, setTableNames, updateName, bulkAddStudents, removeIndex}) => {
+
+    const nameChange = (input) => {
+        if (/\r|\n/.exec(input)) { // if newline is found in string
+            console.log('multiline detected')
+            console.log(input.split('\n'))
+
+            const inputNames = input.split('\n').filter(e =>  e)
+            // create new students with subsequent names
+            bulkAddStudents(inputNames)
+            // delete current row
+            // removeIndex(index)
+        } else {
+            const name = input
+            setTableNames([...tableNames.filter(n => n.index !== index), {index:index, name: name, id: student_id}])
+        }
+    }
+
+    return (
+        <textarea rows="1"
+            onChange={e => nameChange(e.target.value)}
+            onBlur={e => updateName(index, tableNames.filter(n => n.index === index)[0].name, tableNames.filter(n => n.index === index)[0].id)}
+            className="resize-none flex-grow outline-none focus:border-gray-500 border-b-2 border-gray-300 bg-gray-100"
+            value={tableNames.filter(name => name.index === index)[0].name}
+        />
+    )
+}
+
+const StudentMenu = ({index, removeIndex}) => {
+
+    return (
+        <Popup
+            trigger={<p className="ml-auto px-2 py-0.5 rounded hover:bg-gray-300 cursor-pointer font-bold">⋮</p>}
+            position="left top"
+            arrow={false}
+            {...{ contentStyle, arrowStyle }}
+        >
+            { close => (
+                <div className="flex flex-col bg-gray-700 text-gray-300 py-1 px-3 bg-white rounded w-40">
+                    <p className="py-1 hover:text-white cursor-pointer" onClick={e => {removeIndex(index); close()}}>Delete</p>
+                </div>
+            )}
+        </Popup>
+    )
+}
+
+const SubmissionSummary = ({student_id, tasks, sortedTasks, submissions}) => {
+    if (!submissions) return <h1></h1>
+    return (
+        <div className="flex flex-row flex-wrap mt-1">
+            { sortedTasks().map((task, i) => {
+                const sub = submissions.filter(submission => submission.student === student_id && submission.task === task.id)[0]
+
+                let status = <h1></h1>
+                if (!sub) { // no submission
+                    status = (
+                        <svg width="20" height="20" className="pr-0.5">
+                            <rect width="14" height="14" x="2" y="2" rx="2" ry="2" className="rounded" style={{fill:"#D1D5DB", stroke:"#9CA3AF", strokeWidth:"2"}}></rect>
+                        </svg>
+                    )
+                } else if (!(sub.stars)) { // submitted but not reviewed
+                    status = (
+                        <svg width="20" height="20" className="pr-0.5">
+                            <rect width="14" height="14" x="2" y="2" rx="2" ry="2" className="rounded" style={{fill:"#6EE7B7", stroke:"#34D399", strokeWidth:"2"}}></rect>
+                        </svg>
+                    )
+                } else {
+                    status = (
+                        <svg width="20" height="20" className="pr-0.5">
+                            <rect width="14" height="14" x="2" y="2" rx="2" ry="2" className="rounded" style={{fill:"#10B981", stroke:"#059669", strokeWidth:"2"}}></rect>
+                        </svg>
+                    )
+                }
+
+                return (
+                    <Popup
+                        key={i} trigger={status} position="bottom center" on={['hover', 'focus']}
+                        arrow arrowStyle={arrowStyle}
+                    >
+                        <div className="py-1 px-2 bg-gray-700 rounded mb-2"><p className="text-white text-sm">{task.name}</p></div>
+                    </Popup>
+                )
+            })}
+        </div>
+    )
+}
 
 const Submission = ({sub, sp, task, addReview, sendJsonMessage }) => {
 
@@ -179,12 +267,6 @@ const Submission = ({sub, sp, task, addReview, sendJsonMessage }) => {
 
     )
 }
-
-// { sub.text ? (
-//     <p className="mt-4">{sub.text}</p>
-// ) : (
-//     <img className="mt-4" src={sub.image} style={{maxHeight:"400px"}} onError={() => sendJsonMessage({'submission': sub.id})} />
-// )}
 
 const Review = ({sub, task}) => {
     return (
@@ -253,7 +335,6 @@ const TaskMenu = ({task, setOneTask, deleteTask, submissions}) => {
         >
             <div className="flex flex-col bg-gray-700 text-gray-300 py-1 px-3 bg-white rounded w-40">
                 <TaskDetails task={task} setOneTask={setOneTask} setIsCloseOnDocClick={setIsCloseOnDocClick} subs={submissions.filter(s => s.task === task.id)} />
-                <p className="border-b-2 border-gray-500 py-1 hover:text-white cursor-pointer">Hide</p>
                 <DeleteTask id={task.id} setIsCloseOnDocClick={setIsCloseOnDocClick} deleteTask={deleteTask} />
             </div>
         </Popup>
@@ -326,7 +407,7 @@ const NewTask = ({addTask}) => {
 
     return (
         <CustomPopup
-            trigger={<button className="mt-8 mr-4 py-1 px-2 bg-gray-500 text-sm text-white rounded hover:bg-gray-600">Add Task</button>}
+            trigger={<button className="mt-8 mr-4 py-1 px-2 bg-blue-600 text-sm text-white rounded hover:bg-blue-700 focus:outline-none">Add Task</button>}
         >
             { close => (
                 <form

@@ -3,7 +3,7 @@ import { useEffect, useState, useContext } from 'react'
 import { useRouter } from 'next/router'
 import axios from 'axios'
 
-import { AuthContext } from '../../contexts/Auth.Context'
+import { AuthContext } from '../contexts/Auth.Context'
 
 const TeacherLogin = () => {
     const router = useRouter()
@@ -42,22 +42,22 @@ const TeacherLogin = () => {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 
-            <main className="pt-8 px-8 bg-white">
+            <main className="flex flex-col items-center pt-8 px-8 bg-white">
                 { invalidInput && <p className="py-2 px-2 border-2 border-red-500 rounded-lg font-bold text-red-500">Invalid inputs.</p>}
 
-                <h1 className="text-5xl my-6">Login for Teachers</h1>
+                <h1 className="text-5xl my-6 font-bold">Login</h1>
 
                 <form onSubmit={e => loginUser(e)}>
                     <label>
-                        <p>Username:</p>
-                        <input className="border-2" type="text" name="code" onChange={e => setUsername(e.target.value)} />
+                        <h2 className="font-semibold text-lg pb-2">Username</h2>
+                        <input className="outline-none border-b-2 text-xl w-full" type="text" placeholder="Enter Username" name="code" onChange={e => setUsername(e.target.value)} />
                     </label>
                     <label>
-                        <p>Password:</p>
-                        <input className="border-2" type="password" name="index" onChange={e => setPassword(e.target.value)} />
+                        <h2 className="font-semibold text-lg pb-2 mt-4">Password</h2>
+                        <input className="outline-none border-b-2 text-xl" type="password" placeholder="Enter Password" name="index" onChange={e => setPassword(e.target.value)} />
                     </label>
                     <br />
-                    <button type="submit" className="bg-gray-500 text-white mt-4 py-1 px-2 rounded-lg">Submit</button>
+                    <button type="submit" className="bg-blue-500 hover:bg-blue-600 text-white text-lg mt-6 py-1 px-2 rounded-md w-full">Login</button>
                 </form>
             </main>
 

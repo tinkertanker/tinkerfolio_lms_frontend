@@ -3,8 +3,8 @@ import { useRouter } from 'next/router'
 import { AuthContext } from '../contexts/Auth.Context'
 
 const OPENROUTES = [
-    '/student/login',
-    '/teacher/login',
+    '/join',
+    '/login',
     '/'
 ]
 

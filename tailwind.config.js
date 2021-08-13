@@ -7,7 +7,8 @@ module.exports = {
         fontFamily: {
             'sans': ['Inter', ...defaultTheme.fontFamily.sans],
             'serif': [...defaultTheme.fontFamily.serif],
-            'mono': [...defaultTheme.fontFamily.mono]
+            'mono': [...defaultTheme.fontFamily.mono],
+            'logo': ['Staatliches']
         },
         extend: {},
     },
