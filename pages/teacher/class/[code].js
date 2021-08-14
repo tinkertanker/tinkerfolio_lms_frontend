@@ -43,6 +43,7 @@ const Classroom = () => {
     }[readyState];
 
     useEffect(() => {
+        console.log('router.query')
         const { code } = router.query
         if (!code) return
 
@@ -115,6 +116,7 @@ const Classroom = () => {
     }, [tasks, classroom, submissions])
 
     const handleMessage = (msg) => {
+        console.log(msg)
         if (Object.keys(msg)[0] === 'submission') {
             setSubmissions([...submissions.filter(sub => sub.id !== msg.submission.id), msg.submission])
         }
@@ -223,7 +225,7 @@ const Classroom = () => {
                             <Settings classroom={classroom} changeStatus={changeStatus} />
                         }
                     </div>
-                    <div className={`fixed bottom-4 right-4 flex flex-row items-center py-1 px-4 rounded-full bg-white shadow ${statusColor[connectionStatus]}`}>
+                    <div className={`fixed bottom-4 right-4 flex flex-row items-center py-1 px-4 rounded-full bg-white shadow-lg ${statusColor[connectionStatus]}`}>
                         <p className="blinking pr-2">⬤</p>
                         <p>{connectionStatus}</p>
                     </div>

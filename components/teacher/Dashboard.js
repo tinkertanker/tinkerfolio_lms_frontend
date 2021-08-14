@@ -61,6 +61,7 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
     }
 
     const addReview = (id, stars, comment) => {
+        // push review to server
         getAccessToken().then((accessToken) => {
             axios.put(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE+'core/submissions/'+id.toString()+'/', {
                 stars, comment
@@ -71,6 +72,14 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                 setSubmissions([...submissions.filter(s => s.id !== res.data.id), res.data])
             })
         })
+
+        // add stars to student's score
+        console.log(id)
+        const studentID = submissions.filter(sub => sub.id === id)[0].student
+        console.log(studentID)
+        let name = tableNames.filter(name => name.id === studentID)[0]
+        name.score += stars
+        setTableNames([...tableNames.filter(name => name.id !== studentID), name])
     }
 
     const sortedTasks = () => tasks.sort((a, b) => (a.id > b.id) ? 1 : -1)
@@ -98,6 +107,7 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                     <tr className="border-2">
                         <th className="border-r-2 px-2 py-2"><p>Index</p></th>
                         <th className="border-r-2 px-2 py-2"><p>Student</p></th>
+                        <th className="border-r-2 px-2 py-2"><p className="text-xl">★</p></th>
                         { sortTableTasks().map((task, i) => (
                             <th className="border-r-2 px-2 py-2" key={i} style={{width:"200px"}}>
                                 {/* this image below is a quick fix to give HTML table a min-width property. DO NOT DELETE */}
@@ -126,6 +136,7 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                                     <p className="mt-4 text-sm text-gray-700">Submissions</p>
                                     <SubmissionSummary {...{student_id, tasks, sortedTasks, submissions}} />
                                 </td>
+                                <td className="border-r-2 px-2 py-2 text-center">{sp.score}</td>
                                 { submissions && sortTableTasks().map((task, i) => {
                                     let sub = submissions.filter(s => ((s.task === task.id) && (s.student === student_id)))[0]
                                     return sub ? <Submission {...{sub, sp, task, addReview, sendJsonMessage }} key={i} /> : <td className="px-2 py-2 border-r-2" key={i}></td>
