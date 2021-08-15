@@ -157,7 +157,8 @@ const SubmissionForm = ({task, addSubmission}) => {
         e.preventDefault()
         // Check if file is an image
         if (fileInput) {
-            if (!((fileInput.name.includes('jpg')) | (fileInput.name.includes('jpeg')) | (fileInput.name.includes('png')))) return
+            const n = fileInput.name
+            if (!((n.includes('jpg')) | (n.includes('JPG')) | (n.includes('jpeg')) | (n.includes('JPEG')) | (n.includes('png')) | (n.includes('PNG')))) return
         }
         addSubmission(textInput, fileInput, task.id)
     }

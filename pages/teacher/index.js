@@ -66,10 +66,8 @@ const TeacherHome = () => {
             </Head>
 
             <main className="pt-8 px-8 bg-white">
-                <h1 className="text-5xl font-bold">Teacher Dashboard</h1>
-
-                <div className="flex flex-row items-center">
-                    <h2 className="text-3xl mt-8 mb-4">Classrooms</h2>
+                <div className="flex flex-row items-center mb-4">
+                    <h2 className="text-4xl font-bold">Classrooms</h2>
                     <CreateClassForm createClass={createClass} setFormName={setFormName} setFormStudents={setFormStudents} />
                 </div>
 
@@ -103,7 +101,7 @@ const Classroom = ({classroom}) => {
 const CreateClassForm = ({ createClass, setFormName, setFormStudents }) => {
     return (
         <Popup
-            trigger={<button className="ml-6 mt-5 px-2 py-1 rounded text-white text-sm bg-gray-500 hover:bg-gray-600 cursor-pointer">Create Class</button>}
+            trigger={<button className="ml-6 mt-1 px-2 py-1 rounded text-white text-sm bg-gray-500 hover:bg-gray-600 cursor-pointer">Create Class</button>}
             position="bottom right"
         >
             { close => (
