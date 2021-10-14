@@ -1,22 +1,23 @@
 import { useState, useEffect, useContext } from 'react'
 import axios from 'axios'
 import Popup from 'reactjs-popup'
-import CustomPopup from '../CustomPopup'
+import CustomPopup from '../../utils/CustomPopup'
+import CustomLinkify from '../../utils/CustomLinkify'
 
 import { AuthContext } from '../../contexts/Auth.Context'
 
-import { Filter as FilterIcon, AddCircleOutline } from 'react-ionicons'
+import { Filter as FilterIcon, AddCircleOutline, FunnelOutline } from 'react-ionicons'
 const contentStyle = { paddingLeft: '0.5rem', paddingRight: '0.5rem' }
 const arrowStyle = { color: '#374151', paddingBottom: '0.25rem' } // style for an svg element
 
-const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents, updateName, tasks, setTasks, submissions, setSubmissions, sendJsonMessage  }) => {
+const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents, updateName, tasks, setTasks, submissionStatuses, submissions, setSubmissions, sendJsonMessage  }) => {
 
     const { getAccessToken } = useContext(AuthContext)
     const [tableNames, setTableNames] = useState()
     const [tasksToHide, setTasksToHide] = useState([])
+    const [sortBy, setSortBy] = useState('indexLowToHigh')
 
     useEffect(() => {
-        console.log(names)
         setTableNames(names)
     }, [names])
 
@@ -89,12 +90,35 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
         return tasksToShow.sort((a, b) => (a.id > b.id) ? 1 : -1)
     }
 
+    const sortStudentIndex = () => {
+
+        let sortedTableNames = null
+
+        switch(sortBy) {
+            case "indexLowToHigh":
+                return classroom.student_indexes
+                break
+            case "indexHightoLow":
+                return classroom.student_indexes.sort((a, b) => (a.id > b.id) ? 1 : -1)
+                break
+            case "starsHighToLow":
+                sortedTableNames = tableNames.sort((a, b) => (a.score < b.score) ? 1 : -1)
+                return sortedTableNames.map((n, i) => n.index)
+                break
+            case "starsLowToHigh":
+                sortedTableNames = tableNames.sort((a, b) => (a.score > b.score) ? 1 : -1)
+                return sortedTableNames.map((n, i) => n.index)
+                break
+        }
+    }
+
     return (
         <>
             <h1 className="text-4xl sm:text-5xl font-semibold">Dashboard</h1>
 
             <div className="flex flex-row">
                 <Filter {...{tasks, tasksToHide, setTasksToHide}} />
+                <Sort {...{sortBy, setSortBy}} />
                 <NewTask addTask={addTask} />
                 <button className="flex flex-row mt-8 py-1 px-2 bg-blue-600 text-sm text-white rounded hover:bg-blue-700 focus:outline-none" onClick={() => addStudent("")}>
                     <AddCircleOutline color={'#00000'} title={"Add"} height="20px" width="20px" />
@@ -122,7 +146,7 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                     </tr>
                 </thead>
                 <tbody className="align-top">
-                    { classroom.student_indexes.map((index, i) => {
+                    { sortStudentIndex().map((index, i) => {
                         const sp = tableNames.filter(tn => tn.index === index)[0]
                         const student_id = sp.id
                         return (
@@ -134,7 +158,7 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                                         <StudentMenu index={index} removeIndex={removeIndex} />
                                     </div>
                                     <p className="mt-4 text-sm text-gray-700">Submissions</p>
-                                    <SubmissionSummary {...{student_id, tasks, sortedTasks, submissions}} />
+                                    <SubmissionSummary {...{student_id, tasks, sortedTasks, submissions, submissionStatuses}} />
                                 </td>
                                 <td className="border-r-2 px-2 py-2 text-center">{sp.score}</td>
                                 { submissions && sortTableTasks().map((task, i) => {
@@ -207,6 +231,50 @@ const Filter = ({tasks, tasksToHide, setTasksToHide}) => {
     )
 }
 
+const Sort = ({sortBy, setSortBy}) => {
+
+    return (
+        <Popup
+            trigger={
+                <button className="flex flex-row items-center mt-8 mr-4 py-1 px-2 bg-blue-600 text-sm text-white rounded hover:bg-blue-700 focus:outline-none">
+                    <FunnelOutline color={'#ffffff'} height="17px" width="17px" />
+                    <p className="pl-2">Sort</p>
+                </button>
+            }
+            position="bottom left" arrow={false} contentStyle={{paddingTop: "0.5rem"}}
+        >
+            { close => (
+                <div className="px-4 py-4 bg-white shadow-md rounded">
+                    <p className="text-xl font-bold mb-3">Sort By</p>
+
+                    <form>
+                        <input
+                            type="radio" id="indexLowToHigh" name="sort" className="mr-2 mb-2"
+                            checked={sortBy === "indexLowToHigh"} onClick={() => setSortBy("indexLowToHigh")}
+                        />
+                        <label for="indexLowToHigh">Index: Low to High</label><br />
+                        <input
+                            type="radio" id="indexHightoLow" name="sort" className="mr-2 mb-2"
+                            checked={sortBy === "indexHightoLow"} onClick={() => setSortBy("indexHightoLow")}
+                        />
+                        <label for="indexHightoLow">Index: High to Low</label><br />
+                        <input
+                            type="radio" id="starsHighToLow" name="sort" className="mr-2 mb-2"
+                            checked={sortBy === "starsHighToLow"} onClick={() => setSortBy("starsHighToLow")}
+                        />
+                        <label for="starsHighToLow">Stars: High to Low</label><br />
+                        <input
+                            type="radio" id="starsLowToHigh" name="sort" className="mr-2 mb-2"
+                            checked={sortBy === "starsLowToHigh"} onClick={() => setSortBy("starsLowToHigh")}
+                        />
+                        <label for="starsLowToHigh">Stars: Low to High</label><br />
+                    </form>
+                </div>
+            )}
+        </Popup>
+    )
+}
+
 const StudentName = ({index, student_id, tableNames, setTableNames, updateName, bulkAddStudents, removeIndex}) => {
 
     const nameChange = (input) => {
@@ -236,45 +304,71 @@ const StudentName = ({index, student_id, tableNames, setTableNames, updateName, 
 }
 
 const StudentMenu = ({index, removeIndex}) => {
+    const [isCloseOnDocClick, setIsCloseOnDocClick] = useState(true)
 
     return (
         <Popup
             trigger={<p className="ml-auto px-2 py-0.5 rounded hover:bg-gray-300 cursor-pointer font-bold">⋮</p>}
             position="left top"
             arrow={false}
+            closeOnDocumentClick={isCloseOnDocClick}
             {...{ contentStyle, arrowStyle }}
         >
             { close => (
+
                 <div className="flex flex-col bg-gray-700 text-gray-300 py-1 px-3 bg-white rounded w-40">
-                    <p className="py-1 hover:text-white cursor-pointer" onClick={e => {removeIndex(index); close()}}>Delete</p>
+                    <DeleteStudent {...{removeIndex, index, close, setIsCloseOnDocClick}}/>
                 </div>
             )}
         </Popup>
     )
 }
 
-const SubmissionSummary = ({student_id, tasks, sortedTasks, submissions}) => {
-    if (!submissions) return <h1></h1>
+const SubmissionSummary = ({student_id, tasks, sortedTasks, submissions, submissionStatuses}) => {
+    if ((!submissions) || (!submissionStatuses)) return <h1></h1>
     return (
         <div className="flex flex-row flex-wrap mt-1">
             { sortedTasks().map((task, i) => {
                 const sub = submissions.filter(submission => submission.student === student_id && submission.task === task.id)[0]
+                const status = submissionStatuses.filter(status => status.student === student_id && status.task === task.id)[0]
 
-                let status = <h1></h1>
+                let statusIcon = <h1></h1>
                 if (!sub) { // no submission
-                    status = (
-                        <svg width="20" height="20" className="pr-0.5">
-                            <rect width="14" height="14" x="2" y="2" rx="2" ry="2" className="rounded" style={{fill:"#D1D5DB", stroke:"#9CA3AF", strokeWidth:"2"}}></rect>
-                        </svg>
-                    )
+                    if (!status) { // no status indicated
+                        statusIcon = ( // has not started
+                            <svg width="20" height="20" className="pr-0.5">
+                                <rect width="14" height="14" x="2" y="2" rx="2" ry="2" className="rounded" style={{fill:"#D1D5DB", stroke:"#9CA3AF", strokeWidth:"2"}}></rect>
+                            </svg>
+                        )
+                    } else { // status indicated
+                        if (status.status === 0) { // has not started
+                            statusIcon = (
+                                <svg width="20" height="20" className="pr-0.5">
+                                    <rect width="14" height="14" x="2" y="2" rx="2" ry="2" className="rounded" style={{fill:"#D1D5DB", stroke:"#9CA3AF", strokeWidth:"2"}}></rect>
+                                </svg>
+                            )
+                        } else if (status.status === 1) { // working on it
+                            statusIcon = (
+                                <svg width="20" height="20" className="pr-0.5">
+                                    <rect width="14" height="14" x="2" y="2" rx="2" ry="2" className="rounded" style={{fill:"#FCD34D", stroke:"#FBBF24", strokeWidth:"2"}}></rect>
+                                </svg>
+                            )
+                        } else if (status.status === 2) {
+                            statusIcon = (
+                                <svg width="20" height="20" className="pr-0.5">
+                                    <rect width="14" height="14" x="2" y="2" rx="2" ry="2" className="rounded" style={{fill:"#FCA5A5", stroke:"#F87171", strokeWidth:"2"}}></rect>
+                                </svg>
+                            )
+                        }
+                    }
                 } else if (!(sub.stars)) { // submitted but not reviewed
-                    status = (
+                    statusIcon = (
                         <svg width="20" height="20" className="pr-0.5">
                             <rect width="14" height="14" x="2" y="2" rx="2" ry="2" className="rounded" style={{fill:"#6EE7B7", stroke:"#34D399", strokeWidth:"2"}}></rect>
                         </svg>
                     )
                 } else {
-                    status = (
+                    statusIcon = (
                         <svg width="20" height="20" className="pr-0.5">
                             <rect width="14" height="14" x="2" y="2" rx="2" ry="2" className="rounded" style={{fill:"#10B981", stroke:"#059669", strokeWidth:"2"}}></rect>
                         </svg>
@@ -283,7 +377,7 @@ const SubmissionSummary = ({student_id, tasks, sortedTasks, submissions}) => {
 
                 return (
                     <Popup
-                        key={i} trigger={status} position="bottom center" on={['hover', 'focus']}
+                        key={i} trigger={statusIcon} position="bottom center" on={['hover', 'focus']}
                         arrow arrowStyle={arrowStyle}
                     >
                         <div className="py-1 px-2 bg-gray-700 rounded mb-2"><p className="text-white text-sm">{task.name}</p></div>
@@ -330,7 +424,11 @@ const Submission = ({sub, sp, task, addReview, sendJsonMessage }) => {
                 </div>
 
                 <div className="border-2 border-gray-300 rounded mt-4">
-                    <p className="text-gray-700 ml-2 px-2 py-2 whitespace-pre-wrap">{sub.text}</p>
+
+                        <p className="ml-2 px-2 py-2 whitespace-pre-wrap">
+                            <CustomLinkify>{sub.text}</CustomLinkify>
+                        </p>
+
                     { sub.image && <img src={sub.image} className="px-2 py-2 mx-auto" style={{ maxHeight:300 }} onError={() => reloadSubmission(sub.id)}/>}
                 </div>
 
@@ -530,12 +628,32 @@ const DeleteTask = ({id, deleteTask, setIsCloseOnDocClick}) => {
             onOpen={() => setIsCloseOnDocClick(false)} onClose={() => setIsCloseOnDocClick(true)}
         >
             { close => (
-                <div className="flex flex-col px-4 py-4 bg-white rounded-lg w-72 sm:w-96">
-                    <h1 className="text-xl font-semibold">Are you sure?</h1>
-                    <p className="text-gray-500 mt-2">Deleted tasks cannot be recovered.</p>
-                    <div className="flex flex-row mt-8">
-                        <button className="focus:outline-none w-min px-2 py-1 border-2 border-red-500 text-red-500 hover:bg-red-500 hover:text-white rounded" onClick={() => {deleteTask(id); close()}}>Delete</button>
-                        <button className="focus:outline-none w-min ml-auto px-2 py-1 text-white bg-gray-500 hover:bg-gray-600 rounded" onClick={() => close()}>Cancel</button>
+                <div className="flex flex-col px-6 py-8 bg-white rounded-lg w-56 sm:w-80">
+                    <h1 className="text-xl font-semibold text-center">Are you sure?</h1>
+                    <p className="text-gray-500 mt-2">This task and its submissions will not be able to be recovered.</p>
+                    <div className="flex flex-col mt-4">
+                        <button className="focus:outline-none px-2 py-1 border border-red-300 text-red-500 hover:bg-red-100 hover:border-red-500 hover:text-red-700 rounded mb-2" onClick={() => {deleteTask(id); close()}}>Delete</button>
+                        <button className="focus:outline-none px-2 py-1 border border-gray-300 hover:bg-gray-100 hover:border-gray-400 rounded" onClick={() => close()}>Cancel</button>
+                    </div>
+                </div>
+            )}
+        </CustomPopup>
+    )
+}
+
+const DeleteStudent = ({index, removeIndex, close, setIsCloseOnDocClick}) => {
+    return (
+        <CustomPopup
+            trigger={<p className="py-1 hover:text-white cursor-pointer">Delete</p>}
+            onOpen={() => setIsCloseOnDocClick(false)} onClose={() => setIsCloseOnDocClick(true)}
+        >
+            { close => (
+                <div className="flex flex-col px-6 py-8 bg-white rounded-lg w-56 sm:w-80">
+                    <h1 className="text-xl font-semibold text-center">Are you sure?</h1>
+                    <p className="text-gray-500 mt-2">This student's submissions will not be able to be recovered.</p>
+                    <div className="flex flex-col mt-4">
+                        <button className="focus:outline-none px-2 py-1 border border-red-300 text-red-500 hover:bg-red-100 hover:border-red-500 hover:text-red-700 rounded mb-2" onClick={() => {removeIndex(index); close()}}>Delete</button>
+                        <button className="focus:outline-none px-2 py-1 border border-gray-300 hover:bg-gray-100 hover:border-gray-400 rounded" onClick={() => close()}>Cancel</button>
                     </div>
                 </div>
             )}

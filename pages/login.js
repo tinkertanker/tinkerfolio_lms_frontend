@@ -2,6 +2,7 @@ import Head from 'next/head'
 import { useEffect, useState, useContext } from 'react'
 import { useRouter } from 'next/router'
 import axios from 'axios'
+import SyncLoader from "react-spinners/SyncLoader"
 
 import { AuthContext } from '../contexts/Auth.Context'
 
@@ -11,6 +12,7 @@ const TeacherLogin = () => {
     const {auth, setAuth} = useContext(AuthContext)
     const [username, setUsername] = useState()
     const [password, setPassword] = useState()
+    const [loginFailed, setLoginFailed] = useState()
 
     const [invalidInput, setInvalidInput] = useState(false)
 
@@ -27,6 +29,8 @@ const TeacherLogin = () => {
         })
         .catch(res => {
             console.log('login failed')
+            setAuth({...auth, loading: false})
+            setLoginFailed(true)
         })
     }
 
@@ -57,7 +61,15 @@ const TeacherLogin = () => {
                         <input className="outline-none border-b-2 text-xl" type="password" placeholder="Enter Password" name="index" onChange={e => setPassword(e.target.value)} />
                     </label>
                     <br />
-                    <button type="submit" className="bg-blue-500 hover:bg-blue-600 text-white text-lg mt-6 py-1 px-2 rounded-md w-full">Login</button>
+                    { loginFailed && <small className="text-red-500 mt-2">Invalid username or password.</small>}
+                    { auth.loading ? (
+                        <div className="flex flex-row justify-center bg-blue-500 mt-4 py-1 px-2 rounded-md w-full" style={{height: "36px"}}>
+                            <SyncLoader color={"#ffffff"} size={8} margin={1} />
+                        </div>
+                    ) : (
+                        <button type="submit" className="bg-blue-500 hover:bg-blue-600 text-white text-lg mt-4 py-1 px-2 rounded-md w-full">Login</button>
+                    )}
+
                 </form>
             </main>
 

@@ -1,13 +1,14 @@
 import { useState, useContext } from 'react'
 import Popup from 'reactjs-popup'
-import CustomPopup from '../CustomPopup'
+import CustomPopup from '../../utils/CustomPopup'
+import CustomLinkify from '../../utils/CustomLinkify'
 import axios from 'axios'
 
 import { AuthContext } from '../../contexts/Auth.Context'
 
 const contentStyle={ overflowY: 'scroll', margin: '10px auto' }
 
-const Dashboard = ({tasks, submissions, setSubmissions}) => {
+const Dashboard = ({tasks, submissions, setSubmissions, submissionStatuses, setSubmissionStatuses, sendJsonMessage}) => {
 
     const { getAccessToken } = useContext(AuthContext)
 
@@ -15,8 +16,6 @@ const Dashboard = ({tasks, submissions, setSubmissions}) => {
 
         const formData = new FormData()
         formData.append("task_id", id)
-        console.log(textInput)
-        console.log(fileInput)
         textInput && formData.append("text", textInput)
         fileInput && formData.append("image", fileInput)
 
@@ -31,6 +30,45 @@ const Dashboard = ({tasks, submissions, setSubmissions}) => {
                 console.log(res)
             })
         })
+    }
+
+    const updateStatus = ({taskID, status}) => {
+        const existingStatus = submissionStatuses.filter(substatus => substatus.task === taskID)
+        if (existingStatus.length === 1) {
+            // status already exists
+            getAccessToken().then((accessToken) => {
+                axios.put(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE+'student/submission_status/'+existingStatus[0].id+'/', {status}, {
+                    headers: {'Authorization': 'Bearer '+accessToken},
+                })
+                .then(res => {
+                    setSubmissionStatuses([
+                        ...submissionStatuses.filter(substatus => substatus.task !== taskID),
+                        res.data
+                    ])
+                })
+                .catch(res => {
+                    console.log(res)
+                })
+            })
+        } else {
+            // status does not exist yet
+            getAccessToken().then((accessToken) => {
+                axios.post(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE+'student/submission_status/', {
+                    task_id: taskID, status
+                }, {
+                    headers: {'Authorization': 'Bearer '+accessToken},
+                })
+                .then(res => {
+                    setSubmissionStatuses([
+                        ...submissionStatuses.filter(substatus => substatus.task !== taskID),
+                        res.data
+                    ])
+                })
+                .catch(res => {
+                    console.log(res)
+                })
+            })
+        }
     }
 
     const reloadSubmission = (id) => {
@@ -48,14 +86,14 @@ const Dashboard = ({tasks, submissions, setSubmissions}) => {
         })
     }
 
-    if ((!tasks) || (!submissions)) return <h1></h1>
+    if ((!tasks) || (!submissions) || (!submissionStatuses)) return <h1></h1>
 
     return (
         <div className="flex flex-col">
             <h1 className="text-5xl font-semibold mb-8 ml-2">Tasks</h1>
             { tasks.filter(t => t.status === 1).map((task, i) => {
                 const sub = submissions.filter(s => s.task === task.id)[0]
-                return <Task {...{task, sub, i, addSubmission}} key={i} />
+                return <Task {...{task, sub, i, addSubmission, reloadSubmission, updateStatus, status: submissionStatuses.filter(status => status.task == task.id)[0]}} key={i} />
             })}
 
             { tasks.filter(t => t.status !== 1).length > 0 && (
@@ -64,7 +102,7 @@ const Dashboard = ({tasks, submissions, setSubmissions}) => {
 
             { tasks.filter(t => t.status !== 1).map((task, i) => {
                 const sub = submissions.filter(s => s.task === task.id)[0]
-                return <Task {...{task, sub, i, addSubmission, reloadSubmission}} key={i} />
+                return <Task {...{task, sub, i, addSubmission, reloadSubmission, updateStatus, status: submissionStatuses.filter(status => status.task == task.id)[0]}} key={i} />
             })}
         </div>
     )
@@ -72,7 +110,7 @@ const Dashboard = ({tasks, submissions, setSubmissions}) => {
 
 export default Dashboard
 
-const Task = ({task, sub, i, addSubmission, reloadSubmission}) => {
+const Task = ({task, sub, i, addSubmission, reloadSubmission, status, updateStatus}) => {
     const isSubmitted = sub ? true : false
     const isGraded = sub ? (sub.stars ? true : false) : false
 
@@ -102,7 +140,10 @@ const Task = ({task, sub, i, addSubmission, reloadSubmission}) => {
                             <TeacherComment isGraded={isGraded} task={task} sub={sub} />
                         </>
                     ) : (
-                        <SubmissionForm task={task} addSubmission={addSubmission} />
+                        <>
+                            <SubmissionStatus {...{task, status, updateStatus}}/>
+                            <SubmissionForm task={task} addSubmission={addSubmission} />
+                        </>
                     )}
 
                 </div>
@@ -120,18 +161,12 @@ const Submission = ({sub, reloadSubmission}) => {
                 { sub.image && <a href={sub.image} className="text-sm text-white py-0.5 px-1 ml-2 bg-gray-500 hover:bg-gray-600 rounded" download="test.png" target="_blank">Full Image</a>}
             </div>
             <div className="border-2 border-gray-300 rounded mx-2">
-                <p className="text-gray-700 px-2 py-2 whitespace-pre-wrap">{sub.text}</p>
+                <p className="text-gray-700 px-2 py-2 whitespace-pre-wrap"><CustomLinkify>{sub.text}</CustomLinkify></p>
                 { sub.image && <img src={sub.image} className="px-2 py-2 mx-auto" style={{ maxHeight:300 }} onError={() => reloadSubmission(sub.id)}/>}
             </div>
         </div>
     )
 }
-
-// { sub.image ? (
-//     <img src={sub.image} className="px-2 py-2 mx-auto" style={{ maxHeight:300 }} onError={() => reloadSubmission(sub.id)}/>
-// ):(
-//     <p className="text-gray-700 ml-2 px-2 py-2 border-2 border-gray-300 rounded">{sub.text}</p>
-// )}
 
 const TeacherComment = ({isGraded, task, sub}) => {
     return (
@@ -145,6 +180,57 @@ const TeacherComment = ({isGraded, task, sub}) => {
             ): (
                 <p className="pl-2 pt-2 text-sm italic text-gray-500">Submission not reviewed yet.</p>
             )}
+        </div>
+    )
+}
+
+const SubmissionStatus = ({task, status, updateStatus}) => {
+    console.log(status)
+
+    let subStatus = {status: 0}
+    if (status) subStatus = status
+
+    return (
+        <div className="w-full">
+            <h2 className="text-xl pl-2 pt-4">Not done yet?</h2>
+            <small className="text-gray-500 pl-2">Let your teacher know how you're doing!</small>
+
+            <div className="grid grid-cols-3 items-center justify-center gap-4 mt-4 px-2">
+                <SubmissionStatusOption
+                    imgPath="/confused.svg" text="Haven't started."
+                    status={0} selected={subStatus.status == 0}
+                    task={task} updateStatus={updateStatus}
+                />
+                <SubmissionStatusOption
+                    imgPath="/happy.svg" text="Making progress!"
+                    status={1} selected={subStatus.status == 1}
+                    task={task} updateStatus={updateStatus}
+                />
+                <SubmissionStatusOption
+                    imgPath="/crying.svg" text="Need help."
+                    status={2} selected={subStatus.status == 2}
+                    task={task} updateStatus={updateStatus}
+                />
+            </div>
+
+            <div className="mx-2 pb-6 border-b"></div>
+        </div>
+    )
+}
+
+const SubmissionStatusOption = ({task, imgPath, text, status, selected, updateStatus}) => {
+
+    console.log(selected)
+
+    let optionStyle = "flex flex-col items-center gap-2 px-2 py-2 border rounded cursor-pointer hover:border-blue-500"
+    if (selected) optionStyle = "flex flex-col items-center gap-2 px-2 py-2 border-2 border-blue-500 rounded cursor-pointer"
+
+    return (
+        <div className="col-span-1">
+            <div className={optionStyle} onClick={() => updateStatus({taskID: task.id, status})}>
+                <img src={imgPath} height="50" width="50" />
+                <p className="text-sm text-gray-700">{text}</p>
+            </div>
         </div>
     )
 }
@@ -166,16 +252,17 @@ const SubmissionForm = ({task, addSubmission}) => {
     return (
         <div className="w-full">
             <h2 className="text-xl pl-2 pt-4">Submit</h2>
-            <small className="text-gray-500 pl-2">Either text or image submission is accepted.</small>
+            <small className="text-gray-500 pl-2">Both text and images are accepted.</small>
             <form onSubmit={e => submitForm(e)}>
-                <textarea
-                    onChange={e => setTextInput(e.target.value)}
-                    className="outline-none border-2 border-gray-100 focus:border-gray-300 px-2 py-2 my-2 rounded-lg w-full"
-                    rows="4" value={textInput} name="description"
-                />
+                <div className="px-2">
+                    <textarea
+                        onChange={e => setTextInput(e.target.value)}
+                        className="outline-none border-2 border-gray-100 focus:border-gray-300 px-2 py-2 my-2 rounded-lg w-full"
+                        rows="4" value={textInput} name="description"
+                    />
+                </div>
                 <div className="flex flex-row-reverse items-center">
                     <input type="file" className="bg-gray-400 text-white px-2 py-1 w-min text-sm rounded-lg" onChange={e => setFileInput(e.target.files[0])} />
-                    <p className="text-lg mr-2">or</p>
                 </div>
                 <button type="submit" className="mt-4 px-2 py-1 bg-green-600 hover:bg-green-700 text-white rounded">Submit</button>
             </form>

@@ -9,10 +9,13 @@ const OPENROUTES = [
 ]
 
 const PrivateRoute = ({children}) => {
+
+    if (typeof window === 'undefined') return children
+    
     const router = useRouter()
     const { auth } = useContext(AuthContext)
 
-    if (auth.loading === true) return (<h1>Loading...</h1>)
+    // if (auth.loading === true) return (<h1>Loading...</h1>)
     if (!auth.isAuthenticated && !OPENROUTES.includes(router.pathname)) router.push('/')
 
     if (auth.isAuthenticated && router.pathname == '/') {

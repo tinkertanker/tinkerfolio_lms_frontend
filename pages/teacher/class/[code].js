@@ -21,6 +21,7 @@ const Classroom = () => {
 
     const [classroom, setClassroom] = useState()
     const [tasks, setTasks] = useState([])
+    const [submissionStatuses, setSubmissionStatuses] = useState()
     const [submissions, setSubmissions] = useState()
     const [isDashboard, setIsDashboard] = useState(true)
     const [names, setNames] = useState()
@@ -47,7 +48,9 @@ const Classroom = () => {
         const { code } = router.query
         if (!code) return
 
-        setWSURL(process.env.NEXT_PUBLIC_BACKEND_WS_BASE+'ws/teacher/?token='+auth.tokens.access+'&code='+code)
+        if (auth.tokens) {
+            setWSURL(process.env.NEXT_PUBLIC_BACKEND_WS_BASE+'ws/teacher/?token='+auth.tokens.access+'&code='+code)
+        }
 
         if (!classrooms) {
             // Get classrooms data if user went directly to classroom link
@@ -82,7 +85,7 @@ const Classroom = () => {
                 console.log(res)
             })
         })
-    }, [router.query])
+    }, [router.query, auth.tokens])
 
     useEffect(() => {
         if (!classroom) return
@@ -94,13 +97,13 @@ const Classroom = () => {
                 params: {'code': classroom.code}
             })
             .then(res => {
-                console.log(res.data)
                 setNames(res.data)
             })
         })
     }, [classroom])
 
     useEffect(() => {
+        // get all submissions
         if ((tasks) && (classroom) && (!submissions)) {
             getAccessToken().then((accessToken) => {
                 axios.get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE+'core/submissions/', {
@@ -108,8 +111,17 @@ const Classroom = () => {
                     params: {'code': classroom.code}
                 })
                 .then(res => {
-                    console.log(res.data)
                     setSubmissions(res.data)
+                })
+            })
+
+            getAccessToken().then((accessToken) => {
+                axios.get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE+'core/submission_status/', {
+                    headers: {'Authorization': 'Bearer '+accessToken},
+                    params: {'code': classroom.code}
+                })
+                .then(res => {
+                    setSubmissionStatuses(res.data)
                 })
             })
         }
@@ -118,7 +130,15 @@ const Classroom = () => {
     const handleMessage = (msg) => {
         console.log(msg)
         if (Object.keys(msg)[0] === 'submission') {
-            setSubmissions([...submissions.filter(sub => sub.id !== msg.submission.id), msg.submission])
+            setSubmissions([
+                ...submissions.filter(sub => sub.id !== msg.submission.id),
+                msg.submission
+            ])
+        } else if (Object.keys(msg)[0] === 'submission_status') {
+            setSubmissionStatuses([
+                ...submissionStatuses.filter(status => status.id !== msg.submission_status.id),
+                msg.submission_status
+            ])
         }
     }
 
@@ -221,7 +241,7 @@ const Classroom = () => {
                             <Dashboard {...{
                                 classroom, removeIndex, addStudent, bulkAddStudents, names,
                                 updateName, tasks, setTasks,
-                                submissions, setSubmissions, sendJsonMessage
+                                submissionStatuses, submissions, setSubmissions, sendJsonMessage
                             }} /> :
                             <Settings classroom={classroom} changeStatus={changeStatus} />
                         }

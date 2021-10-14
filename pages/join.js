@@ -2,6 +2,7 @@ import Head from 'next/head'
 import { useEffect, useState, useContext } from 'react'
 import { useRouter } from 'next/router'
 import axios from 'axios'
+import SyncLoader from "react-spinners/SyncLoader"
 
 import { AuthContext } from '../contexts/Auth.Context'
 
@@ -11,6 +12,7 @@ const StudentLogin = () => {
     const {auth, setAuth} = useContext(AuthContext)
     const [code, setCode] = useState()
     const [index, setIndex] = useState()
+    const [loginFailed, setLoginFailed] = useState()
 
     const [invalidInput, setInvalidInput] = useState(false)
 
@@ -18,9 +20,9 @@ const StudentLogin = () => {
         e.preventDefault()
         // Validation
         if ((code.length !== 6) | (isNaN(index))) {
-            setInvalidInput(true)
+            setLoginFailed(true)
             return
-        } else setInvalidInput(false)
+        }
 
         setAuth({...auth, loading: true})
 
@@ -33,6 +35,8 @@ const StudentLogin = () => {
         })
         .catch(res => {
             console.log('login failed')
+            setAuth({...auth, loading: false})
+            setLoginFailed(true)
         })
     }
 
@@ -63,7 +67,14 @@ const StudentLogin = () => {
                         <input className="outline-none border-b-2 text-3xl" type="text" name="index" onChange={e => setIndex(e.target.value)} />
                     </label>
                     <br />
-                    <button type="submit" className="bg-blue-400 hover:bg-blue-500 text-white text-lg mt-6 py-2 px-2 rounded-md w-full">Join</button>
+                    { loginFailed && <small className="text-red-500 mt-2">Invalid username or password.</small>}
+                    { auth.loading ? (
+                        <div className="flex flex-row justify-center bg-blue-500 mt-4 py-1 px-2 rounded-md w-full" style={{height: "36px"}}>
+                            <SyncLoader color={"#ffffff"} size={8} margin={1} />
+                        </div>
+                    ) : (
+                        <button type="submit" className="bg-blue-500 hover:bg-blue-600 text-white text-lg mt-4 py-1 px-2 rounded-md w-full">Join</button>
+                    )}
                 </form>
             </main>
 

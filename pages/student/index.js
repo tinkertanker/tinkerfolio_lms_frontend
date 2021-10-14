@@ -18,12 +18,13 @@ const StudentHome = () => {
     const [profile, setProfile] = useState()
     const [classroom, setClassroom] = useState()
     const [tasks, setTasks] = useState()
+    const [submissionStatuses, setSubmissionStatuses] = useState()
     const [submissions, setSubmissions] = useState()
     const [leaderboard, setLeaderboard] = useState()
 
     const [wsURL, setWSURL] = useState(null)
     const {
-        sendMessage, lastMessage, readyState,
+        sendJsonMessage, lastMessage, readyState,
     } = useWebSocket(wsURL, {
         onOpen: () => console.log('opened'),
         onMessage: (msg) => handleMessage(JSON.parse(msg.data)),
@@ -39,7 +40,15 @@ const StudentHome = () => {
     }[readyState];
 
     useEffect(() => {
-        setWSURL(process.env.NEXT_PUBLIC_BACKEND_WS_BASE+'ws/student/?token='+auth.tokens.access)
+        if (auth.tokens) {
+            setWSURL(process.env.NEXT_PUBLIC_BACKEND_WS_BASE+'ws/student/?token='+auth.tokens.access)
+        }
+    }, [auth.tokens])
+
+    useEffect(() => {
+        if (auth.tokens) {
+            setWSURL(process.env.NEXT_PUBLIC_BACKEND_WS_BASE+'ws/student/?token='+auth.tokens.access)
+        }
 
         // Get initial data
         getAccessToken().then((accessToken) => {
@@ -51,6 +60,9 @@ const StudentHome = () => {
                 setClassroom(res.data.classroom)
                 setTasks(res.data.tasks)
                 setSubmissions(res.data.submissions)
+                setSubmissionStatuses(res.data.submission_statuses)
+
+                console.log(res.data.submission_statuses)
             })
 
             axios.get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE+'student/leaderboard', {
@@ -102,7 +114,7 @@ const StudentHome = () => {
 
                 </div>
                 <div className="bg-gray-100 w-full pt-8 px-8">
-                    { isTasks ? <Dashboard {...{tasks, submissions, setSubmissions}}/> : <Leaderboard {...{profile, leaderboard}} />}
+                    { isTasks ? <Dashboard {...{tasks, submissions, setSubmissions, submissionStatuses, setSubmissionStatuses, sendJsonMessage}}/> : <Leaderboard {...{profile, leaderboard}} />}
                 </div>
                 <div className={`fixed bottom-4 right-4 flex flex-row items-center py-1 px-4 rounded-full bg-white shadow-lg ${statusColor[connectionStatus]}`}>
                     <p className="blinking pr-2">⬤</p>
