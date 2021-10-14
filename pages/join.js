@@ -60,11 +60,11 @@ const StudentLogin = () => {
                 <form onSubmit={e => loginUser(e)} className="">
                     <label>
                         <h2 className="font-semibold text-lg pb-0.5">Classroom Code</h2>
-                        <input className="outline-none border-b-2 text-3xl" type="text" name="code" onChange={e => setCode(e.target.value)} />
+                        <input className="outline-none border-b-2 text-3xl" type="text" name="code" onChange={e => setCode(e.target.value)} autocomplete="off" />
                     </label>
                     <label>
                         <h2 className="font-semibold text-lg pt-4 pb-0.5">Index</h2>
-                        <input className="outline-none border-b-2 text-3xl" type="text" name="index" onChange={e => setIndex(e.target.value)} />
+                        <input className="outline-none border-b-2 text-3xl" type="text" name="index" onChange={e => setIndex(e.target.value)} autocomplete="off" />
                     </label>
                     <br />
                     { loginFailed && <small className="text-red-500 mt-2">Invalid username or password.</small>}

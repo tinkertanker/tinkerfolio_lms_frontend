@@ -54,11 +54,11 @@ const TeacherLogin = () => {
                 <form onSubmit={e => loginUser(e)}>
                     <label>
                         <h2 className="font-semibold text-lg pb-2">Username</h2>
-                        <input className="outline-none border-b-2 text-xl w-full" type="text" placeholder="Enter Username" name="code" onChange={e => setUsername(e.target.value)} />
+                        <input className="outline-none border-b-2 text-xl w-full" type="text" placeholder="Enter Username" name="code" onChange={e => setUsername(e.target.value)} autocomplete="off"/>
                     </label>
                     <label>
                         <h2 className="font-semibold text-lg pb-2 mt-4">Password</h2>
-                        <input className="outline-none border-b-2 text-xl" type="password" placeholder="Enter Password" name="index" onChange={e => setPassword(e.target.value)} />
+                        <input className="outline-none border-b-2 text-xl" type="password" placeholder="Enter Password" name="index" onChange={e => setPassword(e.target.value)} autocomplete="off" />
                     </label>
                     <br />
                     { loginFailed && <small className="text-red-500 mt-2">Invalid username or password.</small>}
