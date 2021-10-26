@@ -75,9 +75,7 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
         })
 
         // add stars to student's score
-        console.log(id)
         const studentID = submissions.filter(sub => sub.id === id)[0].student
-        console.log(studentID)
         let name = tableNames.filter(name => name.id === studentID)[0]
         name.score += stars
         setTableNames([...tableNames.filter(name => name.id !== studentID), name])
@@ -452,6 +450,7 @@ const Review = ({sub, task}) => {
 }
 
 const ReviewForm = ({sub, task, addReview}) => {
+    const [isLoading, setIsLoading] = useState(false)
     const [isHover, setIsHover] = useState(false)
     const [tempStars, setTempStars] = useState(0)
     const [savedStars, setSavedStars] = useState(false)
@@ -471,7 +470,7 @@ const ReviewForm = ({sub, task, addReview}) => {
     return (
         <>
             <h1 className="text-lg font-bold mt-6">Leave a Review</h1>
-            <form onSubmit={e => {e.preventDefault(); addReview(sub.id, savedStars+1, comment)}}>
+            <form onSubmit={e => {e.preventDefault(); setIsLoading(true); addReview(sub.id, savedStars+1, comment)}}>
                 <div className="flex flex-row">
                     { Array.from(Array(task.max_stars).keys()).map((a,i) => (
                         <p
@@ -487,7 +486,12 @@ const ReviewForm = ({sub, task, addReview}) => {
                     className="w-full outline-none border-2 border-gray-100 focus:border-gray-300 py-2 px-2 my-2 rounded-lg"
                     rows="4" value={comment} name="description" placeholder="Leave a comment..."
                 />
-                <button type="submit" className="px-2 py-1 rounded text-white bg-gray-500 hover:bg-gray-600" disabled={savedStars === false}>Submit</button>
+
+                { isLoading ? (
+                    <button type="submit" className="px-2 py-1 rounded text-white bg-gray-600" disabled={true}>Submit</button>
+                ) : (
+                    <button type="submit" className="px-2 py-1 rounded text-white bg-gray-500 hover:bg-gray-600" disabled={savedStars === false}>Submit</button>
+                )}
             </form>
         </>
     )

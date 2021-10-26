@@ -39,6 +39,7 @@ const Layout = ({children}) => {
             <Head>
                 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter" />
                 <link href="https://fonts.googleapis.com/css2?family=Staatliches&display=swap" rel="stylesheet" />
+                <link rel="icon" href="/e_favicon.ico" />
             </Head>
             <div className="bg-gray-100">
                 <nav className="flex flex-row bg-white border-b-2 px-8 py-2 flex-wrap items-center justify-items-end">
