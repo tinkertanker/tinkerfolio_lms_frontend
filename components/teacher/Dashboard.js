@@ -634,7 +634,7 @@ const DeleteTask = ({id, deleteTask, setIsCloseOnDocClick}) => {
             { close => (
                 <div className="flex flex-col px-6 py-8 bg-white rounded-lg w-56 sm:w-80">
                     <h1 className="text-xl font-semibold text-center">Are you sure?</h1>
-                    <p className="text-gray-500 mt-2">This task and its submissions will not be able to be recovered.</p>
+                    <p className="text-gray-500 mt-2">This task and its submissions cannot be recovered.</p>
                     <div className="flex flex-col mt-4">
                         <button className="focus:outline-none px-2 py-1 border border-red-300 text-red-500 hover:bg-red-100 hover:border-red-500 hover:text-red-700 rounded mb-2" onClick={() => {deleteTask(id); close()}}>Delete</button>
                         <button className="focus:outline-none px-2 py-1 border border-gray-300 hover:bg-gray-100 hover:border-gray-400 rounded" onClick={() => close()}>Cancel</button>
@@ -654,7 +654,7 @@ const DeleteStudent = ({index, removeIndex, close, setIsCloseOnDocClick}) => {
             { close => (
                 <div className="flex flex-col px-6 py-8 bg-white rounded-lg w-56 sm:w-80">
                     <h1 className="text-xl font-semibold text-center">Are you sure?</h1>
-                    <p className="text-gray-500 mt-2">This student's submissions will not be able to be recovered.</p>
+                    <p className="text-gray-500 mt-2">This student's submissions and grades cannot be recovered.</p>
                     <div className="flex flex-col mt-4">
                         <button className="focus:outline-none px-2 py-1 border border-red-300 text-red-500 hover:bg-red-100 hover:border-red-500 hover:text-red-700 rounded mb-2" onClick={() => {removeIndex(index); close()}}>Delete</button>
                         <button className="focus:outline-none px-2 py-1 border border-gray-300 hover:bg-gray-100 hover:border-gray-400 rounded" onClick={() => close()}>Cancel</button>
