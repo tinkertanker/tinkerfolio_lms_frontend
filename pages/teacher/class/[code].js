@@ -231,15 +231,16 @@ const Classroom = () => {
 
             { classroom && (
                 <div className="flex sm:flex-row flex-col min-h-screen">
-                    <div className="flex flex-col pt-10 px-4 whitespace-nowrap">
-                        <h1 className="text-3xl font-bold px-2">{classroom.name}</h1>
+                    <div className="pt-10 ml-4 mr-4 sm:ml-6 sm:mr-0 sm:min-w-sidebar">
+                        <h1 className="text-3xl font-bold px-2 truncate" >{classroom.name}</h1>
                         <p className={`${classroom.status === 1 ? "text-green-600" : "text-red-500"} px-2 mb-4 font-bold`}>{classroom.status === 1 ? 'Active' : 'Archived'}</p>
-                        <button className={`focus:outline-none ${isDashboard ? "bg-blue-300" : "hover:bg-blue-100"} text-lg font-semibold px-2 py-1 mt-1 text-left rounded`} onClick={changePage}>Dashboard</button>
-                        <button className={`focus:outline-none ${(!isDashboard) ? "bg-blue-300" : "hover:bg-blue-100"} text-lg font-semibold px-2 py-1 my-1 text-left rounded`} onClick={changePage}>Settings</button>
+                        <button className={`focus:outline-none ${isDashboard ? "bg-blue-300" : "hover:bg-blue-100"} text-lg font-semibold pl-2 py-1 mt-1 text-left rounded min-w-full`} onClick={changePage}>Dashboard</button>
+                        <br />
+                        <button className={`focus:outline-none ${(!isDashboard) ? "bg-blue-300" : "hover:bg-blue-100"} text-lg font-semibold pl-2 py-1 my-1 text-left rounded min-w-full`} onClick={changePage}>Settings</button>
 
                         <ClassCode code={classroom.code} />
                     </div>
-                    <div className="pt-6 px-4 sm:pt-10 sm:px-12">
+                    <div className="pt-6 mx-6 sm:mx-0 sm:pt-10 sm:px-12">
                         { isDashboard ?
                             <Dashboard {...{
                                 classroom, removeIndex, addStudent, bulkAddStudents, names,
@@ -276,7 +277,7 @@ const ClassCode = ({code}) => {
     return (
         <Popup
             trigger={
-                <div className="flex flex-col mt-8 py-2 text-lg rounded-lg">
+                <div className="mt-4 sm:mt-10 ml-2 text-lg rounded-lg">
                     <div><p className="text-base text-center font-bold text-lg text-gray-500">For Students</p></div>
                     <div><p className="text-center py-1 font-mono font-bold bg-blue text-black rounded cursor-pointer border-2 text-2xl border-blue-300 hover:bg-blue-300">{code}</p></div>
                 </div>

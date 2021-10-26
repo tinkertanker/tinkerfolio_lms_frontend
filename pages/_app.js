@@ -46,7 +46,7 @@ const Layout = ({children}) => {
                     <div><h1 className="text-2xl font-logo text-blue-700">EchoClass</h1></div>
                     { auth.userType === 'teacher' && (
                         <div><Link href='/teacher'>
-                            <p className=" text-gray-500 hover:text-gray-700 px-12 cursor-pointer" >Classes</p>
+                            <p className="text-gray-500 hover:text-gray-700 px-6 sm:px-12 cursor-pointer" >Classes</p>
                         </Link></div>
                     )}
                     { auth.isAuthenticated &&

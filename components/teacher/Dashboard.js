@@ -112,13 +112,13 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
 
     return (
         <>
-            <h1 className="text-4xl sm:text-5xl font-semibold">Dashboard</h1>
+            <h1 className="mt-6 sm:mt-0 text-4xl sm:text-5xl font-semibold">Dashboard</h1>
 
-            <div className="flex flex-row">
+            <div className="flex flex-row flex-wrap mt-4 sm:mt-8 gap-4">
                 <Filter {...{tasks, tasksToHide, setTasksToHide}} />
                 <Sort {...{sortBy, setSortBy}} />
                 <NewTask addTask={addTask} />
-                <button className="flex flex-row mt-8 py-1 px-2 bg-blue-600 text-sm text-white rounded hover:bg-blue-700 focus:outline-none" onClick={() => addStudent("")}>
+                <button className="flex flex-row py-1 px-2 bg-blue-600 text-sm text-white rounded hover:bg-blue-700 focus:outline-none" onClick={() => addStudent("")}>
                     <AddCircleOutline color={'#00000'} title={"Add"} height="20px" width="20px" />
                     <p className="pl-1">Student</p>
                 </button>
@@ -192,7 +192,7 @@ const Filter = ({tasks, tasksToHide, setTasksToHide}) => {
     return (
         <Popup
             trigger={
-                <button className="flex flex-row mt-8 mr-4 py-1 px-2 bg-blue-600 text-sm text-white rounded hover:bg-blue-700 focus:outline-none">
+                <button className="flex flex-row py-1 px-2 bg-blue-600 text-sm text-white rounded hover:bg-blue-700 focus:outline-none">
                     <FilterIcon color={'#ffffff'} height="20px" width="20px" />
                     <p className="pl-2">Filter ({tasks.length - tasksToHide.length})</p>
                 </button>
@@ -234,7 +234,7 @@ const Sort = ({sortBy, setSortBy}) => {
     return (
         <Popup
             trigger={
-                <button className="flex flex-row items-center mt-8 mr-4 py-1 px-2 bg-blue-600 text-sm text-white rounded hover:bg-blue-700 focus:outline-none">
+                <button className="flex flex-row items-center py-1 px-2 bg-blue-600 text-sm text-white rounded hover:bg-blue-700 focus:outline-none">
                     <FunnelOutline color={'#ffffff'} height="17px" width="17px" />
                     <p className="pl-2">Sort</p>
                 </button>
@@ -585,7 +585,7 @@ const NewTask = ({addTask}) => {
     return (
         <CustomPopup
             trigger={
-                <button className="flex flex-row mt-8 mr-4 py-1 px-2 bg-blue-600 text-sm text-white rounded hover:bg-blue-700 focus:outline-none">
+                <button className="flex flex-row py-1 px-2 bg-blue-600 text-sm text-white rounded hover:bg-blue-700 focus:outline-none">
                     <AddCircleOutline color={'#00000'} title={"Add"} height="20px" width="20px" />
                     <p className="pl-1">Task</p>
                 </button>

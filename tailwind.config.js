@@ -17,6 +17,15 @@ module.exports = {
             'mono': [...defaultTheme.fontFamily.mono],
             'logo': ['Staatliches']
         },
+        minWidth: {
+            'sidebar': '10rem',
+
+            '0': '0',
+            '1/4': '25%',
+            '1/2': '50%',
+            '3/4': '75%',
+            'full': '100%',
+        },
         extend: {},
     },
     variants: {
