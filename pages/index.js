@@ -34,7 +34,7 @@ const Home = () => {
                             <Testimonial
                                 quote="&quot;EchoClass tells me what my students are struggling with so I can tailor my teaching for them.&quot;"
                                 imgPath="zj_testimonials.jfif"
-                                name="Zhang Jane"
+                                name="Jane Zhang"
                                 position="Lecturer @ Republic Polytechnic"
                             />
                         </div>
