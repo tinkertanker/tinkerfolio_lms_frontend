@@ -6,7 +6,11 @@ const Home = () => {
         <div>
             <Head>
                 <title>Home | EchoClass</title>
-                <meta name="description" content="EchoClass is an open-source LMS." />
+
+                <meta property='og:title' content='EchoClass'/>
+                <meta property='og:description' content="Monitor your students' learning progress, receive task submissions, give feedback — in a fun and interactive way."/>
+                <meta name="twitter:title" content="EchoClass" />
+                <meta name="twitter:description" content="Monitor your students' learning progress, receive task submissions, give feedback — in a fun and interactive way." />
             </Head>
 
             <main>
