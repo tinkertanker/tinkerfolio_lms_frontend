@@ -1,5 +1,7 @@
 import Head from 'next/head'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
+
 import { useContext } from 'react'
 import '../styles/globals.css'
 import AuthContextProvider from "../contexts/Auth.Context"
@@ -25,6 +27,7 @@ function MyApp({ Component, pageProps }) {
 export default MyApp
 
 const Layout = ({children}) => {
+    const router = useRouter()
     const { auth, setAuth } = useContext(AuthContext)
 
     const logout = () => {
@@ -34,16 +37,37 @@ const Layout = ({children}) => {
         localStorage.removeItem('userType')
     }
 
+    let navStyle = "bg-white border-b-2 px-8 py-2 flex flex-row items-center"
+    if (router.pathname === "/") navStyle = "max-w-4xl 2xl:max-w-6xl mx-auto py-6 px-6 sm:px-0 bg-purple-50 flex flex-row items-center"
+    if (router.pathname === "/login") navStyle = "bg-white border-b-2 px-6 py-2 flex flex-row items-center"
+    if (router.pathname == "/join") navStyle = "hidden"
     return (
         <>
             <Head>
-                <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter" />
+                <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
                 <link href="https://fonts.googleapis.com/css2?family=Staatliches&display=swap" rel="stylesheet" />
                 <link rel="icon" href="/e_favicon.ico" />
             </Head>
-            <div className="bg-gray-100">
-                <nav className="flex flex-row bg-white border-b-2 px-8 py-2 flex-wrap items-center justify-items-end">
-                    <div><h1 className="text-2xl font-logo text-blue-700">EchoClass</h1></div>
+            <div className={(router.pathname === "/" ? "bg-purple-50" : "bg-gray-100")}>
+                <nav className={navStyle}>
+                    { ['/', '/login', 'join'].includes(router.pathname) ? (
+                        <Link href="/">
+                            <img className="cursor-pointer" src="logo.png" height="50px" width="50px"/>
+                        </Link>
+                    ) : (
+                        <div><h1 className="text-2xl font-logo text-blue-700">EchoClass</h1></div>
+                    )}
+
+                    { (!auth.isAuthenticated) && (
+                        <div className="flex flex-row-reverse items-center ml-auto gap-4 sm:gap-8">
+                            <Link href='/login'>
+                                <a className="px-4 py-0.5 border-2 border-blue-500 hover:border-blue-700 text-blue-500 hover:text-blue-700 text-lg rounded font-semibold">Login</a>
+                            </Link>
+                            <Link href='/join'>
+                                <a className="text-gray-500 hover:text-gray-700">Join Code</a>
+                            </Link>
+                        </div>
+                    )}
                     { auth.userType === 'teacher' && (
                         <div><Link href='/teacher'>
                             <p className="text-gray-500 hover:text-gray-700 px-6 sm:px-12 cursor-pointer" >Classes</p>

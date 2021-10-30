@@ -240,7 +240,7 @@ const Classroom = () => {
 
                         <ClassCode code={classroom.code} />
                     </div>
-                    <div className="pt-6 mx-6 sm:mx-0 sm:pt-10 sm:px-12">
+                    <div className="pt-6 mx-6 sm:mx-0 sm:pt-10 sm:pl-12">
                         { isDashboard ?
                             <Dashboard {...{
                                 classroom, removeIndex, addStudent, bulkAddStudents, names,
