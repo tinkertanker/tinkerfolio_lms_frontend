@@ -305,7 +305,7 @@ const StudentName = ({index, student_id, tableNames, setTableNames, updateName, 
         <textarea rows="1"
             onChange={e => nameChange(e.target.value)}
             onBlur={e => updateName(index, tableNames.filter(n => n.index === index)[0].name, tableNames.filter(n => n.index === index)[0].id)}
-            className="resize-none flex-grow outline-none focus:border-gray-500 border-b-2 border-gray-300 bg-gray-100"
+            className="resize-none flex-grow outline-none hover:border-gray-400 focus:border-blue-500 border-b-2 border-gray-300"
             value={tableNames.filter(name => name.index === index)[0].name}
         />
     )
@@ -385,13 +385,13 @@ const Submission = ({sub, sp, task, addReview, sendJsonMessage }) => {
     return (
         <CustomPopup
             trigger={
-                <td className="px-2 py-2 border-r-2 min-w-48 cursor-pointer hover:bg-gray-200">
+                <td className="px-2 py-2 border-r-2 min-w-48 cursor-pointer hover:bg-gray-100">
                     { sub.stars ? (
                         <p className="text-lg">{'★'.repeat(sub.stars)+'☆'.repeat(task.max_stars - sub.stars)}</p>
                     ) : (
                         <p className="italic text-xs mb-2">Not reviewed yet.</p>
                     )}
-                    <p className="border-t-2 border-gray-400"></p>
+                    <p className="border-t border-gray-300"></p>
                     { sub.text && <p className="flex-none text-xs text-gray-700 mt-2">{shortened(sub.text, (sub.text && sub.image) ? 40 : 100)}</p> }
 
                     <img className="mt-2" src={sub.image} style={{maxHeight:"100px"}} onError={() => sendJsonMessage({'submission': sub.id})} />
@@ -532,13 +532,13 @@ const TaskDetails = ({task, setOneTask, setIsCloseOnDocClick, subs}) => {
                 <input
                     onChange={e => setNewTask({...newTask, [e.target.name]:e.target.value})}
                     onBlur={() => setOneTask(newTask)}
-                    className="outline-none text-2xl border-b-2 border-white focus:border-gray-300 my-2 mx-2 w-min"
+                    className="outline-none text-2xl border-b-2 border-gray-100 hover:border-gray-300 focus:border-blue-500 my-2 mx-2 w-min"
                     value={newTask.name} name="name"
                 />
                 <textarea
                     onChange={e => setNewTask({...newTask, [e.target.name]:e.target.value})}
                     onBlur={() => setOneTask(newTask)}
-                    className=" outline-none text-sm border-2 border-gray-100 focus:border-gray-300 py-2 px-2 my-2 mx-2 rounded-lg"
+                    className=" outline-none text-sm border-2 border-gray-100 hover:border-gray-300 focus:border-blue-500 py-2 px-2 my-2 mx-2 rounded-lg"
                     rows="4" value={newTask.description} name="description"
                 />
                 <div className="flex flex-row">
@@ -560,6 +560,7 @@ const TaskDetails = ({task, setOneTask, setIsCloseOnDocClick, subs}) => {
                             onBlur={() => setOneTask(newTask)}
                             className="outline-none py-1.5 px-2 bg-gray-100 rounded-lg my-1 mx-2 w-min"
                             name="max_stars" id="max_stars" type="number" min={minStars()} max="5" value={newTask.max_stars}
+                            onKeyDown={(e) => {e.preventDefault(); return false}}
                         />
                     </div>
                 </div>
