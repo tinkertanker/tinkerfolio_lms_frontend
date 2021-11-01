@@ -10,7 +10,7 @@ import { Filter as FilterIcon, AddCircleOutline, FunnelOutline } from 'react-ion
 const contentStyle = { paddingLeft: '0.5rem', paddingRight: '0.5rem' }
 const arrowStyle = { color: '#374151', paddingBottom: '0.25rem' } // style for an svg element
 
-const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents, updateName, tasks, setTasks, submissionStatuses, submissions, setSubmissions, sendJsonMessage  }) => {
+const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents, loadingAddStudent, setLoadingAddStudent, updateName, tasks, setTasks, submissionStatuses, submissions, setSubmissions, sendJsonMessage, size }) => {
 
     const { getAccessToken } = useContext(AuthContext)
     const [tableNames, setTableNames] = useState()
@@ -20,6 +20,10 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
     useEffect(() => {
         setTableNames(names)
     }, [names])
+
+    useEffect(() => {
+        setLoadingAddStudent(false)
+    }, [tableNames])
 
     if (!tableNames) return <h1></h1>
 
@@ -110,21 +114,26 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
         }
     }
 
+    // disabling add student when its loading is still not working
     return (
         <>
-            <h1 className="mt-6 sm:mt-0 text-4xl sm:text-5xl font-semibold">Dashboard</h1>
+            <div style={{height: "96px"}}></div>
 
-            <div className="flex flex-row flex-wrap mt-4 sm:mt-8 gap-4">
+            <div className="flex flex-row flex-wrap my-6 gap-4 pl-8">
                 <Filter {...{tasks, tasksToHide, setTasksToHide}} />
                 <Sort {...{sortBy, setSortBy}} />
                 <NewTask addTask={addTask} />
-                <button className="flex flex-row py-1 px-2 bg-blue-600 text-sm text-white rounded hover:bg-blue-700 focus:outline-none" onClick={() => addStudent("")}>
+                <button
+                    className={"flex flex-row py-1 px-2 bg-blue-600 text-sm text-white rounded focus:outline-none "+(loadingAddStudent ? "filter brightness-50" : "hover:bg-blue-700")}
+                    onClick={() => {if (!loadingAddStudent) {addStudent(""); setLoadingAddStudent(true)}}}
+                    disabled={loadingAddStudent}
+                >
                     <AddCircleOutline color={'#00000'} title={"Add"} height="20px" width="20px" />
                     <p className="pl-1">Student</p>
                 </button>
             </div>
 
-            <table className="mt-6 mb-12 block overflow-x-auto teacher-table align-top">
+            <table className="block overflow-y-auto pl-8" style={{height: size.height-175, borderSpacing:"50px"}}>
                 <thead>
                     <tr className="border-2">
                         <th className="border-r-2 px-2 py-2"><p>Index</p></th>
@@ -136,7 +145,7 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                                 <img style={{float:"left",minWidth:"200px",visibility:"hidden",width:"0px"}} />
                                 <div className="flex flex-row items-center">
                                     <p className="font-normal ml-1 mr-2 py-0.5 px-1 text-sm text-white bg-gray-700 rounded">Task</p>
-                                    <p className="whitespace-nowrap">{task.name}</p>
+                                    <p className="truncate text-left" style={{width:"150px"}}>{task.name}</p>
                                     <TaskMenu {...{task, setOneTask, deleteTask, submissions}} />
                                 </div>
                             </th>
@@ -146,6 +155,7 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                 <tbody className="align-top">
                     { sortStudentIndex().map((index, i) => {
                         const sp = tableNames.filter(tn => tn.index === index)[0]
+                        if (typeof sp === "undefined") return
                         const student_id = sp.id
                         return (
                             <tr className="border-2" key={i}>
@@ -298,27 +308,6 @@ const StudentName = ({index, student_id, tableNames, setTableNames, updateName, 
             className="resize-none flex-grow outline-none focus:border-gray-500 border-b-2 border-gray-300 bg-gray-100"
             value={tableNames.filter(name => name.index === index)[0].name}
         />
-    )
-}
-
-const StudentMenu = ({index, removeIndex}) => {
-    const [isCloseOnDocClick, setIsCloseOnDocClick] = useState(true)
-
-    return (
-        <Popup
-            trigger={<p className="ml-auto px-2 py-0.5 rounded hover:bg-gray-300 cursor-pointer font-bold">⋮</p>}
-            position="left top"
-            arrow={false}
-            closeOnDocumentClick={isCloseOnDocClick}
-            {...{ contentStyle, arrowStyle }}
-        >
-            { close => (
-
-                <div className="flex flex-col bg-gray-700 text-gray-300 py-1 px-3 bg-white rounded w-40">
-                    <DeleteStudent {...{removeIndex, index, close, setIsCloseOnDocClick}}/>
-                </div>
-            )}
-        </Popup>
     )
 }
 
@@ -604,18 +593,19 @@ const NewTask = ({addTask}) => {
                     <input
                         onChange={e => setTask({...task, [e.target.name]:e.target.value})}
                         className="outline-none text-2xl border-b-2 border-gray-300 focus:border-gray-500 my-2 mx-2"
-                        value={task.name} name="name" placeholder="Task Name"
+                        value={task.name} name="name" placeholder="Enter task name here..."
                     />
                     <textarea
                         onChange={e => setTask({...task, [e.target.name]:e.target.value})}
                         className="outline-none resize-none text-sm border-2 border-gray-300 focus:border-gray-500 py-2 px-2 my-2 mx-2 rounded-lg"
-                        rows="4" value={task.description} name="description" placeholder="Task Description"
+                        rows="4" value={task.description} name="description" placeholder="Enter task description here..."
                     />
                     <label htmlFor="max_stars" className="px-2 pt-2">Max. Stars</label>
                     <input
                         onChange={e => setTask({...task, [e.target.name]: parseInt(e.target.value)})}
                         className="outline-none py-1.5 px-2 bg-gray-100 rounded-lg my-1 mx-2 w-min"
                         name="max_stars" id="max_stars" type="number" min="0" max="5" value={task.max_stars}
+                        onKeyDown={(e) => {e.preventDefault(); return false}}
                     />
                     <small className="ml-2 text-gray-500">Capped at 5 stars.</small>
                     <button type="submit" className="mt-4 ml-2 px-2 py-1 w-min bg-blue-500 text-white rounded hover:bg-blue-600">Create</button>
@@ -645,7 +635,28 @@ const DeleteTask = ({id, deleteTask, setIsCloseOnDocClick}) => {
     )
 }
 
-const DeleteStudent = ({index, removeIndex, close, setIsCloseOnDocClick}) => {
+const StudentMenu = ({index, removeIndex}) => {
+    const [isCloseOnDocClick, setIsCloseOnDocClick] = useState(true)
+
+    return (
+        <Popup
+            trigger={<p className="ml-auto px-2 py-0.5 rounded hover:bg-gray-300 cursor-pointer font-bold">⋮</p>}
+            position="left top"
+            arrow={false}
+            closeOnDocumentClick={isCloseOnDocClick}
+            {...{ contentStyle, arrowStyle }}
+        >
+            { close => (
+
+                <div className="flex flex-col bg-gray-700 text-gray-300 py-1 px-3 bg-white rounded w-40">
+                    <DeleteStudent {...{removeIndex, index, menuClose: close, setIsCloseOnDocClick}}/>
+                </div>
+            )}
+        </Popup>
+    )
+}
+
+const DeleteStudent = ({index, removeIndex, menuClose, setIsCloseOnDocClick}) => {
     return (
         <CustomPopup
             trigger={<p className="py-1 hover:text-white cursor-pointer">Delete</p>}
@@ -656,8 +667,8 @@ const DeleteStudent = ({index, removeIndex, close, setIsCloseOnDocClick}) => {
                     <h1 className="text-xl font-semibold text-center">Are you sure?</h1>
                     <p className="text-gray-500 mt-2">This student's submissions and grades cannot be recovered.</p>
                     <div className="flex flex-col mt-4">
-                        <button className="focus:outline-none px-2 py-1 border border-red-300 text-red-500 hover:bg-red-100 hover:border-red-500 hover:text-red-700 rounded mb-2" onClick={() => {removeIndex(index); close()}}>Delete</button>
-                        <button className="focus:outline-none px-2 py-1 border border-gray-300 hover:bg-gray-100 hover:border-gray-400 rounded" onClick={() => close()}>Cancel</button>
+                        <button className="focus:outline-none px-2 py-1 border border-red-300 text-red-500 hover:bg-red-100 hover:border-red-500 hover:text-red-700 rounded mb-2" onClick={() => {removeIndex(index); close(); menuClose()}}>Delete</button>
+                        <button className="focus:outline-none px-2 py-1 border border-gray-300 hover:bg-gray-100 hover:border-gray-400 rounded" onClick={() => {close(); menuClose()}}>Cancel</button>
                     </div>
                 </div>
             )}

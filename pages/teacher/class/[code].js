@@ -5,17 +5,19 @@ import { useState, useEffect, useContext } from 'react'
 import axios from 'axios'
 import Popup from 'reactjs-popup'
 import useWebSocket, { ReadyState } from 'react-use-websocket'
-import { ClipboardOutline, CheckmarkSharp } from 'react-ionicons'
+import { ClipboardOutline, CheckmarkSharp, SettingsOutline, InformationCircleOutline } from 'react-ionicons'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 
 import { AuthContext } from '../../../contexts/Auth.Context'
 import { ClassroomsContext } from '../../../contexts/Classrooms.Context'
 
 import Dashboard from '../../../components/teacher/Dashboard'
-import Settings from '../../../components/teacher/Settings'
+
+import useWindowSize from '../../../utils/windowSize'
 
 const Classroom = () => {
     const router = useRouter()
+    const size = useWindowSize()
     const { auth, setAuth, getAccessToken } = useContext(AuthContext)
     const { classrooms, setClassrooms } = useContext(ClassroomsContext)
 
@@ -23,8 +25,9 @@ const Classroom = () => {
     const [tasks, setTasks] = useState([])
     const [submissionStatuses, setSubmissionStatuses] = useState()
     const [submissions, setSubmissions] = useState()
-    const [isDashboard, setIsDashboard] = useState(true)
     const [names, setNames] = useState()
+
+    const [loadingAddStudent, setLoadingAddStudent] = useState(false)
 
     const [wsURL, setWSURL] = useState(null)
     const {
@@ -142,10 +145,6 @@ const Classroom = () => {
         }
     }
 
-    const changePage = () => {
-        setIsDashboard(!isDashboard)
-    }
-
     const changeStatus = () => {
         const newClassroom = {...classroom, status: classroom.status === 1 ? 2 : 1}
         updateClassroom(newClassroom)
@@ -187,6 +186,7 @@ const Classroom = () => {
                 console.log(res.data)
                 setClassroom(res.data)
                 setClassrooms([...classrooms.filter(cr => cr.id !== res.data.id), res.data])
+                // setLoadingAddStudent(false)
             })
         })
     }
@@ -230,25 +230,24 @@ const Classroom = () => {
             </Head>
 
             { classroom && (
-                <div className="flex sm:flex-row flex-col min-h-screen">
-                    <div className="pt-10 ml-4 mr-4 sm:ml-6 sm:mr-0 sm:min-w-sidebar">
-                        <h1 className="text-3xl font-bold px-2 truncate" >{classroom.name}</h1>
-                        <p className={`${classroom.status === 1 ? "text-green-600" : "text-red-500"} px-2 mb-4 font-bold`}>{classroom.status === 1 ? 'Active' : 'Archived'}</p>
-                        <button className={`focus:outline-none ${isDashboard ? "bg-blue-300" : "hover:bg-blue-100"} text-lg font-semibold pl-2 py-1 mt-1 text-left rounded min-w-full`} onClick={changePage}>Dashboard</button>
-                        <br />
-                        <button className={`focus:outline-none ${(!isDashboard) ? "bg-blue-300" : "hover:bg-blue-100"} text-lg font-semibold pl-2 py-1 my-1 text-left rounded min-w-full`} onClick={changePage}>Settings</button>
-
-                        <ClassCode code={classroom.code} />
+                <div className="flex flex-col">
+                    <div
+                        className="fixed w-full flex flex-row gap-4 items-center bg-gray-600 py-2 px-4 sm:px-8"
+                        style={{marginTop: "48px"}}
+                    >
+                        <h1 className="text-xl font-bold px-2 py-0.5 rounded-lg bg-gray-500 text-white">{classroom.name}</h1>
+                        <StudentJoinInfo code={classroom.code} />
+                        <SettingsMenu {...{classroom, changeStatus}} />
                     </div>
-                    <div className="pt-6 mx-6 sm:mx-0 sm:pt-10 sm:pl-12">
-                        { isDashboard ?
-                            <Dashboard {...{
-                                classroom, removeIndex, addStudent, bulkAddStudents, names,
-                                updateName, tasks, setTasks,
-                                submissionStatuses, submissions, setSubmissions, sendJsonMessage
-                            }} /> :
-                            <Settings classroom={classroom} changeStatus={changeStatus} />
-                        }
+                    <div className="bg-white">
+                        <Dashboard {...{
+                            classroom, removeIndex,
+                            addStudent, bulkAddStudents, loadingAddStudent, setLoadingAddStudent,
+                            names, updateName,
+                            tasks, setTasks,
+                            submissionStatuses, submissions, setSubmissions, sendJsonMessage,
+                            size
+                        }} />
                     </div>
                     <div className={`fixed bottom-4 right-4 flex flex-row items-center py-1 px-4 rounded-full bg-white shadow-lg ${statusColor[connectionStatus]}`}>
                         <p className="blinking pr-2">⬤</p>
@@ -264,6 +263,76 @@ const Classroom = () => {
 }
 
 export default Classroom
+
+const SettingsMenu = ({classroom, changeStatus}) => {
+    console.log(classroom.status)
+    return (
+        <Popup
+            trigger={
+                <div className="flex flex-row items-center py-1 px-2 rounded bg-gray-500 hover:bg-gray-400 cursor-pointer">
+                    <SettingsOutline color='#ffffff' height="20px" width="20px" />
+                    <p className="text-sm text-white pl-2">Settings</p>
+                </div>
+            }
+            position="bottom right" arrow={false}
+        >
+            { close => (
+                <div className="mt-4 px-4 py-4 w-72 bg-white shadow-lg rounded">
+                    <h2 className="text-gray-500 text-center">Settings</h2>
+                    <div className="flex mt-2 mb-4 border"></div>
+                    <div className="flex flex-row items-center">
+                        <p className="font-semibold">Status</p>
+                        <select className="ml-auto border py-0.5 px-2 rounded outline-none" value={classroom.status} onChange={changeStatus}>
+                            <option value={1}>Active</option>
+                            <option value={2}>Archive</option>
+                        </select>
+                    </div>
+                </div>
+            )}
+        </Popup>
+    )
+}
+
+const StudentJoinInfo = ({code}) => {
+
+    const [isCopied, setIsCopied] = useState(false)
+
+    const hasCopied = () => {
+        setIsCopied(true)
+        setTimeout(() => setIsCopied(false), 3000)
+    }
+
+    return (
+        <Popup
+            trigger={
+                <div className="flex flex-row ml-auto items-center py-1 px-2 rounded bg-gray-500 hover:bg-gray-400 cursor-pointer">
+                    <InformationCircleOutline color='#ffffff' height="20px" width="20px" />
+                    <p className="text-sm text-white pl-2">Join Info for Students</p>
+                </div>
+            }
+            modal overlayStyle={{ background: 'rgba(0,0,0,0.4)' }}
+        >
+            { close => (
+                <div className="flex flex-col px-4 py-4 bg-white rounded-lg shadow-md">
+                    <div className="flex flex-row items-center justify-center">
+                        <h1 className="text-lg sm:text-xl text-center">Join at <a className="text-blue-500 hover:underline" href="https://www.echoclass.com/join" target="_blank" rel="noreferrer">echoclass.com/join</a> using this code.</h1>
+
+                    </div>
+                    <div className="flex flex-row items-center justify-center mt-4">
+                        <p className="font-mono text-5xl sm:text-7xl tracking-widest text-white py-2 px-2 bg-black ml-1">{code}</p>
+                        { isCopied ? (
+                            <CheckmarkSharp color={'#10B981'} cssClasses="ml-2" height="45px" width="45px" />
+                        ) : (
+                            <CopyToClipboard className="cursor-pointer" text={code} onCopy={hasCopied}>
+                                <ClipboardOutline beat cssClasses="ml-2" height="45px" width="45px" />
+                            </CopyToClipboard>
+                        )}
+                    </div>
+                </div>
+            )}
+        </Popup>
+    )
+}
 
 const ClassCode = ({code}) => {
 

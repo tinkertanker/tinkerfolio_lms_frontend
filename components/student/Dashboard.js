@@ -88,10 +88,24 @@ const Dashboard = ({tasks, submissions, setSubmissions, submissionStatuses, setS
 
     if ((!tasks) || (!submissions) || (!submissionStatuses)) return <h1></h1>
 
+    const sortedTasks = (tasks) => {
+        const getPriority = (id) => {
+            const sub = submissions.filter(s => s.task === id)[0]
+            const isSubmitted = sub ? true : false
+            const isGraded = sub ? (sub.stars ? true : false) : false
+
+            if (!isSubmitted) return 2
+            if (isSubmitted && isGraded) return 1
+            return 0
+        }
+
+        return tasks.sort((a, b) => (getPriority(a.id) < getPriority(b.id)) ? 1 : -1)
+    }
+
     return (
         <div className="flex flex-col">
             <h1 className="text-5xl font-semibold mb-8 ml-2">Tasks</h1>
-            { tasks.filter(t => t.status === 1).map((task, i) => {
+            { sortedTasks(tasks.filter(t => t.status === 1)).map((task, i) => {
                 const sub = submissions.filter(s => s.task === task.id)[0]
                 return <Task {...{task, sub, i, addSubmission, reloadSubmission, updateStatus, status: submissionStatuses.filter(status => status.task == task.id)[0]}} key={i} />
             })}
@@ -100,7 +114,7 @@ const Dashboard = ({tasks, submissions, setSubmissions, submissionStatuses, setS
                 <h1 className="text-2xl font-semibold mb-6 mt-12 ml-2">Archived</h1>
             )}
 
-            { tasks.filter(t => t.status !== 1).map((task, i) => {
+            { sortedTasks(tasks.filter(t => t.status !== 1)).map((task, i) => {
                 const sub = submissions.filter(s => s.task === task.id)[0]
                 return <Task {...{task, sub, i, addSubmission, reloadSubmission, updateStatus, status: submissionStatuses.filter(status => status.task == task.id)[0]}} key={i} />
             })}
