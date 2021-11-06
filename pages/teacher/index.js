@@ -54,6 +54,8 @@ const TeacherHome = () => {
         })
     }
 
+    console.log(classrooms)
+
     return (
         <div>
             <Head>
@@ -67,6 +69,8 @@ const TeacherHome = () => {
                     <h2 className="text-4xl font-bold">Classrooms</h2>
                     <CreateClassForm {...{createClass}} />
                 </div>
+
+                { classrooms && ((classrooms.length === 0) && <p className="italic text-gray-500 py-2">No classrooms found.</p>)}
 
                 { classrooms && sortClassrooms(classrooms).map((cr, i) => {
                     return (<Classroom classroom={cr} key={i} />)
