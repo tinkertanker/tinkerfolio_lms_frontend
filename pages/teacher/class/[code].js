@@ -200,7 +200,9 @@ const Classroom = () => {
                 headers: {'Authorization': 'Bearer '+accessToken},
             })
             .then(res => {
-                setNames([...names.filter(n => n.index !== index), {index, name, id}])
+                let newName = names.filter(n => n.index === index)[0]
+                newName.name = name
+                setNames([...names.filter(n => n.index !== index), newName])
             })
         })
     }
