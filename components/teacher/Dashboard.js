@@ -285,6 +285,8 @@ const Sort = ({sortBy, setSortBy}) => {
 
 const StudentName = ({index, student_id, tableNames, setTableNames, updateName, bulkAddStudents, removeIndex}) => {
 
+    console.log(tableNames)
+
     const nameChange = (input) => {
         if (/\r|\n/.exec(input)) { // if newline is found in string
             console.log('multiline detected')
@@ -296,8 +298,9 @@ const StudentName = ({index, student_id, tableNames, setTableNames, updateName, 
             // delete current row
             // removeIndex(index)
         } else {
-            const name = input
-            setTableNames([...tableNames.filter(n => n.index !== index), {index:index, name: name, id: student_id}])
+            let newTableName = tableNames.filter(n => n.index === index)[0]
+            newTableName.name = input
+            setTableNames([...tableNames.filter(n => n.index !== index), newTableName])
         }
     }
 
