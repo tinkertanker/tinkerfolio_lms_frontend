@@ -24,7 +24,7 @@ const Home = () => {
                 <section className="px-6 bg-purple-50">
                     <div className="sm:hidden block pt-12">
                         <iframe
-                            className="w-full h-full"
+                            style={{width:"87vw", height:"49vw"}}
                             src="https://www.youtube.com/embed/re7bGA5MsI0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen
                         ></iframe>
                     </div>
