@@ -30,7 +30,7 @@ const Home = () => {
                     </div>
                     <div className="flex sm:flex-row flex-col items-center gap-12 sm:gap-16 max-w-4xl 2xl:max-w-6xl mx-auto pt-8 sm:pt-20 pb-20 sm:pb-28">
                         <div className="flex flex-col items-center sm:items-start">
-                            <h1 className="text-2xl sm:text-4xl 2xl:text-6xl mx-auto pb-4 mb-2 font-semibold"><span className="inline-block">Supercharge</span> <span className="inline-block">your teaching.</span></h1>
+                            <h1 className="text-3xl sm:text-4xl 2xl:text-6xl mx-auto pb-4 mb-2 font-semibold sm:text-left text-center"><span className="inline-block">Supercharge</span><br /><span className="inline-block">your teaching.</span></h1>
                             <a href="mailto:hello@michaelchen.io?subject=Request for Beta Access to EchoClass" className="py-2 px-4 text-lg font-semibold text-white bg-blue-700 hover:bg-blue-900 rounded">Sign Up for Beta Access</a>
                         </div>
                         <div className="flex-grow sm:block hidden">
