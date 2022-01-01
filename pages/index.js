@@ -11,14 +11,34 @@ const Home = () => {
                 <meta property='og:description' content="Monitor your students' learning progress, receive task submissions, give feedback — in a fun and interactive way."/>
                 <meta name="twitter:title" content="EchoClass" />
                 <meta name="twitter:description" content="Monitor your students' learning progress, receive task submissions, give feedback — in a fun and interactive way." />
+
+                <style>{`\
+                    .ytube {
+                        width: 560px;
+                        height: 315px
+                    }
+                `}</style>
             </Head>
 
             <main>
                 <section className="px-6 bg-purple-50">
-                    <div className="max-w-4xl 2xl:max-w-6xl mx-auto pt-12 sm:pt-20 pb-20 sm:pb-28">
-                        <h1 className="text-4xl sm:text-6xl pb-4 font-extrabold">Supercharge your teaching.</h1>
-                        <h3 className="text-xl sm:text-2xl text-gray-500 mt-2 mb-6">Monitor your students' learning progress, receive task submissions, give feedback — in a fun and interactive way.</h3>
-                        <a href="mailto:hello@michaelchen.io?subject=Request for Beta Access to EchoClass" className="py-2 px-4 text-lg font-semibold text-white bg-blue-700 hover:bg-blue-900 rounded">Sign Up for Beta Access</a>
+                    <div className="sm:hidden block pt-12">
+                        <iframe
+                            className="w-full h-full"
+                            src="https://www.youtube.com/embed/re7bGA5MsI0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen
+                        ></iframe>
+                    </div>
+                    <div className="flex sm:flex-row flex-col items-center gap-12 sm:gap-16 max-w-4xl 2xl:max-w-6xl mx-auto pt-8 sm:pt-20 pb-20 sm:pb-28">
+                        <div className="flex flex-col items-center sm:items-start">
+                            <h1 className="text-2xl sm:text-4xl 2xl:text-6xl mx-auto pb-4 mb-2 font-semibold"><span className="inline-block">Supercharge</span> <span className="inline-block">your teaching.</span></h1>
+                            <a href="mailto:hello@michaelchen.io?subject=Request for Beta Access to EchoClass" className="py-2 px-4 text-lg font-semibold text-white bg-blue-700 hover:bg-blue-900 rounded">Sign Up for Beta Access</a>
+                        </div>
+                        <div className="flex-grow sm:block hidden">
+                            <iframe
+                                className="ytube ml-auto"
+                                src="https://www.youtube.com/embed/re7bGA5MsI0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen;" allowfullscreen
+                            ></iframe>
+                        </div>
                     </div>
                 </section>
                 <section className="bg-white">
