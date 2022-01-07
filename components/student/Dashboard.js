@@ -91,8 +91,9 @@ const Dashboard = ({tasks, submissions, setSubmissions, submissionStatuses, setS
     const sortedTasks = (tasks) => {
         const getPriority = (id) => {
             const sub = submissions.filter(s => s.task === id)[0]
+            console.log(sub)
             const isSubmitted = sub ? true : false
-            const isGraded = sub ? (sub.stars ? true : false) : false
+            const isGraded = sub ? ([0,1,2,3,4,5].includes(sub.stars) ? true : false) : false
 
             if (!isSubmitted) return 2
             if (isSubmitted && isGraded) return 1
@@ -126,7 +127,7 @@ export default Dashboard
 
 const Task = ({task, sub, i, addSubmission, reloadSubmission, status, updateStatus}) => {
     const isSubmitted = sub ? true : false
-    const isGraded = sub ? (sub.stars ? true : false) : false
+    const isGraded = sub ? ([0,1,2,3,4,5].includes(sub.stars) ? true : false) : false
 
     return (
         <CustomPopup

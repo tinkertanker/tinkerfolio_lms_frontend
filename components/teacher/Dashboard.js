@@ -75,6 +75,7 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                 headers: {'Authorization': 'Bearer '+accessToken}
             })
             .then(res => {
+                console.log(res.data)
                 setSubmissions([...submissions.filter(s => s.id !== res.data.id), res.data])
             })
         })
@@ -350,7 +351,7 @@ const SubmissionSummary = ({student_id, tasks, sortedTasks, submissions, submiss
                             )
                         }
                     }
-                } else if (!(sub.stars)) { // submitted but not reviewed
+                } else if (!([0,1,2,3,4,5].includes(sub.stars))) { // submitted but not reviewed
                     statusIcon = (
                         <svg width="20" height="20" className="pr-0.5">
                             <rect width="14" height="14" x="2" y="2" rx="2" ry="2" className="rounded" style={{fill:"#6EE7B7", stroke:"#34D399", strokeWidth:"2"}}></rect>
@@ -388,7 +389,7 @@ const Submission = ({sub, sp, task, addReview, sendJsonMessage }) => {
         <CustomPopup
             trigger={
                 <td className="px-2 py-2 border-r-2 min-w-48 cursor-pointer hover:bg-gray-100">
-                    { sub.stars ? (
+                    { [0,1,2,3,4,5].includes(sub.stars) ? (
                         <p className="text-lg">{'★'.repeat(sub.stars)+'☆'.repeat(task.max_stars - sub.stars)}</p>
                     ) : (
                         <p className="italic text-xs mb-2">Not reviewed yet.</p>
@@ -423,7 +424,7 @@ const Submission = ({sub, sp, task, addReview, sendJsonMessage }) => {
 
                 <p className="border-b-2 border-gray-200 mt-6"></p>
 
-                { sub.stars ? <Review sub={sub} task={task} /> : <ReviewForm sub={sub} task={task} addReview={addReview} />}
+                { [0,1,2,3,4,5].includes(sub.stars) ? <Review sub={sub} task={task} /> : <ReviewForm sub={sub} task={task} addReview={addReview} />}
             </div>
         </CustomPopup>
 
@@ -458,10 +459,19 @@ const ReviewForm = ({sub, task, addReview}) => {
         return false
     }
 
+    console.log(task)
+
+    const formSubmit = (e) => {
+        console.log('review form submitting', ((savedStars !== false) ? savedStars+1 : 0))
+        e.preventDefault()
+        setIsLoading(true)
+        addReview(sub.id, ((savedStars !== false) ? savedStars+1 : 0), comment)
+    }
+
     return (
         <>
             <h1 className="text-lg font-bold mt-6">Leave a Review</h1>
-            <form onSubmit={e => {e.preventDefault(); setIsLoading(true); addReview(sub.id, savedStars+1, comment)}}>
+            <form onSubmit={e => formSubmit(e)}>
                 <div className="flex flex-row">
                     { Array.from(Array(task.max_stars).keys()).map((a,i) => (
                         <p
@@ -481,7 +491,7 @@ const ReviewForm = ({sub, task, addReview}) => {
                 { isLoading ? (
                     <button type="submit" className="px-2 py-1 rounded text-white bg-gray-600" disabled={true}>Submit</button>
                 ) : (
-                    <button type="submit" className="px-2 py-1 rounded text-white bg-gray-500 hover:bg-gray-600" disabled={savedStars === false}>Submit</button>
+                    <button type="submit" className="px-2 py-1 rounded text-white bg-gray-500 hover:bg-gray-600" disabled={((savedStars === false) && (task.max_stars > 0))}>Submit</button>
                 )}
             </form>
         </>
@@ -501,10 +511,12 @@ const TaskMenu = ({task, setOneTask, deleteTask, submissions}) => {
             closeOnDocumentClick={isCloseOnDocClick}
             {...{ contentStyle, arrowStyle }}
         >
-            <div className="flex flex-col bg-gray-700 text-gray-300 py-1 px-3 bg-white rounded w-40">
-                <TaskDetails task={task} setOneTask={setOneTask} setIsCloseOnDocClick={setIsCloseOnDocClick} subs={submissions.filter(s => s.task === task.id)} />
-                <DeleteTask id={task.id} setIsCloseOnDocClick={setIsCloseOnDocClick} deleteTask={deleteTask} />
-            </div>
+            { close => (
+                <div className="flex flex-col bg-gray-700 text-gray-300 py-1 px-3 bg-white rounded w-40">
+                    <TaskDetails task={task} setOneTask={setOneTask} setIsCloseOnDocClick={setIsCloseOnDocClick} subs={submissions.filter(s => s.task === task.id)} />
+                    <DeleteTask id={task.id} setIsCloseOnDocClick={setIsCloseOnDocClick} deleteTask={deleteTask} popupClose={close} />
+                </div>
+            )}
         </Popup>
     )
 }
@@ -596,7 +608,7 @@ const NewTask = ({addTask}) => {
                     <input
                         onChange={e => setTask({...task, [e.target.name]:e.target.value})}
                         className="outline-none text-2xl border-b-2 border-gray-300 focus:border-gray-500 my-2 mx-2"
-                        value={task.name} name="name" placeholder="Enter task name here..."
+                        value={task.name} name="name" placeholder="Enter task name here..." autocomplete="off"
                     />
                     <textarea
                         onChange={e => setTask({...task, [e.target.name]:e.target.value})}
@@ -618,7 +630,7 @@ const NewTask = ({addTask}) => {
     )
 }
 
-const DeleteTask = ({id, deleteTask, setIsCloseOnDocClick}) => {
+const DeleteTask = ({id, deleteTask, setIsCloseOnDocClick, popupClose}) => {
     return (
         <CustomPopup
             trigger={<p className="py-1 hover:text-white cursor-pointer">Delete</p>}
@@ -629,8 +641,8 @@ const DeleteTask = ({id, deleteTask, setIsCloseOnDocClick}) => {
                     <h1 className="text-xl font-semibold text-center">Are you sure?</h1>
                     <p className="text-gray-500 mt-2">This task and its submissions cannot be recovered.</p>
                     <div className="flex flex-col mt-4">
-                        <button className="focus:outline-none px-2 py-1 border border-red-300 text-red-500 hover:bg-red-100 hover:border-red-500 hover:text-red-700 rounded mb-2" onClick={() => {deleteTask(id); close()}}>Delete</button>
-                        <button className="focus:outline-none px-2 py-1 border border-gray-300 hover:bg-gray-100 hover:border-gray-400 rounded" onClick={() => close()}>Cancel</button>
+                        <button className="focus:outline-none px-2 py-1 border border-red-300 text-red-500 hover:bg-red-100 hover:border-red-500 hover:text-red-700 rounded mb-2" onClick={() => {deleteTask(id); close(); popupClose()}}>Delete</button>
+                        <button className="focus:outline-none px-2 py-1 border border-gray-300 hover:bg-gray-100 hover:border-gray-400 rounded" onClick={() => {close(); popupClose()}}>Cancel</button>
                     </div>
                 </div>
             )}
