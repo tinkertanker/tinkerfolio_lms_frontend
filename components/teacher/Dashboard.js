@@ -121,7 +121,7 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
         <>
             <div style={{height: "96px"}}></div>
 
-            <div className="flex flex-row flex-wrap my-6 gap-4 pl-8">
+            <div className="flex flex-row flex-wrap py-4 gap-4 pl-8 bg-gray-100 shadow-md">
                 <Filter {...{tasks, tasksToHide, setTasksToHide}} />
                 <Sort {...{sortBy, setSortBy}} />
                 <NewTask addTask={addTask} />
@@ -135,7 +135,7 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                 </button>
             </div>
 
-            <table className="block overflow-y-auto pl-8" style={{height: size.height-175, borderSpacing:"50px"}}>
+            <table className="block overflow-y-auto px-8 py-8" style={{height: size.height-156, borderSpacing:"50px"}}>
                 <thead>
                     <tr className="border-2">
                         <th className="border-r-2 px-2 py-2"><p>Index</p></th>
@@ -308,7 +308,7 @@ const StudentName = ({index, student_id, tableNames, setTableNames, updateName, 
         <textarea rows="1"
             onChange={e => nameChange(e.target.value)}
             onBlur={e => updateName(index, tableNames.filter(n => n.index === index)[0].name, tableNames.filter(n => n.index === index)[0].id)}
-            className="resize-none flex-grow outline-none hover:border-gray-400 focus:border-blue-500 border-b-2 border-gray-300"
+            className="bg-transparent resize-none flex-grow outline-none hover:border-gray-400 focus:border-blue-500 border-b-2 border-gray-300"
             value={tableNames.filter(name => name.index === index)[0].name}
         />
     )
