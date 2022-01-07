@@ -142,6 +142,14 @@ const Classroom = () => {
                 ...submissionStatuses.filter(status => status.id !== msg.submission_status.id),
                 msg.submission_status
             ])
+        } else if (Object.keys(msg)[0] === 'student_profile') {
+            setNames([
+                ...names.filter(name => name.index !== msg.student_profile.index),
+                msg.student_profile
+            ])
+            let newClassroom = {...classroom, student_indexes: classroom.student_indexes.concat([msg.student_profile.index])}
+            setClassroom(newClassroom)
+            setClassrooms([...classrooms.filter(cr => cr.id !== newClassroom.id), newClassroom])
         }
     }
 

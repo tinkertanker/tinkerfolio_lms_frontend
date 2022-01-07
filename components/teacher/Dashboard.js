@@ -19,6 +19,7 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
 
     useEffect(() => {
         setTableNames(names)
+        console.log('update table names', names)
     }, [names])
 
     useEffect(() => {
@@ -284,8 +285,6 @@ const Sort = ({sortBy, setSortBy}) => {
 }
 
 const StudentName = ({index, student_id, tableNames, setTableNames, updateName, bulkAddStudents, removeIndex}) => {
-
-    console.log(tableNames)
 
     const nameChange = (input) => {
         if (/\r|\n/.exec(input)) { // if newline is found in string

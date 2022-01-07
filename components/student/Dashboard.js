@@ -156,7 +156,7 @@ const Task = ({task, sub, i, addSubmission, reloadSubmission, status, updateStat
                     ) : (
                         <>
                             <SubmissionStatus {...{task, status, updateStatus}}/>
-                            <SubmissionForm task={task} addSubmission={addSubmission} />
+                            <SubmissionForm task={task} addSubmission={addSubmission} close={close} />
                         </>
                     )}
 
@@ -249,7 +249,7 @@ const SubmissionStatusOption = ({task, imgPath, text, status, selected, updateSt
     )
 }
 
-const SubmissionForm = ({task, addSubmission}) => {
+const SubmissionForm = ({task, addSubmission, close}) => {
     const [textInput, setTextInput] = useState("")
     const [fileInput, setFileInput] = useState()
 
@@ -261,6 +261,9 @@ const SubmissionForm = ({task, addSubmission}) => {
             if (!((n.includes('jpg')) | (n.includes('JPG')) | (n.includes('jpeg')) | (n.includes('JPEG')) | (n.includes('png')) | (n.includes('PNG')))) return
         }
         addSubmission(textInput, fileInput, task.id)
+        setTextInput("")
+        setFileInput(null)
+        close()
     }
 
     return (
