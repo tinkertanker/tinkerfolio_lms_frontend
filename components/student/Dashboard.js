@@ -132,14 +132,15 @@ const Task = ({task, sub, i, addSubmission, reloadSubmission, status, updateStat
     return (
         <CustomPopup
             trigger={
-                <div className="py-2 px-2 border-b-2 border-gray-300 cursor-pointer hover:bg-gray-200">
+                <div className="pt-3 pb-2 px-2 border-b-2 border-gray-300 cursor-pointer hover:bg-gray-200">
                     <div className="flex flex-row items-center">
                         <h2 className="text-lg font-semibold mr-4">{task.name}</h2>
                         <p className={`${isSubmitted ? 'bg-green-600':'bg-red-500'} py-0.5 px-1 text-sm text-white rounded`}>{isSubmitted ? 'Done':'Not Done'}</p>
                         { isGraded && <p className="ml-2 py-0.5 px-1 text-sm text-white bg-gray-700 rounded">Graded</p>}
                     </div>
 
-                    <p className="text-gray-500">{ isGraded ? sub.stars : '-' }/{task.max_stars} ★</p>
+                    { (task.max_stars > 0) ? <p className="text-gray-500">{ isGraded ? sub.stars : '-' }/{task.max_stars} ★</p> : <div style={{height:"24px"}}></div>}
+
                 </div>
             }
             contentStyle={{ overflowY: 'auto', marginTop: 'min(60px, 100%)', marginBottom: 'min(60px, 100%)' }}
