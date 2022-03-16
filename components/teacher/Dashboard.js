@@ -1084,7 +1084,7 @@ const NewTask = ({ addTask }) => {
                         value={task.name}
                         name="name"
                         placeholder="Enter task name here..."
-                        autoComplete="off"
+                        autocomplete="off"
                     />
                     <textarea
                         onChange={(e) =>
@@ -1117,15 +1117,14 @@ const NewTask = ({ addTask }) => {
                         name="max_stars"
                         id="max_stars"
                     >
-                        <option selected disabled hidden value="">
-                            Max Stars
-                        </option>
                         <option value={0}>0</option>
                         <option value={1}>1</option>
                         <option value={2}>2</option>
                         <option value={3}>3</option>
                         <option value={4}>4</option>
-                        <option value={5}>5</option>
+                        <option selected value={5}>
+                            5
+                        </option>
                     </select>
                     <small className="ml-2 text-gray-500">
                         Capped at 5 stars.
