@@ -1011,26 +1011,30 @@ const TaskDetails = ({ task, setOneTask, setIsCloseOnDocClick, subs }) => {
                         <label htmlFor="max_stars" className="px-2 pt-2">
                             Max. Stars
                         </label>
-                        <input
+                        <select
                             onChange={(e) =>
                                 setNewTask({
                                     ...newTask,
                                     [e.target.name]: parseInt(e.target.value),
                                 })
                             }
-                            onBlur={() => setOneTask(newTask)}
-                            className="outline-none py-1.5 px-2 bg-gray-100 rounded-lg my-1 mx-2 w-min"
-                            name="max_stars"
-                            id="max_stars"
-                            type="number"
-                            min={minStars()}
-                            max="5"
-                            value={newTask.max_stars}
                             onKeyDown={(e) => {
                                 e.preventDefault();
                                 return false;
                             }}
-                        />
+                            onBlur={() => setOneTask(newTask)}
+                            className="outline-none py-1.5 px-2 bg-gray-100 rounded-lg my-1 mx-2 w-min"
+                            name="max_stars"
+                            id="max_stars"
+                            value={newTask.max_stars}
+                        >
+                            <option value={0}>0</option>
+                            <option value={1}>1</option>
+                            <option value={2}>2</option>
+                            <option value={3}>3</option>
+                            <option value={4}>4</option>
+                            <option value={5}>5</option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -1098,25 +1102,31 @@ const NewTask = ({ addTask }) => {
                     <label htmlFor="max_stars" className="px-2 pt-2">
                         Max. Stars
                     </label>
-                    <input
+                    <select
                         onChange={(e) =>
                             setTask({
                                 ...task,
                                 [e.target.name]: parseInt(e.target.value),
                             })
                         }
-                        className="outline-none py-1.5 px-2 bg-gray-100 rounded-lg my-1 mx-2 w-min"
-                        name="max_stars"
-                        id="max_stars"
-                        type="number"
-                        min="0"
-                        max="5"
-                        value={task.max_stars}
                         onKeyDown={(e) => {
                             e.preventDefault();
                             return false;
                         }}
-                    />
+                        className="outline-none py-1.5 px-2 bg-gray-100 rounded-lg my-1 mx-2 w-min"
+                        name="max_stars"
+                        id="max_stars"
+                    >
+                        <option selected disabled hidden value="">
+                            Max Stars
+                        </option>
+                        <option value={0}>0</option>
+                        <option value={1}>1</option>
+                        <option value={2}>2</option>
+                        <option value={3}>3</option>
+                        <option value={4}>4</option>
+                        <option value={5}>5</option>
+                    </select>
                     <small className="ml-2 text-gray-500">
                         Capped at 5 stars.
                     </small>
