@@ -298,7 +298,7 @@ const Dashboard = ({
                                                             <td
                                                                 className="px-2 py-2 border-r-2"
                                                                 key={i}
-                                                                style={{ width: "241.2px" }}
+                                                                style={{ width: "241.36px" }}
                                                             ></td>
                                                         );
                                                     }
@@ -326,7 +326,7 @@ const Dashboard = ({
 
                                     return (
                                         <tr
-                                            className="border-2"
+                                            className="border-t-2 border-l-2 border-b-2"
                                             key={index}
                                         >
                                             <td className="border-r-2 px-2 py-2 w-16">
@@ -362,7 +362,7 @@ const Dashboard = ({
                                                             <td
                                                                 className="px-2 py-2 border-r-2"
                                                                 key={i}
-                                                                style={{ width: "241.2px" }}
+                                                                style={{ width: "241.36px" }}
                                                             ></td>
                                                         );
                                                     }
@@ -423,7 +423,7 @@ const Dashboard = ({
                                                             <td
                                                                 className="px-2 py-2 border-r-2"
                                                                 key={i}
-                                                                style={{ width: "241.2px" }}
+                                                                style={{ width: "241.36px" }}
                                                             ></td>
                                                         );
                                                     }
