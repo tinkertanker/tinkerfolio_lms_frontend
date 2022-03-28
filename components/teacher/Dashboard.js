@@ -186,7 +186,7 @@ const Dashboard = ({
         <>
             <div style={{ height: "96px" }}></div>
 
-            <div className="flex flex-row flex-wrap py-4 gap-4 pl-8 bg-gray-100 shadow-md">
+            <div className="flex flex-row flex-wrap py-4 gap-4 pl-8 bg-gray-100 shadow-md w-full fixed">
                 <Filter {...{ tasks, tasksToHide, setTasksToHide }} />
                 <Sort {...{ sortBy, setSortBy }} />
                 <NewTask addTask={addTask} />
@@ -211,7 +211,7 @@ const Dashboard = ({
             </div>
 
             <table
-                className="flex overflow-y-auto px-8 py-8 flex-col w-max"
+                className="flex overflow-y-auto px-8 py-8 flex-col w-max mt-12"
                 style={{ height: size.height - 156, borderSpacing: "50px" }}
             >
                 <thead>
@@ -298,7 +298,7 @@ const Dashboard = ({
                                                             <td
                                                                 className="px-2 py-2 border-r-2"
                                                                 key={i}
-                                                                style={{ width: "241px" }}
+                                                                style={{ width: "241.2px" }}
                                                             ></td>
                                                         );
                                                     }
@@ -362,7 +362,7 @@ const Dashboard = ({
                                                             <td
                                                                 className="px-2 py-2 border-r-2"
                                                                 key={i}
-                                                                style={{ width: "241px" }}
+                                                                style={{ width: "241.2px" }}
                                                             ></td>
                                                         );
                                                     }
@@ -423,7 +423,7 @@ const Dashboard = ({
                                                             <td
                                                                 className="px-2 py-2 border-r-2"
                                                                 key={i}
-                                                                style={{ width: "241px" }}
+                                                                style={{ width: "241.2px" }}
                                                             ></td>
                                                         );
                                                     }
@@ -532,7 +532,7 @@ const Sort = ({ sortBy, setSortBy }) => {
                 <div className="px-4 py-4 bg-white shadow-md rounded">
                     <p className="text-xl font-bold mb-3">Sort By</p>
 
-                    <form>
+                    <form className="w-56">
                         <input
                             type="radio"
                             id="indexLowToHigh"
