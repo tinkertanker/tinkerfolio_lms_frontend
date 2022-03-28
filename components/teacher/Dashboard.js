@@ -205,29 +205,24 @@ const Dashboard = ({
                     }}
                     disabled={loadingAddStudent}
                 >
-                    <AddCircleOutline
-                        color={"#00000"}
-                        title={"Add"}
-                        height="20px"
-                        width="20px"
-                    />
+                    <AddCircleOutline color={"#00000"} title={"Add"} height="20px" width="20px" />
                     <p className="pl-1">Student</p>
                 </button>
             </div>
 
             <table
-                className="block overflow-y-auto px-8 py-8"
+                className="flex overflow-y-auto px-8 py-8 flex-col"
                 style={{ height: size.height - 156, borderSpacing: "50px" }}
             >
                 <thead>
-                    <tr className="border-2 w-96">
-                        <th className="border-r-2 px-2 py-2 w-1/6">
+                    <tr className="border-2">
+                        <th className="border-r-2 px-2 py-2 w-16">
                             <p>Index</p>
                         </th>
-                        <th className="border-r-2 px-2 py-2 w-2/3">
+                        <th className="border-r-2 px-2 py-2 w-72">
                             <p>Student</p>
                         </th>
-                        <th className="border-r-2 px-2 py-2 w-1/6">
+                        <th className="border-r-2 px-2 py-2 w-16">
                             <p className="text-xl">★</p>
                         </th>
                         {sortTableTasks().map((task, i) => (
@@ -237,14 +232,7 @@ const Dashboard = ({
                                 style={{ width: "200px" }}
                             >
                                 {/* this image below is a quick fix to give HTML table a min-width property. DO NOT DELETE */}
-                                <img
-                                    style={{
-                                        float: "left",
-                                        minWidth: "200px",
-                                        visibility: "hidden",
-                                        width: "0px",
-                                    }}
-                                />
+                                <img style={{ float: "left", minWidth: "200px", visibility: "hidden", width: "0px", }} />
                                 <div className="flex flex-row items-center">
                                     <p className="font-normal ml-1 mr-2 py-0.5 px-1 text-sm text-white bg-gray-700 rounded">
                                         Task
@@ -255,20 +243,13 @@ const Dashboard = ({
                                     >
                                         {task.name}
                                     </p>
-                                    <TaskMenu
-                                        {...{
-                                            task,
-                                            setOneTask,
-                                            deleteTask,
-                                            submissions,
-                                        }}
-                                    />
+                                    <TaskMenu {...{ task, setOneTask, deleteTask, submissions, }} />
                                 </div>
                             </th>
                         ))}
                     </tr>
                 </thead>
-                <tbody className="align-top flex flex-col border-none">
+                <tbody className="align-top">
                     {sortBy === "indexLowToHigh" ? (
                         <>
                             {Object.keys(tableNames).map(
@@ -281,47 +262,23 @@ const Dashboard = ({
 
                                     return (
                                         <tr
-                                            className="border-l-2 w-96"
+                                            className="border-2"
                                             key={index}
                                         >
-                                            <hr className="w-96" />
-                                            <td className="border-r-2 px-2 py-2 w-1/6">
+                                            <td className="border-r-2 px-2 py-2 w-16">
                                                 <p>{index}</p>
                                             </td>
-                                            <td className="border-r-2 px-3 py-2 w-2/3">
+                                            <td className="border-r-2 px-2 py-2 w-72">
                                                 <div className="flex flex-row">
-                                                    <StudentName
-                                                        {...{
-                                                            index,
-                                                            student_id,
-                                                            tableNames,
-                                                            setTableNames,
-                                                            updateName,
-                                                            bulkAddStudents,
-                                                            removeIndex,
-                                                        }}
-                                                    />
-                                                    <StudentMenu
-                                                        index={index}
-                                                        removeIndex={
-                                                            removeIndex
-                                                        }
-                                                    />
+                                                    <StudentName {...{ index, student_id, tableNames, setTableNames, updateName, bulkAddStudents, removeIndex }} />
+                                                    <StudentMenu index={index} removeIndex={ removeIndex } />
                                                 </div>
                                                 <p className="mt-4 text-sm text-gray-700">
                                                     Submissions
                                                 </p>
-                                                <SubmissionSummary
-                                                    {...{
-                                                        student_id,
-                                                        tasks,
-                                                        sortedTasks,
-                                                        submissions,
-                                                        submissionStatuses,
-                                                    }}
-                                                />
+                                                <SubmissionSummary {...{ student_id, tasks, sortedTasks, submissions, submissionStatuses }} />
                                             </td>
-                                            <td className="border-r-2 px-2 py-2 text-center w-1/6">
+                                            <td className="border-r-2 px-2 py-2 text-center w-16">
                                                 {sp.score}
                                             </td>
                                             {submissions &&
@@ -336,25 +293,16 @@ const Dashboard = ({
                                                                         student_id
                                                             )[0];
                                                         return sub ? (
-                                                            <Submission
-                                                                {...{
-                                                                    sub,
-                                                                    sp,
-                                                                    task,
-                                                                    addReview,
-                                                                    sendJsonMessage,
-                                                                }}
-                                                                key={i}
-                                                            />
+                                                            <Submission {...{ sub, sp, task, addReview, sendJsonMessage, }} key={i} />
                                                         ) : (
                                                             <td
-                                                                className="px-2 py-2 border-r-2 w-1/6"
+                                                                className="px-2 py-2 border-r-2"
                                                                 key={i}
+                                                                style={{ width: "241px" }}
                                                             ></td>
                                                         );
                                                     }
                                                 )}
-                                            <hr className="w-96" />
                                         </tr>
                                     );
                                 }
@@ -365,7 +313,7 @@ const Dashboard = ({
                     )}
                 </tbody>
 
-                <tbody className="align-top flex flex-col-reverse border-none">
+                <tbody className="align-top flex flex-col-reverse w-max">
                     {sortBy === "indexHightoLow" ? (
                         <>
                             {Object.keys(tableNames).map(
@@ -378,47 +326,23 @@ const Dashboard = ({
 
                                     return (
                                         <tr
-                                            className="border-l-2 w-96"
+                                            className="border-2"
                                             key={index}
                                         >
-                                            <hr className="w-96" />
-                                            <td className="border-r-2 px-2 py-2 w-1/6">
+                                            <td className="border-r-2 px-2 py-2 w-16">
                                                 <p>{index}</p>
                                             </td>
-                                            <td className="border-r-2 px-3 py-2 w-2/3">
+                                            <td className="border-r-2 px-3 py-2 w-72">
                                                 <div className="flex flex-row">
-                                                    <StudentName
-                                                        {...{
-                                                            index,
-                                                            student_id,
-                                                            tableNames,
-                                                            setTableNames,
-                                                            updateName,
-                                                            bulkAddStudents,
-                                                            removeIndex,
-                                                        }}
-                                                    />
-                                                    <StudentMenu
-                                                        index={index}
-                                                        removeIndex={
-                                                            removeIndex
-                                                        }
-                                                    />
+                                                    <StudentName {...{ index, student_id, tableNames, setTableNames, updateName, bulkAddStudents, removeIndex }} />
+                                                    <StudentMenu index={index} removeIndex={ removeIndex } />
                                                 </div>
                                                 <p className="mt-4 text-sm text-gray-700">
                                                     Submissions
                                                 </p>
-                                                <SubmissionSummary
-                                                    {...{
-                                                        student_id,
-                                                        tasks,
-                                                        sortedTasks,
-                                                        submissions,
-                                                        submissionStatuses,
-                                                    }}
-                                                />
+                                                <SubmissionSummary {...{ student_id, tasks, sortedTasks, submissions, submissionStatuses }} />
                                             </td>
-                                            <td className="border-r-2 px-2 py-2 text-center w-1/6">
+                                            <td className="border-r-2 px-2 py-2 text-center w-16">
                                                 {sp.score}
                                             </td>
                                             {submissions &&
@@ -433,25 +357,16 @@ const Dashboard = ({
                                                                         student_id
                                                             )[0];
                                                         return sub ? (
-                                                            <Submission
-                                                                {...{
-                                                                    sub,
-                                                                    sp,
-                                                                    task,
-                                                                    addReview,
-                                                                    sendJsonMessage,
-                                                                }}
-                                                                key={i}
-                                                            />
+                                                            <Submission {...{ sub, sp, task, addReview, sendJsonMessage, }} key={i} />
                                                         ) : (
                                                             <td
-                                                                className="px-2 py-2 border-r-2 w-1/6"
+                                                                className="px-2 py-2 border-r-2"
                                                                 key={i}
+                                                                style={{ width: "241px" }}
                                                             ></td>
                                                         );
                                                     }
                                                 )}
-                                            <hr className="w-96" />
                                         </tr>
                                     );
                                 }
@@ -480,36 +395,13 @@ const Dashboard = ({
                                             </td>
                                             <td className="border-r-2 px-2 py-2">
                                                 <div className="flex flex-row">
-                                                    <StudentName
-                                                        {...{
-                                                            index,
-                                                            student_id,
-                                                            tableNames,
-                                                            setTableNames,
-                                                            updateName,
-                                                            bulkAddStudents,
-                                                            removeIndex,
-                                                        }}
-                                                    />
-                                                    <StudentMenu
-                                                        index={index}
-                                                        removeIndex={
-                                                            removeIndex
-                                                        }
-                                                    />
+                                                    <StudentName {...{ index, student_id, tableNames, setTableNames, updateName, bulkAddStudents, removeIndex, }} />
+                                                    <StudentMenu index={index} removeIndex={ removeIndex } />
                                                 </div>
                                                 <p className="mt-4 text-sm text-gray-700">
                                                     Submissions
                                                 </p>
-                                                <SubmissionSummary
-                                                    {...{
-                                                        student_id,
-                                                        tasks,
-                                                        sortedTasks,
-                                                        submissions,
-                                                        submissionStatuses,
-                                                    }}
-                                                />
+                                                <SubmissionSummary {...{ student_id, tasks, sortedTasks, submissions, submissionStatuses, }} />
                                             </td>
                                             <td className="border-r-2 px-2 py-2 text-center">
                                                 {sp.score}
@@ -526,16 +418,7 @@ const Dashboard = ({
                                                                         student_id
                                                             )[0];
                                                         return sub ? (
-                                                            <Submission
-                                                                {...{
-                                                                    sub,
-                                                                    sp,
-                                                                    task,
-                                                                    addReview,
-                                                                    sendJsonMessage,
-                                                                }}
-                                                                key={i}
-                                                            />
+                                                            <Submission {...{ sub, sp, task, addReview, sendJsonMessage, }} key={i} />
                                                         ) : (
                                                             <td
                                                                 className="px-2 py-2 border-r-2"
@@ -636,11 +519,7 @@ const Sort = ({ sortBy, setSortBy }) => {
         <Popup
             trigger={
                 <button className="flex flex-row items-center py-1 px-2 bg-blue-600 text-sm text-white rounded hover:bg-blue-700 focus:outline-none">
-                    <FunnelOutline
-                        color={"#ffffff"}
-                        height="17px"
-                        width="17px"
-                    />
+                    <FunnelOutline color={"#ffffff"} height="17px" width="17px" />
                     <p className="pl-2">Sort</p>
                 </button>
             }
