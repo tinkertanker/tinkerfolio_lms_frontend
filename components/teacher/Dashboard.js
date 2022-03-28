@@ -211,7 +211,7 @@ const Dashboard = ({
             </div>
 
             <table
-                className="flex overflow-y-auto px-8 py-8 flex-col"
+                className="flex overflow-y-auto px-8 py-8 flex-col w-max"
                 style={{ height: size.height - 156, borderSpacing: "50px" }}
             >
                 <thead>
@@ -390,10 +390,10 @@ const Dashboard = ({
                                     const student_id = sp.id;
                                     return (
                                         <tr className="border-2" key={i}>
-                                            <td className="border-r-2 px-2 py-2">
+                                            <td className="border-r-2 px-2 py-2 w-16">
                                                 <p>{index}</p>
                                             </td>
-                                            <td className="border-r-2 px-2 py-2">
+                                            <td className="border-r-2 px-2 py-2 w-72">
                                                 <div className="flex flex-row">
                                                     <StudentName {...{ index, student_id, tableNames, setTableNames, updateName, bulkAddStudents, removeIndex, }} />
                                                     <StudentMenu index={index} removeIndex={ removeIndex } />
@@ -403,7 +403,7 @@ const Dashboard = ({
                                                 </p>
                                                 <SubmissionSummary {...{ student_id, tasks, sortedTasks, submissions, submissionStatuses, }} />
                                             </td>
-                                            <td className="border-r-2 px-2 py-2 text-center">
+                                            <td className="border-r-2 px-2 py-2 text-center w-16">
                                                 {sp.score}
                                             </td>
                                             {submissions &&
@@ -423,6 +423,7 @@ const Dashboard = ({
                                                             <td
                                                                 className="px-2 py-2 border-r-2"
                                                                 key={i}
+                                                                style={{ width: "241px" }}
                                                             ></td>
                                                         );
                                                     }
