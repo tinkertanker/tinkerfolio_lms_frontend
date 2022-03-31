@@ -211,8 +211,8 @@ const Dashboard = ({
             </div>
 
             <table
-                className="block overflow-y-auto px-8 py-8 mt-12 w-max min-w-full"
-                style={{ height: size.height - 156, borderSpacing: "50px" }}
+                className="block overflow-y-auto px-8 py-8 w-max min-w-full"
+                style={{ height: size.height - 173, borderSpacing: "50px", marginTop: "60px" }}
             >
                 {sortBy === "indexHightoLow" ? (
                     <>
