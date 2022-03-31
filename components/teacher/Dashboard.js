@@ -186,7 +186,7 @@ const Dashboard = ({
         <>
             <div style={{ height: "96px" }}></div>
 
-            <div className="flex flex-row flex-wrap py-4 gap-4 pl-8 bg-gray-100 shadow-md">
+            <div className="flex flex-row flex-wrap py-4 gap-4 pl-8 bg-gray-100 shadow-md w-full fixed">
                 <Filter {...{ tasks, tasksToHide, setTasksToHide }} />
                 <Sort {...{ sortBy, setSortBy }} />
                 <NewTask addTask={addTask} />
@@ -205,144 +205,272 @@ const Dashboard = ({
                     }}
                     disabled={loadingAddStudent}
                 >
-                    <AddCircleOutline
-                        color={"#00000"}
-                        title={"Add"}
-                        height="20px"
-                        width="20px"
-                    />
+                    <AddCircleOutline color={"#00000"} title={"Add"} height="20px" width="20px" />
                     <p className="pl-1">Student</p>
                 </button>
             </div>
 
             <table
-                className="block overflow-y-auto px-8 py-8"
-                style={{ height: size.height - 156, borderSpacing: "50px" }}
+                className="block overflow-y-auto px-8 py-8 w-max min-w-full"
+                style={{ height: size.height - 173, borderSpacing: "50px", marginTop: "60px" }}
             >
-                <thead>
-                    <tr className="border-2">
-                        <th className="border-r-2 px-2 py-2">
-                            <p>Index</p>
-                        </th>
-                        <th className="border-r-2 px-2 py-2">
-                            <p>Student</p>
-                        </th>
-                        <th className="border-r-2 px-2 py-2">
-                            <p className="text-xl">★</p>
-                        </th>
-                        {sortTableTasks().map((task, i) => (
-                            <th
-                                className="border-r-2 px-2 py-2"
-                                key={i}
-                                style={{ width: "200px" }}
-                            >
-                                {/* this image below is a quick fix to give HTML table a min-width property. DO NOT DELETE */}
-                                <img
-                                    style={{
-                                        float: "left",
-                                        minWidth: "200px",
-                                        visibility: "hidden",
-                                        width: "0px",
-                                    }}
-                                />
-                                <div className="flex flex-row items-center">
-                                    <p className="font-normal ml-1 mr-2 py-0.5 px-1 text-sm text-white bg-gray-700 rounded">
-                                        Task
-                                    </p>
-                                    <p
-                                        className="truncate text-left"
-                                        style={{ width: "150px" }}
+                {sortBy === "indexHightoLow" ? (
+                    <>
+                        <thead className="flex">
+                            <tr className="border-l-2 border-t-2">
+                                <th className="border-r-2 px-2 py-2 w-16">
+                                    <p>Index</p>
+                                </th>
+                                <th className="border-r-2 px-2 py-2 w-72">
+                                    <p>Student</p>
+                                </th>
+                                <th className="border-r-2 px-2 py-2 w-16">
+                                    <p className="text-xl">★</p>
+                                </th>
+                                {sortTableTasks().map((task, i) => (
+                                    <th
+                                        className="border-r-2 px-2 py-2"
+                                        key={i}
+                                        style={{ width: "200px" }}
                                     >
-                                        {task.name}
-                                    </p>
-                                    <TaskMenu
-                                        {...{
-                                            task,
-                                            setOneTask,
-                                            deleteTask,
-                                            submissions,
-                                        }}
-                                    />
-                                </div>
+                                        {/* this image below is a quick fix to give HTML table a min-width property. DO NOT DELETE */}
+                                        <img style={{ float: "left", minWidth: "200px", visibility: "hidden", width: "0px", }} />
+                                        <div className="flex flex-row items-center">
+                                            <p className="font-normal ml-1 mr-2 py-0.5 px-1 text-sm text-white bg-gray-700 rounded">
+                                                Task
+                                            </p>
+                                            <p
+                                                className="truncate text-left"
+                                                style={{ width: "150px" }}
+                                            >
+                                                {task.name}
+                                            </p>
+                                            <TaskMenu {...{ task, setOneTask, deleteTask, submissions, }} />
+                                        </div>
+                                    </th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody className="align-top flex flex-col-reverse w-max">
+                            {Object.keys(tableNames).map(
+                                (studentName, index) => {
+                                    const sp = tableNames.filter(
+                                        (tn) => tn.index === index
+                                    )[0];
+                                    if (typeof sp === "undefined") return;
+                                    const student_id = sp.id;
+
+                                    return (
+                                        <tr
+                                            className="border-t-2 border-l-2 border-b-2"
+                                            key={index}
+                                        >
+                                            <td className="border-r-2 px-2 py-2 w-16">
+                                                <p>{index}</p>
+                                            </td>
+                                            <td className="border-r-2 px-3 py-2 w-72">
+                                                <div className="flex flex-row">
+                                                    <StudentName {...{ index, student_id, tableNames, setTableNames, updateName, bulkAddStudents, removeIndex }} />
+                                                    <StudentMenu index={index} removeIndex={ removeIndex } />
+                                                </div>
+                                                <p className="mt-4 text-sm text-gray-700">
+                                                    Submissions
+                                                </p>
+                                                <SubmissionSummary {...{ student_id, tasks, sortedTasks, submissions, submissionStatuses }} />
+                                            </td>
+                                            <td className="border-r-2 px-2 py-2 text-center w-16">
+                                                {sp.score}
+                                            </td>
+                                            {submissions &&
+                                                sortTableTasks().map(
+                                                    (task, i) => {
+                                                        let sub =
+                                                            submissions.filter(
+                                                                (s) =>
+                                                                    s.task ===
+                                                                        task.id &&
+                                                                    s.student ===
+                                                                        student_id
+                                                            )[0];
+                                                        return sub ? (
+                                                            <Submission {...{ sub, sp, task, addReview, sendJsonMessage, }} key={i} />
+                                                        ) : (
+                                                            <td
+                                                                className="px-2 py-2 border-r-2"
+                                                                key={i}
+                                                                style={{ width: "241.36px" }}
+                                                            ></td>
+                                                        );
+                                                    }
+                                                )}
+                                        </tr>
+                                    );
+                                })}
+                                </tbody>
+                    </>
+                ) : (
+                    <>
+                        <thead>
+                        <tr className="border-2">
+                            <th className="border-r-2 px-2 py-2 w-16">
+                                <p>Index</p>
                             </th>
-                        ))}
-                    </tr>
-                </thead>
-                <tbody className="align-top">
-                    {sortStudentIndex().map((index, i) => {
-                        const sp = tableNames.filter(
-                            (tn) => tn.index === index
-                        )[0];
-                        if (typeof sp === "undefined") return;
-                        const student_id = sp.id;
-                        return (
-                            <tr className="border-2" key={i}>
-                                <td className="border-r-2 px-2 py-2">
-                                    <p>{index}</p>
-                                </td>
-                                <td className="border-r-2 px-2 py-2">
-                                    <div className="flex flex-row">
-                                        <StudentName
-                                            {...{
-                                                index,
-                                                student_id,
-                                                tableNames,
-                                                setTableNames,
-                                                updateName,
-                                                bulkAddStudents,
-                                                removeIndex,
-                                            }}
-                                        />
-                                        <StudentMenu
-                                            index={index}
-                                            removeIndex={removeIndex}
-                                        />
+                            <th className="border-r-2 px-2 py-2 w-72">
+                                <p>Student</p>
+                            </th>
+                            <th className="border-r-2 px-2 py-2 w-16">
+                                <p className="text-xl">★</p>
+                            </th>
+                            {sortTableTasks().map((task, i) => (
+                                <th
+                                    className="border-r-2 px-2 py-2"
+                                    key={i}
+                                    style={{ width: "200px" }}
+                                >
+                                    {/* this image below is a quick fix to give HTML table a min-width property. DO NOT DELETE */}
+                                    <img style={{ float: "left", minWidth: "200px", visibility: "hidden", width: "0px", }} />
+                                    <div className="flex flex-row items-center">
+                                        <p className="font-normal ml-1 mr-2 py-0.5 px-1 text-sm text-white bg-gray-700 rounded">
+                                            Task
+                                        </p>
+                                        <p
+                                            className="truncate text-left"
+                                            style={{ width: "150px" }}
+                                        >
+                                            {task.name}
+                                        </p>
+                                        <TaskMenu {...{ task, setOneTask, deleteTask, submissions, }} />
                                     </div>
-                                    <p className="mt-4 text-sm text-gray-700">
-                                        Submissions
-                                    </p>
-                                    <SubmissionSummary
-                                        {...{
-                                            student_id,
-                                            tasks,
-                                            sortedTasks,
-                                            submissions,
-                                            submissionStatuses,
-                                        }}
-                                    />
-                                </td>
-                                <td className="border-r-2 px-2 py-2 text-center">
-                                    {sp.score}
-                                </td>
-                                {submissions &&
-                                    sortTableTasks().map((task, i) => {
-                                        let sub = submissions.filter(
-                                            (s) =>
-                                                s.task === task.id &&
-                                                s.student === student_id
+                                </th>
+                            ))}
+                        </tr>
+                    </thead>
+                    <tbody className="align-top">
+                        {sortBy === "indexLowToHigh" ? (
+                            <>
+                                {Object.keys(tableNames).map(
+                                    (studentName, index) => {
+                                        const sp = tableNames.filter(
+                                            (tn) => tn.index === index
                                         )[0];
-                                        return sub ? (
-                                            <Submission
-                                                {...{
-                                                    sub,
-                                                    sp,
-                                                    task,
-                                                    addReview,
-                                                    sendJsonMessage,
-                                                }}
-                                                key={i}
-                                            />
-                                        ) : (
-                                            <td
-                                                className="px-2 py-2 border-r-2"
-                                                key={i}
-                                            ></td>
+                                        if (typeof sp === "undefined") return;
+                                        const student_id = sp.id;
+
+                                        return (
+                                            <tr
+                                                className="border-2"
+                                                key={index}
+                                            >
+                                                <td className="border-r-2 px-2 py-2 w-16">
+                                                    <p>{index}</p>
+                                                </td>
+                                                <td className="border-r-2 px-2 py-2 w-72">
+                                                    <div className="flex flex-row">
+                                                        <StudentName {...{ index, student_id, tableNames, setTableNames, updateName, bulkAddStudents, removeIndex }} />
+                                                        <StudentMenu index={index} removeIndex={ removeIndex } />
+                                                    </div>
+                                                    <p className="mt-4 text-sm text-gray-700">
+                                                        Submissions
+                                                    </p>
+                                                    <SubmissionSummary {...{ student_id, tasks, sortedTasks, submissions, submissionStatuses }} />
+                                                </td>
+                                                <td className="border-r-2 px-2 py-2 text-center w-16">
+                                                    {sp.score}
+                                                </td>
+                                                {submissions &&
+                                                    sortTableTasks().map(
+                                                        (task, i) => {
+                                                            let sub =
+                                                                submissions.filter(
+                                                                    (s) =>
+                                                                        s.task ===
+                                                                            task.id &&
+                                                                        s.student ===
+                                                                            student_id
+                                                                )[0];
+                                                            return sub ? (
+                                                                <Submission {...{ sub, sp, task, addReview, sendJsonMessage, }} key={i} />
+                                                            ) : (
+                                                                <td
+                                                                    className="px-2 py-2 border-r-2"
+                                                                    key={i}
+                                                                    style={{ width: "241.36px" }}
+                                                                ></td>
+                                                            );
+                                                        }
+                                                    )}
+                                            </tr>
+                                        );
+                                    }
+                                )}
+                            </>
+                        ) : (
+                            <></>
+                        )}
+                    </tbody>
+
+                    <tbody className="align-top">
+                        <>
+                            {sortBy === "starsHighToLow" ||
+                            sortBy === "starsLowToHigh" ? (
+                                <>
+                                    {sortStudentIndex().map((index, i) => {
+                                        const sp = tableNames.filter(
+                                            (tn) => tn.index === index
+                                        )[0];
+                                        if (typeof sp === "undefined") return;
+                                        const student_id = sp.id;
+                                        return (
+                                            <tr className="border-2" key={i}>
+                                                <td className="border-r-2 px-2 py-2 w-16">
+                                                    <p>{index}</p>
+                                                </td>
+                                                <td className="border-r-2 px-2 py-2 w-72">
+                                                    <div className="flex flex-row">
+                                                        <StudentName {...{ index, student_id, tableNames, setTableNames, updateName, bulkAddStudents, removeIndex, }} />
+                                                        <StudentMenu index={index} removeIndex={ removeIndex } />
+                                                    </div>
+                                                    <p className="mt-4 text-sm text-gray-700">
+                                                        Submissions
+                                                    </p>
+                                                    <SubmissionSummary {...{ student_id, tasks, sortedTasks, submissions, submissionStatuses, }} />
+                                                </td>
+                                                <td className="border-r-2 px-2 py-2 text-center w-16">
+                                                    {sp.score}
+                                                </td>
+                                                {submissions &&
+                                                    sortTableTasks().map(
+                                                        (task, i) => {
+                                                            let sub =
+                                                                submissions.filter(
+                                                                    (s) =>
+                                                                        s.task ===
+                                                                            task.id &&
+                                                                        s.student ===
+                                                                            student_id
+                                                                )[0];
+                                                            return sub ? (
+                                                                <Submission {...{ sub, sp, task, addReview, sendJsonMessage, }} key={i} />
+                                                            ) : (
+                                                                <td
+                                                                    className="px-2 py-2 border-r-2"
+                                                                    key={i}
+                                                                    style={{ width: "241.36px" }}
+                                                                ></td>
+                                                            );
+                                                        }
+                                                    )}
+                                            </tr>
                                         );
                                     })}
-                            </tr>
-                        );
-                    })}
-                </tbody>
+                                </>
+                            ) : (
+                                <></>
+                            )}
+                        </>
+                    </tbody>
+                    </>
+                )}
             </table>
         </>
     );
@@ -426,11 +554,7 @@ const Sort = ({ sortBy, setSortBy }) => {
         <Popup
             trigger={
                 <button className="flex flex-row items-center py-1 px-2 bg-blue-600 text-sm text-white rounded hover:bg-blue-700 focus:outline-none">
-                    <FunnelOutline
-                        color={"#ffffff"}
-                        height="17px"
-                        width="17px"
-                    />
+                    <FunnelOutline color={"#ffffff"} height="17px" width="17px" />
                     <p className="pl-2">Sort</p>
                 </button>
             }
@@ -442,7 +566,7 @@ const Sort = ({ sortBy, setSortBy }) => {
                 <div className="px-4 py-4 bg-white shadow-md rounded">
                     <p className="text-xl font-bold mb-3">Sort By</p>
 
-                    <form>
+                    <form className="w-56">
                         <input
                             type="radio"
                             id="indexLowToHigh"
@@ -563,24 +687,25 @@ const SubmissionSummary = ({
                     // no submission
                     if (!status) {
                         // no status indicated
-                        statusIcon = ( // has not started
-                            <svg width="20" height="20" className="pr-0.5">
-                                <rect
-                                    width="14"
-                                    height="14"
-                                    x="2"
-                                    y="2"
-                                    rx="2"
-                                    ry="2"
-                                    className="rounded"
-                                    style={{
-                                        fill: "#D1D5DB",
-                                        stroke: "#9CA3AF",
-                                        strokeWidth: "2",
-                                    }}
-                                ></rect>
-                            </svg>
-                        );
+                        statusIcon = // has not started
+                            (
+                                <svg width="20" height="20" className="pr-0.5">
+                                    <rect
+                                        width="14"
+                                        height="14"
+                                        x="2"
+                                        y="2"
+                                        rx="2"
+                                        ry="2"
+                                        className="rounded"
+                                        style={{
+                                            fill: "#D1D5DB",
+                                            stroke: "#9CA3AF",
+                                            strokeWidth: "2",
+                                        }}
+                                    ></rect>
+                                </svg>
+                            );
                     } else {
                         // status indicated
                         if (status.status === 0) {
