@@ -60,7 +60,7 @@ const Layout = ({children}) => {
                 <nav className={navStyle}>
                     { ['/', '/login', 'join'].includes(router.pathname) ? (
                         <Link href="/">
-                            <img className="cursor-pointer" src="main_logo_1.png" height="50px" width="50px"/>
+                            <img className="cursor-pointer" src="main_logo_1.png" height="100px" width="100px"/>
                         </Link>
                     ) : (
                         <div><h1 className="text-2xl font-logo text-blue-700">EchoClass</h1></div>
