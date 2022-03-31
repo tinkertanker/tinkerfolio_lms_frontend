@@ -146,6 +146,9 @@ const Dashboard = ({
     };
 
     const sortedTasks = () => tasks.sort((a, b) => (a.id > b.id ? 1 : -1));
+    const shownTasks = () => tasks.filter(
+        (task) => !tasksToHide.includes(task.id)
+    );
 
     const sortTableTasks = () => {
         let tasksToShow = tasks.filter(
@@ -153,6 +156,8 @@ const Dashboard = ({
         );
         return tasksToShow.sort((a, b) => (a.id > b.id ? 1 : -1));
     };
+    
+    
 
     const sortStudentIndex = () => {
         let sortedTableNames = null;
@@ -306,6 +311,7 @@ const Dashboard = ({
                                             student_id,
                                             tasks,
                                             sortedTasks,
+                                            shownTasks,
                                             submissions,
                                             submissionStatuses,
                                         }}
@@ -370,7 +376,7 @@ const Filter = ({ tasks, tasksToHide, setTasksToHide }) => {
                 <button className="flex flex-row py-1 px-2 bg-blue-600 text-sm text-white rounded hover:bg-blue-700 focus:outline-none">
                     <FilterIcon color={"#ffffff"} height="20px" width="20px" />
                     <p className="pl-2">
-                        Filter ({tasks.length - tasksToHide.length})
+                        Hide/Show Tasks ({tasks.length - tasksToHide.length})
                     </p>
                 </button>
             }
@@ -541,13 +547,16 @@ const SubmissionSummary = ({
     student_id,
     tasks,
     sortedTasks,
+    shownTasks,
     submissions,
     submissionStatuses,
 }) => {
     if (!submissions || !submissionStatuses) return <h1></h1>;
     return (
         <div className="flex flex-row flex-wrap mt-1">
-            {sortedTasks().map((task, i) => {
+            
+            
+           {shownTasks().map((task, i) => {
                 const sub = submissions.filter(
                     (submission) =>
                         submission.student === student_id &&
@@ -808,7 +817,7 @@ const Review = ({ sub, task }) => {
                 {"★".repeat(sub.stars) + "☆".repeat(task.max_stars - sub.stars)}
             </p>
             <p className="italic whitespace-pre-wrap">
-                {sub.comments !== "" ? sub.comments : "No additonal comments."}
+                {sub.comments !== "" ? sub.comments : "No additional comments."}
             </p>
         </>
     );
