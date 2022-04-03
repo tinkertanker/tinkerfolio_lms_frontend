@@ -146,6 +146,7 @@ const Dashboard = ({
     };
 
     const sortedTasks = () => tasks.sort((a, b) => (a.id > b.id ? 1 : -1));
+
     const shownTasks = () => tasks.filter(
         (task) => !tasksToHide.includes(task.id)
     );
@@ -156,8 +157,6 @@ const Dashboard = ({
         );
         return tasksToShow.sort((a, b) => (a.id > b.id ? 1 : -1));
     };
-    
-    
 
     const sortStudentIndex = () => {
         let sortedTableNames = null;
@@ -281,7 +280,7 @@ const Dashboard = ({
                                                 <p className="mt-4 text-sm text-gray-700">
                                                     Submissions
                                                 </p>
-                                                <SubmissionSummary {...{ student_id, tasks, sortedTasks, submissions, submissionStatuses }} />
+                                                <SubmissionSummary {...{ student_id, tasks, sortedTasks, shownTasks, submissions, submissionStatuses }} />
                                             </td>
                                             <td className="border-r-2 px-2 py-2 text-center w-16">
                                                 {sp.score}
@@ -377,7 +376,7 @@ const Dashboard = ({
                                                     <p className="mt-4 text-sm text-gray-700">
                                                         Submissions
                                                     </p>
-                                                    <SubmissionSummary {...{ student_id, tasks, sortedTasks, submissions, submissionStatuses }} />
+                                                    <SubmissionSummary {...{ student_id, tasks, sortedTasks, shownTasks, submissions, submissionStatuses }} />
                                                 </td>
                                                 <td className="border-r-2 px-2 py-2 text-center w-16">
                                                     {sp.score}
@@ -438,7 +437,7 @@ const Dashboard = ({
                                                     <p className="mt-4 text-sm text-gray-700">
                                                         Submissions
                                                     </p>
-                                                    <SubmissionSummary {...{ student_id, tasks, sortedTasks, submissions, submissionStatuses, }} />
+                                                    <SubmissionSummary {...{ student_id, tasks, sortedTasks, shownTasks, submissions, submissionStatuses, }} />
                                                 </td>
                                                 <td className="border-r-2 px-2 py-2 text-center w-16">
                                                     {sp.score}
@@ -677,9 +676,7 @@ const SubmissionSummary = ({
     if (!submissions || !submissionStatuses) return <h1></h1>;
     return (
         <div className="flex flex-row flex-wrap mt-1">
-            
-            
-           {shownTasks().map((task, i) => {
+            {shownTasks().map((task, i) => {
                 const sub = submissions.filter(
                     (submission) =>
                         submission.student === student_id &&
