@@ -47,20 +47,20 @@ const Layout = ({children}) => {
             <Head>
                 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
                 <link href="https://fonts.googleapis.com/css2?family=Staatliches&display=swap" rel="stylesheet" />
-                <link rel="icon" href="/e_favicon.ico" />
+                <link rel="icon" href="/mini_logo.ico" />
 
-                <meta property='og:image' content='https://www.echoclass.com/logo.png'/>
+                <meta property='og:image' content='https://www.echoclass.com/main_logo_1.png'/>
 
                 <meta name="twitter:card" content="summary" key="twitter_card" />
                 <meta name="twitter:site" content="@themichaelchen" key="twitter_site" />
-                <meta name="twitter:image" content="https://www.echoclass.com/logo.png" key="twitter_image" />
+                <meta name="twitter:image" content="https://www.echoclass.com/main_logo_1.png" key="twitter_image" />
 
             </Head>
             <div className={(router.pathname === "/" ? "bg-purple-50" : "bg-gray-100")}>
                 <nav className={navStyle}>
                     { ['/', '/login', 'join'].includes(router.pathname) ? (
                         <Link href="/">
-                            <img className="cursor-pointer" src="logo.png" height="50px" width="50px"/>
+                            <img className="cursor-pointer" src="main_logo_1.png" height="100px" width="100px"/>
                         </Link>
                     ) : (
                         <div><h1 className="text-2xl font-logo text-blue-700">EchoClass</h1></div>
