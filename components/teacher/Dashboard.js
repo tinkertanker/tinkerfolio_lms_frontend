@@ -297,7 +297,13 @@ const Dashboard = ({
                                                                         student_id
                                                             )[0];
                                                         return sub ? (
-                                                            <Submission {...{ sub, sp, task, addReview, sendJsonMessage, }} key={i} />
+                                                            <td
+                                                                className="px-2 py-2 border-r-2"
+                                                                key={i}
+                                                                style={{ width: "241.36px" }}
+                                                            >
+                                                                <SubmissionHighToLow {...{ sub, sp, task, addReview, sendJsonMessage, }} key={i} />
+                                                            </td>
                                                         ) : (
                                                             <td
                                                                 className="px-2 py-2 border-r-2"
@@ -845,6 +851,102 @@ const Submission = ({ sub, sp, task, addReview, sendJsonMessage }) => {
         <CustomPopup
             trigger={
                 <td className="px-2 py-2 border-r-2 min-w-48 cursor-pointer hover:bg-gray-100">
+                    {[0, 1, 2, 3, 4, 5].includes(sub.stars) ? (
+                        <p className="text-lg">
+                            {"★".repeat(sub.stars) +
+                                "☆".repeat(task.max_stars - sub.stars)}
+                        </p>
+                    ) : (
+                        <p className="italic text-xs mb-2">Not reviewed yet.</p>
+                    )}
+                    <p className="border-t border-gray-300"></p>
+                    {sub.text && (
+                        <p className="flex-none text-xs text-gray-700 mt-2">
+                            {shortened(
+                                sub.text,
+                                sub.text && sub.image ? 40 : 100
+                            )}
+                        </p>
+                    )}
+
+                    <img
+                        className="mt-2"
+                        src={sub.image}
+                        style={{ maxHeight: "100px" }}
+                        onError={() => sendJsonMessage({ submission: sub.id })}
+                    />
+                </td>
+            }
+            contentStyle={{
+                overflowY: "auto",
+                marginTop: "min(5%)",
+                height: "max(80%)",
+            }}
+        >
+            <div className="flex flex-col px-4 py-4 bg-white rounded-lg popup">
+                <div className="flex flex-row text-xl">
+                    <p>Index:</p>
+                    <p className="ml-2 font-bold">{sp.index}</p>
+                    {sp.name !== "" && (
+                        <>
+                            <p className="ml-4">Name:</p>
+                            <p className="ml-2 font-bold">{sp.name}</p>
+                        </>
+                    )}
+                </div>
+
+                <div className="flex flex-row mt-6 items-center">
+                    <h1 className="text-lg font-bold">Submission</h1>
+                    {sub.image && (
+                        <a
+                            href={sub.image}
+                            className="text-sm text-white py-0.5 px-1 ml-4 bg-gray-500 hover:bg-gray-600 rounded"
+                            download="submission.png"
+                            target="_blank"
+                        >
+                            Full Image
+                        </a>
+                    )}
+                </div>
+
+                <div className="border-2 border-gray-300 rounded mt-4">
+                    <p className="ml-2 px-2 py-2 whitespace-pre-wrap">
+                        <CustomLinkify>{sub.text}</CustomLinkify>
+                    </p>
+
+                    {sub.image && (
+                        <img
+                            src={sub.image}
+                            className="px-2 py-2 mx-auto"
+                            style={{ maxHeight: 300 }}
+                            onError={() => reloadSubmission(sub.id)}
+                        />
+                    )}
+                </div>
+
+                <p className="border-b-2 border-gray-200 mt-6"></p>
+
+                {[0, 1, 2, 3, 4, 5].includes(sub.stars) ? (
+                    <Review sub={sub} task={task} />
+                ) : (
+                    <ReviewForm sub={sub} task={task} addReview={addReview} />
+                )}
+            </div>
+        </CustomPopup>
+    );
+};
+
+const SubmissionHighToLow = ({ sub, sp, task, addReview, sendJsonMessage }) => {
+    const shortened = (text, maxLength) => {
+        if (text.length > maxLength)
+            return text.substring(0, maxLength) + "...";
+        return text;
+    };
+
+    return (
+        <CustomPopup
+            trigger={
+                <td className="px-2 py-2 cursor-pointer hover:bg-gray-100" style={{ width: "241.36px" }}>
                     {[0, 1, 2, 3, 4, 5].includes(sub.stars) ? (
                         <p className="text-lg">
                             {"★".repeat(sub.stars) +
