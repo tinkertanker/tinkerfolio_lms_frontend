@@ -221,7 +221,7 @@ const Dashboard = ({
                 {sortBy === "indexHightoLow" ? (
                     <>
                         <thead className="flex">
-                            <tr className="border-l-2 border-t-2">
+                            <tr className="border-l-2 border-t-2 border-b-2">
                                 <th className="border-r-2 px-2 py-2 w-16">
                                     <p>Index</p>
                                 </th>
@@ -266,7 +266,7 @@ const Dashboard = ({
 
                                     return (
                                         <tr
-                                            className="border-t-2 border-l-2 border-b-2"
+                                            className="border-l-2 border-b-2"
                                             key={index}
                                         >
                                             <td className="border-r-2 px-2 py-2 w-16">
