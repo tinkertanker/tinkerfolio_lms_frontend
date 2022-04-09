@@ -14,23 +14,7 @@ import {
 const contentStyle = { paddingLeft: "0.5rem", paddingRight: "0.5rem" };
 const arrowStyle = { color: "#374151", paddingBottom: "0.25rem" }; // style for an svg element
 
-const Dashboard = ({
-    classroom,
-    names,
-    removeIndex,
-    addStudent,
-    bulkAddStudents,
-    loadingAddStudent,
-    setLoadingAddStudent,
-    updateName,
-    tasks,
-    setTasks,
-    submissionStatuses,
-    submissions,
-    setSubmissions,
-    sendJsonMessage,
-    size,
-}) => {
+const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents, loadingAddStudent, setLoadingAddStudent, updateName, tasks, setTasks, submissionStatuses, submissions, setSubmissions, sendJsonMessage, size }) => {
     const { getAccessToken } = useContext(AuthContext);
     const [tableNames, setTableNames] = useState();
     const [tasksToHide, setTasksToHide] = useState([]);
@@ -163,34 +147,44 @@ const Dashboard = ({
 
         switch (sortBy) {
             case "indexLowToHigh":
-                // return classroom.student_indexes;
                 sortedTableNames = tableNames.sort((a, b) =>
                     a.index > b.index ? 1 : -1
                 );
-                return sortedTableNames.map((n, i) => n.index);
+
+                console.log("tablenames:", tableNames)
                 break;
             case "indexHightoLow":
-                // return classroom.student_indexes.sort((a, b) =>
-                //     a.id > b.id ? 1 : -1
-                // );
                 sortedTableNames = tableNames.sort((a, b) =>
                     a.index < b.index ? 1 : -1
                 );
-                return sortedTableNames.map((n, i) => n.index);
                 break;
             case "starsHighToLow":
                 sortedTableNames = tableNames.sort((a, b) =>
-                    a.score < b.score ? 1 : -1
+                    {
+                        if (a.score < b.score) return 1
+                        else if (a.score > b.score) return -1
+                        else {
+                            if (a.index > b.index) return 1
+                            else return -1
+                        }
+                    }
                 );
-                return sortedTableNames.map((n, i) => n.index);
                 break;
             case "starsLowToHigh":
                 sortedTableNames = tableNames.sort((a, b) =>
-                    a.score > b.score ? 1 : -1
+                    {
+                        if (a.score < b.score) return -1
+                        else if (a.score > b.score) return 1
+                        else {
+                            if (a.index > b.index) return 1
+                            else return -1
+                        }
+                    }
                 );
-                return sortedTableNames.map((n, i) => n.index);
                 break;
         }
+
+        return sortedTableNames.map((n, i) => n.index);
     };
 
     // disabling add student when its loading is still not working
