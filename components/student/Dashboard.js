@@ -181,12 +181,12 @@ const Task = ({task, sub, i, addSubmission, updateSubmission, reloadSubmission, 
                     { isSubmitted ? (
                         <>
                             <Submission sub={sub} reloadSubmission={reloadSubmission} />
-                            <TeacherComment isGraded={isGraded} task={task} sub={sub} />
                             { !isGraded ? (
                                 <SubmissionForm task={task} addSubmission={addSubmission} updateSubmission={updateSubmission} close={close} isUpdate={true} sub={sub} />
                             ) : (
                                 <></>
                             )}
+                            <TeacherComment isGraded={isGraded} task={task} sub={sub} />
                         </>
                     ) : (
                         <>
@@ -306,27 +306,7 @@ const SubmissionForm = ({task, addSubmission, updateSubmission, close, isUpdate,
         close()
     }
 
-    if (!isUpdate) {
-        return (
-            <div className="w-full">
-                <h2 className="text-xl pl-2 pt-4">Submit</h2>
-                <small className="text-gray-500 pl-2">Both text and images are accepted.</small>
-                <form onSubmit={e => submitForm(e)}>
-                    <div className="px-2">
-                        <textarea
-                            onChange={e => setTextInput(e.target.value)}
-                            className="outline-none border-2 border-gray-100 focus:border-gray-300 px-2 py-2 my-2 rounded-lg w-full"
-                            rows="4" value={textInput} name="description"
-                        />
-                    </div>
-                    <div className="flex flex-row-reverse items-center">
-                        <input type="file" className="bg-gray-400 text-white px-2 py-1 w-min text-sm rounded-lg" onChange={e => setFileInput(e.target.files[0])} />
-                    </div>
-                    <button type="submit" className="mt-4 px-2 py-1 bg-green-600 hover:bg-green-700 text-white rounded">Submit</button>
-                </form>
-            </div>
-        )
-    } else {
+    if (isUpdate) {
         if (!editing) {
             return (
                 <button className="mt-4 px-2 py-1 bg-green-600 hover:bg-green-700 text-white rounded"
@@ -355,5 +335,25 @@ const SubmissionForm = ({task, addSubmission, updateSubmission, close, isUpdate,
                 </div>
             )
         }
+    } else {
+        return (
+            <div className="w-full">
+                <h2 className="text-xl pl-2 pt-4">Submit</h2>
+                <small className="text-gray-500 pl-2">Both text and images are accepted.</small>
+                <form onSubmit={e => submitForm(e)}>
+                    <div className="px-2">
+                        <textarea
+                            onChange={e => setTextInput(e.target.value)}
+                            className="outline-none border-2 border-gray-100 focus:border-gray-300 px-2 py-2 my-2 rounded-lg w-full"
+                            rows="4" value={textInput} name="description"
+                        />
+                    </div>
+                    <div className="flex flex-row-reverse items-center">
+                        <input type="file" className="bg-gray-400 text-white px-2 py-1 w-min text-sm rounded-lg" onChange={e => setFileInput(e.target.files[0])} />
+                    </div>
+                    <button type="submit" className="mt-4 px-2 py-1 bg-green-600 hover:bg-green-700 text-white rounded">Submit</button>
+                </form>
+            </div>
+        )
     }
 }
