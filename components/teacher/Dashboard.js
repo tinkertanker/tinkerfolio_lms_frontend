@@ -18,7 +18,7 @@ import {
 const contentStyle = { paddingLeft: "0.5rem", paddingRight: "0.5rem" };
 const arrowStyle = { color: "#374151", paddingBottom: "0.25rem" }; // style for an svg element
 
-const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents, loadingAddStudent, setLoadingAddStudent, updateName, tasks, setTasks, submissionStatuses, submissions, setSubmissions, sendJsonMessage, size, announcements, setAnnouncements }) => {
+const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents, loadingAddStudent, setLoadingAddStudent, updateName, tasks, setTasks, submissionStatuses, submissions, setSubmissions, sendJsonMessage, size, announcements, setAnnouncements, resources, setResources }) => {
     const { getAccessToken } = useContext(AuthContext);
     const [tableNames, setTableNames] = useState();
     const [tasksToHide, setTasksToHide] = useState([]);
@@ -145,6 +145,28 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
             console.log("Something went wrong...")
         }
     }
+
+    const addResource = (resource) => {
+            const formData = new FormData()
+            formData.append("code", classroom.code)
+            resource.name && formData.append("name", resource.name)
+
+            for (let i = 0; i < resource.files.length; i++) {
+                formData.append("file_" + (i+1).toString(), resource.files[i])
+            }
+
+            getAccessToken().then((accessToken) => {
+                axios
+                    .post(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + 'core/resource_section/', formData,
+                    { headers: {'Authorization': 'Bearer ' + accessToken} })
+                    .then(res => {
+                        setResources([...resources, res.data])
+                    })
+                    .catch(res => {
+                        console.log(res)
+                    })
+            })
+    };
 
     const addReview = (id, stars, comment) => {
         // push review to server
@@ -285,7 +307,11 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                                                 <div className="flex flex-row flex-1">
                                                     <h3 className="flex justify-start w-1/2 font-bold text-xl text-blue-600">{announcement.name}</h3>
                                                     <div className="flex flex-row justify-end w-1/2 gap-2">
-                                                        <UpdateAnnouncement updateAnnouncement={updateAnnouncement} existingAnnouncement={announcement} />
+                                                        <UpdateAnnouncement
+                                                            updateAnnouncement={updateAnnouncement} 
+                                                            existingAnnouncement={announcement} 
+                                                            popupClose={close} 
+                                                        />
                                                         <DeleteAnnouncement
                                                             id={announcement.id}
                                                             deleteAnnouncement={deleteAnnouncement}
@@ -306,36 +332,59 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                         <section>
                             <div className="flex flex-row flex-1 items-center">
                                 <h1 className="font-bold text-2xl w-1/2">Resources</h1>
-                                <button className="w-1/2 text-base flex justify-end text-gray-500 hover:text-blue-600">
-                                    Add Category
-                                </button>
+                                <NewResource addResource={addResource} popupClose={close} />
                             </div>
-                            <div>
-                                <div className="flex flex-col mt-6 bg-gray-200 shadow-md p-4 border rounded-lg">
-                                    <div className="flex flex-row flex-1">
-                                        <h3 className="flex justify-start w-1/2 font-bold text-xl">Title</h3>
-                                        <div className="flex flex-row justify-end w-1/2 gap-2">
-                                            <button>
-                                                <CreateOutline color={"#00000"} title={"Back"} height="20px" width="20px" />
-                                            </button>
-                                            <button>
-                                                <TrashOutline color={"#00000"} title={"Back"} height="20px" width="20px" />
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div className="my-2">
-                                        <p className="w-ann-text text-blue-600">
-                                            Item 1
-                                        </p>
-                                        <p className="w-ann-text text-blue-600">
-                                            Item 2
-                                        </p>
-                                        <p className="w-ann-text text-blue-600">
-                                            Item 3
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
+                            {resources.map((resource, i) => (
+                                    <>
+                                        {resource.section.name ? (
+                                            <div
+                                                className="flex flex-col mt-6 bg-gray-200 shadow-md p-4 border rounded-lg"
+                                                key={i}
+                                            >
+                                                <div className="flex flex-row flex-1">
+                                                    <h3 className="flex justify-start w-1/2 font-bold text-xl">
+                                                        {resource.section.name}
+                                                    </h3>
+                                                    <div className="flex flex-row justify-end w-1/2 gap-2">
+                                                        {/* <UpdateAnnouncement 
+                                                            updateAnnouncement={updateAnnouncement} 
+                                                            existingAnnouncement={announcement} 
+                                                            popupClose={close}
+                                                        /> */}
+                                                        {/* <DeleteResource
+                                                            id={resource.id}
+                                                            deleteAnnouncement={deleteResource}
+                                                            popupClose={close}
+                                                        /> */}
+                                                    </div>
+                                                </div>
+                                                {resource.resources.map((file, i) => (
+                                                    <a className="text-blue-600 hover:text-blue-700 mt-2" href={file.file} target="_blank">{file.name}</a>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <div className="hidden" key={i}>
+                                                <div className="flex flex-row flex-1">
+                                                    <h3 className="flex justify-start w-1/2 font-bold text-xl">
+                                                        {resource.section.name}
+                                                    </h3>
+                                                    {/* <div className="flex flex-row justify-end w-1/2 gap-2">
+                                                        <UpdateAnnouncement 
+                                                            updateAnnouncement={updateAnnouncement} 
+                                                            existingAnnouncement={announcement} 
+                                                            popupClose={close}
+                                                        />
+                                                        <DeleteAnnouncement
+                                                            id={announcement.id}
+                                                            deleteAnnouncement={deleteAnnouncement}
+                                                            popupClose={close}
+                                                        />
+                                                    </div> */}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </>
+                                ))}
                         </section>
                     </div>
                 </>
@@ -1580,6 +1629,71 @@ const UpdateAnnouncement = ({ updateAnnouncement, existingAnnouncement, popupClo
                             className="focus:outline-none mt-4 ml-2 px-2 py-1 w-min border bg-gray-500 hover:bg-gray-600 rounded text-white font-bold"
                             onClick={() => {
                                 setAnnouncement({ name: existingAnnouncement.name, description: existingAnnouncement.description });
+                                close();
+                                popupClose();
+                            }}
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            className="focus:outline-none mt-4 ml-2 px-2 py-1 w-min bg-blue-500 text-white rounded hover:bg-blue-600 font-bold"
+                        >
+                            Done
+                        </button>
+                    </div>
+                </form>
+            )}
+        </CustomPopup>
+    );
+};
+
+const NewResource = ({ addResource, popupClose }) => {
+    const [resource, setResource] = useState({
+        name: "",
+        files: []
+    });
+
+    return (
+        <CustomPopup
+            trigger={
+                <button className="w-1/2 text-base flex justify-end text-gray-500 hover:text-blue-600 focus:outline-none">
+                    <p>Add Resource</p>
+                </button>
+            }
+        >
+            {(close) => (
+                <form
+                    className="flex flex-col px-4 py-4 bg-white rounded-lg shadow-md popup"
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        addResource(resource);
+                        setResource({ name: "", files: [] }); // reset form fields
+                        close();
+                    }}
+                >
+                    <h1 className="font-bold text-2xl border-b-2 border-gray-300 focus:border-gray-500 my-2 mx-2">
+                        Create Resource Category
+                    </h1>
+                    <label htmlFor="name" className="my-2 mx-2">Title:</label>
+                    <input
+                        onChange={(e) =>
+                            setResource({
+                                ...resource,
+                                [e.target.name]: e.target.value,
+                            })
+                        }
+                        className="outline-none resize-none text-sm border-2 border-gray-300 focus:border-gray-500 py-2 px-2 mx-2 rounded-lg"
+                        value={resource.name}
+                        name="name"
+                        autoComplete="off"
+                    />
+                    <input type="file" multiple className="bg-gray-400 text-white px-2 py-1 w-min text-sm rounded-lg ml-2 mt-4" onChange={e => { setResource({ ...resource, files: e.target.files })}} />
+                    <div className="flex flex-row justify-end gap-4">
+                        <button
+                            className="focus:outline-none mt-4 ml-2 px-2 py-1 w-min border bg-gray-500 hover:bg-gray-600 rounded text-white font-bold"
+                            onClick={() => {
+                                setResource({ name: "", files: [] });
                                 close();
                                 popupClose();
                             }}
