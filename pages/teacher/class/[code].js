@@ -23,6 +23,7 @@ const Classroom = () => {
 
     const [classroom, setClassroom] = useState()
     const [tasks, setTasks] = useState([])
+    const [announcements, setAnnouncements] = useState()
     const [submissionStatuses, setSubmissionStatuses] = useState()
     const [submissions, setSubmissions] = useState()
     const [names, setNames] = useState()
@@ -88,6 +89,21 @@ const Classroom = () => {
                 console.log(res)
             })
         })
+
+        // Get all announcement data
+        getAccessToken().then((accessToken) => {
+            axios.get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE+'core/announcements/', {
+                headers: {'Authorization': 'Bearer '+accessToken},
+                params: {'code': code}
+            })
+            .then(res => {
+                setAnnouncements(res.data)
+            })
+            .catch(res => {
+                console.log(res)
+            })
+        })
+
     }, [router.query, auth.tokens])
 
     useEffect(() => {
@@ -256,7 +272,8 @@ const Classroom = () => {
                             names, updateName,
                             tasks, setTasks,
                             submissionStatuses, submissions, setSubmissions, sendJsonMessage,
-                            size
+                            size,
+                            announcements, setAnnouncements
                         }} />
                     </div>
                     <div className={`fixed bottom-4 right-4 flex flex-row items-center py-1 px-4 rounded-full bg-white shadow-lg ${statusColor[connectionStatus]}`}>
