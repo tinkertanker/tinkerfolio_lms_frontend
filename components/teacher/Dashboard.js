@@ -118,21 +118,32 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
     };
 
     const deleteAnnouncement = (id) => {
-        getAccessToken().then((accessToken) => {
-            axios
-                .delete(
-                    process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-                        "core/announcements/" +
-                        id.toString() +
-                        "/",
-                    {
-                        headers: { Authorization: "Bearer " + accessToken },
-                    }
-                )
-                .then((res) => {
-                    setAnnouncements(announcements.filter((a) => a.id !== id));
-                });
-        });
+        try {
+            const existingAnnouncement = announcements.filter(subAnnouncement => subAnnouncement.id === id)
+            const existingIndex = Object.keys(announcements).find(key => announcements[key] === existingAnnouncement[0])
+
+            getAccessToken().then((accessToken) => {
+                axios
+                    .delete(
+                        process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
+                            "core/announcements/" +
+                            id.toString() +
+                            "/",
+                        {
+                            headers: { Authorization: "Bearer " + accessToken },
+                        }
+                    )
+                    .then((res) => {
+                        setAnnouncements([
+                            ...announcements.filter(subAnnouncement => Object.keys(announcements).find(key => announcements[key] === subAnnouncement) < existingIndex),
+                            res.data,
+                            ...announcements.filter(subAnnouncement => Object.keys(announcements).find(key => announcements[key] === subAnnouncement) > existingIndex),
+                        ])
+                    })
+            });
+        } catch (error) {
+            console.log("Something went wrong...")
+        }
     };
 
     const updateAnnouncement = (name, description, id) => {
@@ -290,25 +301,46 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                             </div>
                             <div>
                                 {announcements.map((announcement, i) => (
-                                    <div
-                                        className="flex flex-col mt-6 bg-gray-200 shadow-md p-4 border rounded-lg"
-                                        key={i}
-                                    >
-                                        <div className="flex flex-row flex-1">
-                                            <h3 className="flex justify-start w-1/2 font-bold text-xl text-blue-600">{announcement.name}</h3>
-                                            <div className="flex flex-row justify-end w-1/2 gap-2">
-                                                <UpdateAnnouncement updateAnnouncement={updateAnnouncement} existingAnnouncement={announcement} />
-                                                <DeleteAnnouncement
-                                                    id={announcement.id}
-                                                    deleteAnnouncement={deleteAnnouncement}
-                                                    popupClose={close}
-                                                />
+                                    <>
+                                        {announcement.name ? (
+                                            <div
+                                                className="flex flex-col mt-6 bg-gray-200 shadow-md p-4 border rounded-lg"
+                                                key={i}
+                                            >
+                                                <div className="flex flex-row flex-1">
+                                                    <h3 className="flex justify-start w-1/2 font-bold text-xl text-blue-600">{announcement.name}</h3>
+                                                    <div className="flex flex-row justify-end w-1/2 gap-2">
+                                                        <UpdateAnnouncement updateAnnouncement={updateAnnouncement} existingAnnouncement={announcement} />
+                                                        <DeleteAnnouncement
+                                                            id={announcement.id}
+                                                            deleteAnnouncement={deleteAnnouncement}
+                                                            popupClose={close}
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <p className="my-2 w-ann-text whitespace-pre-wrap">
+                                                    {announcement.description}
+                                                </p>
                                             </div>
-                                        </div>
-                                        <p className="my-2 w-ann-text whitespace-pre-wrap">
-                                            {announcement.description}
-                                        </p>
-                                    </div>
+                                        ) : (
+                                            <div className="hidden" key={i}>
+                                                <div className="flex flex-row flex-1">
+                                                    <h3 className="flex justify-start w-1/2 font-bold text-xl text-blue-600">{announcement.name}</h3>
+                                                    <div className="flex flex-row justify-end w-1/2 gap-2">
+                                                        <UpdateAnnouncement updateAnnouncement={updateAnnouncement} existingAnnouncement={announcement} />
+                                                        <DeleteAnnouncement
+                                                            id={announcement.id}
+                                                            deleteAnnouncement={deleteAnnouncement}
+                                                            popupClose={close}
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <p className="my-2 w-ann-text whitespace-pre-wrap">
+                                                    {announcement.description}
+                                                </p>
+                                            </div>
+                                        )}
+                                    </>
                                 ))}
                             </div>
                         </section>
