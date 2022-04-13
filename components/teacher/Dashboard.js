@@ -251,7 +251,7 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                         <section>
                             <div className="flex flex-row flex-1 items-center">
                                 <h1 className="font-bold text-2xl w-1/2">Announcements</h1>
-                                <NewAnnouncement addAnnouncement={addAnnouncement} />
+                                <NewAnnouncement addAnnouncement={addAnnouncement} popupClose={close} />
                             </div>
                             <div>
                                 {announcements.map((announcement, i) => (
@@ -264,7 +264,11 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                                                 <div className="flex flex-row flex-1">
                                                     <h3 className="flex justify-start w-1/2 font-bold text-xl text-blue-600">{announcement.name}</h3>
                                                     <div className="flex flex-row justify-end w-1/2 gap-2">
-                                                        <UpdateAnnouncement updateAnnouncement={updateAnnouncement} existingAnnouncement={announcement} />
+                                                        <UpdateAnnouncement 
+                                                            updateAnnouncement={updateAnnouncement} 
+                                                            existingAnnouncement={announcement} 
+                                                            popupClose={close}
+                                                        />
                                                         <DeleteAnnouncement
                                                             id={announcement.id}
                                                             deleteAnnouncement={deleteAnnouncement}
@@ -1397,7 +1401,7 @@ const DeleteTask = ({ id, deleteTask, setIsCloseOnDocClick, popupClose }) => {
     );
 };
 
-const NewAnnouncement = ({ addAnnouncement }) => {
+const NewAnnouncement = ({ addAnnouncement, popupClose }) => {
     const [announcement, setAnnouncement] = useState({
         name: "",
         description: "",
@@ -1421,6 +1425,10 @@ const NewAnnouncement = ({ addAnnouncement }) => {
                         close();
                     }}
                 >
+                    <h1 className="font-bold text-2xl border-b-2 border-gray-300 focus:border-gray-500 my-2 mx-2">
+                        Create Announcement
+                    </h1>
+                    <label htmlFor="name" className="my-2 mx-2">Title:</label>
                     <input
                         onChange={(e) =>
                             setAnnouncement({
@@ -1428,12 +1436,12 @@ const NewAnnouncement = ({ addAnnouncement }) => {
                                 [e.target.name]: e.target.value,
                             })
                         }
-                        className="outline-none text-2xl border-b-2 border-gray-300 focus:border-gray-500 my-2 mx-2"
+                        className="outline-none resize-none text-sm border-2 border-gray-300 focus:border-gray-500 py-2 px-2 mx-2 rounded-lg"
                         value={announcement.name}
                         name="name"
-                        placeholder="Enter announcement name here..."
                         autoComplete="off"
                     />
+                    <label htmlFor="description" className="mt-4 mb-2 mx-2">Body:</label>
                     <textarea
                         onChange={(e) =>
                             setAnnouncement({
@@ -1441,18 +1449,29 @@ const NewAnnouncement = ({ addAnnouncement }) => {
                                 [e.target.name]: e.target.value,
                             })
                         }
-                        className="outline-none resize-none text-sm border-2 border-gray-300 focus:border-gray-500 py-2 px-2 my-2 mx-2 rounded-lg"
-                        rows="4"
+                        className="outline-none resize-none text-sm border-2 border-gray-300 focus:border-gray-500 py-2 px-2 mx-2 rounded-lg"
+                        rows="8"
                         value={announcement.description}
                         name="description"
-                        placeholder="Enter announcement description here..."
                     />
-                    <button
-                        type="submit"
-                        className="mt-4 ml-2 px-2 py-1 w-min bg-blue-500 text-white rounded hover:bg-blue-600"
-                    >
-                        Create
-                    </button>
+                    <div className="flex flex-row justify-end gap-4">
+                        <button
+                            className="focus:outline-none mt-4 ml-2 px-2 py-1 w-min border bg-gray-500 hover:bg-gray-600 rounded text-white font-bold"
+                            onClick={() => {
+                                setAnnouncement({ name: "", description: "" });
+                                close();
+                                popupClose();
+                            }}
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            className="focus:outline-none mt-4 ml-2 px-2 py-1 w-min bg-blue-500 text-white rounded hover:bg-blue-600 font-bold"
+                        >
+                            Done
+                        </button>
+                    </div>
                 </form>
             )}
         </CustomPopup>
@@ -1503,7 +1522,7 @@ const DeleteAnnouncement = ({ id, deleteAnnouncement, popupClose }) => {
     );
 };
 
-const UpdateAnnouncement = ({ updateAnnouncement, existingAnnouncement }) => {
+const UpdateAnnouncement = ({ updateAnnouncement, existingAnnouncement, popupClose }) => {
     const [announcement, setAnnouncement] = useState({
         name: existingAnnouncement.name,
         description: existingAnnouncement.description,
@@ -1527,6 +1546,10 @@ const UpdateAnnouncement = ({ updateAnnouncement, existingAnnouncement }) => {
                         close();
                     }}
                 >
+                    <h1 className="font-bold text-2xl border-b-2 border-gray-300 focus:border-gray-500 my-2 mx-2">
+                        Update Announcement
+                    </h1>
+                    <label htmlFor="name" className="my-2 mx-2">Title:</label>
                     <input
                         onChange={(e) =>
                             setAnnouncement({
@@ -1534,12 +1557,12 @@ const UpdateAnnouncement = ({ updateAnnouncement, existingAnnouncement }) => {
                                 [e.target.name]: e.target.value,
                             })
                         }
-                        className="outline-none text-2xl border-b-2 border-gray-300 focus:border-gray-500 my-2 mx-2"
+                        className="outline-none resize-none text-sm border-2 border-gray-300 focus:border-gray-500 py-2 px-2 mx-2 rounded-lg"
                         value={announcement.name}
                         name="name"
-                        placeholder="Enter announcement name here..."
                         autoComplete="off"
                     />
+                    <label htmlFor="description" className="mt-4 mb-2 mx-2">Body:</label>
                     <textarea
                         onChange={(e) =>
                             setAnnouncement({
@@ -1547,18 +1570,29 @@ const UpdateAnnouncement = ({ updateAnnouncement, existingAnnouncement }) => {
                                 [e.target.name]: e.target.value,
                             })
                         }
-                        className="outline-none resize-none text-sm border-2 border-gray-300 focus:border-gray-500 py-2 px-2 my-2 mx-2 rounded-lg"
-                        rows="4"
+                        className="outline-none resize-none text-sm border-2 border-gray-300 focus:border-gray-500 py-2 px-2 mx-2 rounded-lg"
+                        rows="8"
                         value={announcement.description}
                         name="description"
-                        placeholder="Enter announcement description here..."
                     />
-                    <button
-                        type="submit"
-                        className="mt-4 ml-2 px-2 py-1 w-min bg-blue-500 text-white rounded hover:bg-blue-600"
-                    >
-                        Create
-                    </button>
+                    <div className="flex flex-row justify-end gap-4">
+                        <button
+                            className="focus:outline-none mt-4 ml-2 px-2 py-1 w-min border bg-gray-500 hover:bg-gray-600 rounded text-white font-bold"
+                            onClick={() => {
+                                setAnnouncement({ name: existingAnnouncement.name, description: existingAnnouncement.description });
+                                close();
+                                popupClose();
+                            }}
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            className="focus:outline-none mt-4 ml-2 px-2 py-1 w-min bg-blue-500 text-white rounded hover:bg-blue-600 font-bold"
+                        >
+                            Done
+                        </button>
+                    </div>
                 </form>
             )}
         </CustomPopup>
