@@ -135,6 +135,39 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
         });
     };
 
+    const updateAnnouncement = (name, description, id) => {
+        try {
+            const formData = new FormData()
+            name && formData.append("name", name)
+            description && formData.append("description", description)
+
+            getAccessToken().then((accessToken) => {
+                axios
+                    .put(
+                        process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
+                            "core/announcements/" +
+                            id.toString() +
+                            "/",
+                            formData,
+                        {
+                            headers: { Authorization: "Bearer " + accessToken },
+                        }
+                    )
+                    .then((res) => {
+                        setAnnouncements([
+                            ...announcements.filter(subAnnouncement => subAnnouncement.id !== id),
+                            res.data
+                        ])
+                    })
+                    .catch(res => {
+                        console.log("err:", res)
+                    })
+            });
+        } catch (error) {
+            console.log("Something went wrong...")
+        }
+    }
+
     const addReview = (id, stars, comment) => {
         // push review to server
         getAccessToken().then((accessToken) => {
@@ -260,9 +293,7 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                                         <div className="flex flex-row flex-1">
                                             <h3 className="flex justify-start w-1/2 font-bold text-xl text-blue-600">{announcement.name}</h3>
                                             <div className="flex flex-row justify-end w-1/2 gap-2">
-                                                <button className="focus:outline-none">
-                                                    <CreateOutline color={"#00000"} title={"Back"} height="20px" width="20px" />
-                                                </button>
+                                                <UpdateAnnouncement updateAnnouncement={updateAnnouncement} existingAnnouncement={announcement} />
                                                 <DeleteAnnouncement
                                                     id={announcement.id}
                                                     deleteAnnouncement={deleteAnnouncement}
@@ -1477,6 +1508,68 @@ const DeleteAnnouncement = ({ id, deleteAnnouncement, popupClose }) => {
                         </button>
                     </div>
                 </div>
+            )}
+        </CustomPopup>
+    );
+};
+
+const UpdateAnnouncement = ({ updateAnnouncement, existingAnnouncement }) => {
+    const [announcement, setAnnouncement] = useState({
+        name: existingAnnouncement.name,
+        description: existingAnnouncement.description,
+    });
+
+    return (
+        <CustomPopup
+            trigger={
+                <button className="focus:outline-none">
+                    <CreateOutline color={"#00000"} title={"Back"} height="20px" width="20px" />
+                </button>
+            }
+        >
+            {(close) => (
+                <form
+                    className="flex flex-col px-4 py-4 bg-white rounded-lg shadow-md popup"
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        updateAnnouncement(announcement.name, announcement.description, existingAnnouncement.id);
+                        setAnnouncement({ name: announcement.name, description: announcement.description });
+                        close();
+                    }}
+                >
+                    <input
+                        onChange={(e) =>
+                            setAnnouncement({
+                                ...announcement,
+                                [e.target.name]: e.target.value,
+                            })
+                        }
+                        className="outline-none text-2xl border-b-2 border-gray-300 focus:border-gray-500 my-2 mx-2"
+                        value={announcement.name}
+                        name="name"
+                        placeholder="Enter announcement name here..."
+                        autocomplete="off"
+                    />
+                    <textarea
+                        onChange={(e) =>
+                            setAnnouncement({
+                                ...announcement,
+                                [e.target.name]: e.target.value,
+                            })
+                        }
+                        className="outline-none resize-none text-sm border-2 border-gray-300 focus:border-gray-500 py-2 px-2 my-2 mx-2 rounded-lg"
+                        rows="4"
+                        value={announcement.description}
+                        name="description"
+                        placeholder="Enter announcement description here..."
+                    />
+                    <button
+                        type="submit"
+                        className="mt-4 ml-2 px-2 py-1 w-min bg-blue-500 text-white rounded hover:bg-blue-600"
+                    >
+                        Create
+                    </button>
+                </form>
             )}
         </CustomPopup>
     );
