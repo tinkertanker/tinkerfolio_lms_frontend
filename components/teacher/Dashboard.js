@@ -137,6 +137,9 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
 
     const updateAnnouncement = (name, description, id) => {
         try {
+            const existingAnnouncement = announcements.filter(subAnnouncement => subAnnouncement.id === id)
+            const existingIndex = Object.keys(announcements).find(key => announcements[key] === existingAnnouncement[0])
+
             const formData = new FormData()
             name && formData.append("name", name)
             description && formData.append("description", description)
@@ -155,8 +158,9 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                     )
                     .then((res) => {
                         setAnnouncements([
-                            ...announcements.filter(subAnnouncement => subAnnouncement.id !== id),
-                            res.data
+                            ...announcements.filter(subAnnouncement => Object.keys(announcements).find(key => announcements[key] === subAnnouncement) < existingIndex),
+                            res.data,
+                            ...announcements.filter(subAnnouncement => Object.keys(announcements).find(key => announcements[key] === subAnnouncement) > existingIndex),
                         ])
                     })
                     .catch(res => {
@@ -1306,7 +1310,7 @@ const NewTask = ({ addTask }) => {
                         value={task.name}
                         name="name"
                         placeholder="Enter task name here..."
-                        autocomplete="off"
+                        autoComplete="off"
                     />
                     <textarea
                         onChange={(e) =>
@@ -1442,7 +1446,7 @@ const NewAnnouncement = ({ addAnnouncement }) => {
                         value={announcement.name}
                         name="name"
                         placeholder="Enter announcement name here..."
-                        autocomplete="off"
+                        autoComplete="off"
                     />
                     <textarea
                         onChange={(e) =>
@@ -1474,7 +1478,7 @@ const DeleteAnnouncement = ({ id, deleteAnnouncement, popupClose }) => {
         <CustomPopup
             trigger={
                 <button className="focus:outline-none">
-                    <TrashOutline color={"#00000"} title={"Back"} height="20px" width="20px" />
+                    <TrashOutline color={"#00000"} title={"Delete"} height="20px" width="20px" />
                 </button>
             }
         >
@@ -1523,7 +1527,7 @@ const UpdateAnnouncement = ({ updateAnnouncement, existingAnnouncement }) => {
         <CustomPopup
             trigger={
                 <button className="focus:outline-none">
-                    <CreateOutline color={"#00000"} title={"Back"} height="20px" width="20px" />
+                    <CreateOutline color={"#00000"} title={"Update"} height="20px" width="20px" />
                 </button>
             }
         >
@@ -1548,7 +1552,7 @@ const UpdateAnnouncement = ({ updateAnnouncement, existingAnnouncement }) => {
                         value={announcement.name}
                         name="name"
                         placeholder="Enter announcement name here..."
-                        autocomplete="off"
+                        autoComplete="off"
                     />
                     <textarea
                         onChange={(e) =>
