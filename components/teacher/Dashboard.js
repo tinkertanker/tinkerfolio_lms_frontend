@@ -168,6 +168,26 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
             })
     };
 
+    const deleteResourceSection = (id, index) => {
+        try {
+            getAccessToken().then((accessToken) => {
+                axios
+                    .delete( process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/resource_section/" + id.toString() + "/",
+                        { headers: { Authorization: "Bearer " + accessToken } }
+                    )
+                    .then((res) => {
+                        setResources([
+                            ...resources.filter(r => Object.keys(resources).find(key => resources[key] === r) < index),
+                            res.data,
+                            ...resources.filter(r => Object.keys(resources).find(key => resources[key] === r) > index),
+                        ])
+                    })
+            });
+        } catch (error) {
+            console.log("Something went wrong...")
+        }
+    };
+
     const addReview = (id, stars, comment) => {
         // push review to server
         getAccessToken().then((accessToken) => {
@@ -336,7 +356,7 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                             </div>
                             {resources.map((resource, i) => (
                                     <>
-                                        {resource.section.name ? (
+                                        {resource.section ? (
                                             <div
                                                 className="flex flex-col mt-6 bg-gray-200 shadow-md p-4 border rounded-lg"
                                                 key={i}
@@ -356,6 +376,12 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                                                             deleteAnnouncement={deleteResource}
                                                             popupClose={close}
                                                         /> */}
+                                                        <DeleteResourceSection
+                                                            id={resource.section.id} 
+                                                            index={i}
+                                                            deleteResourceSection={deleteResourceSection} 
+                                                            popupClose={close}
+                                                        />
                                                     </div>
                                                 </div>
                                                 {resource.resources.map((file, i) => (
@@ -363,25 +389,7 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                                                 ))}
                                             </div>
                                         ) : (
-                                            <div className="hidden" key={i}>
-                                                <div className="flex flex-row flex-1">
-                                                    <h3 className="flex justify-start w-1/2 font-bold text-xl">
-                                                        {resource.section.name}
-                                                    </h3>
-                                                    {/* <div className="flex flex-row justify-end w-1/2 gap-2">
-                                                        <UpdateAnnouncement 
-                                                            updateAnnouncement={updateAnnouncement} 
-                                                            existingAnnouncement={announcement} 
-                                                            popupClose={close}
-                                                        />
-                                                        <DeleteAnnouncement
-                                                            id={announcement.id}
-                                                            deleteAnnouncement={deleteAnnouncement}
-                                                            popupClose={close}
-                                                        />
-                                                    </div> */}
-                                                </div>
-                                            </div>
+                                            <div className="hidden" key={i}></div>
                                         )}
                                     </>
                                 ))}
@@ -1708,6 +1716,50 @@ const NewResource = ({ addResource, popupClose }) => {
                         </button>
                     </div>
                 </form>
+            )}
+        </CustomPopup>
+    );
+};
+
+const DeleteResourceSection = ({ id, index, deleteResourceSection, popupClose }) => {
+    return (
+        <CustomPopup
+            trigger={
+                <button className="focus:outline-none">
+                    <TrashOutline color={"#00000"} title={"Delete"} height="20px" width="20px" />
+                </button>
+            }
+        >
+            {(close) => (
+                <div className="flex flex-col px-6 py-8 bg-white rounded-lg w-56 sm:w-80">
+                    <h1 className="text-xl font-semibold text-center">
+                        Are you sure?
+                    </h1>
+                    <p className="text-gray-500 mt-2">
+                        This resource section cannot be recovered.
+                    </p>
+                    <div className="flex flex-col mt-4">
+                        <button
+                            className="focus:outline-none px-2 py-1 border border-red-300 text-red-500 hover:bg-red-100 hover:border-red-500 hover:text-red-700 rounded mb-2"
+                            onClick={() => {
+                                deleteResourceSection(id, index);
+                                close();
+                                popupClose();
+                            }}
+                        >
+                            Delete
+                        </button>
+                        <button
+                            className="focus:outline-none px-2 py-1 border border-gray-300 hover:bg-gray-100 hover:border-gray-400 rounded"
+                            onClick={() => {
+                                close();
+                                popupClose();
+                            }}
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
             )}
         </CustomPopup>
     );
