@@ -64,56 +64,32 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
     const addTask = (task) => {
         getAccessToken().then((accessToken) => {
             axios
-                .post(
-                    process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/tasks/",
-                    {
-                        code: classroom.code,
-                        ...task,
-                    },
-                    {
-                        headers: { Authorization: "Bearer " + accessToken },
-                    }
+                .post(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/tasks/",
+                    { code: classroom.code, ...task },
+                    { headers: { Authorization: "Bearer " + accessToken } }
                 )
-                .then((res) => {
-                    setTasks([...tasks, res.data]);
-                });
+                .then((res) => { setTasks([...tasks, res.data]) });
         });
     };
 
     const deleteTask = (id) => {
         getAccessToken().then((accessToken) => {
             axios
-                .delete(
-                    process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-                        "core/tasks/" +
-                        id.toString() +
-                        "/",
-                    {
-                        headers: { Authorization: "Bearer " + accessToken },
-                    }
+                .delete(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/tasks/" + id.toString() + "/",
+                    { headers: { Authorization: "Bearer " + accessToken } }
                 )
-                .then((res) => {
-                    setTasks(tasks.filter((t) => t.id !== id));
-                });
+                .then((res) => { setTasks(tasks.filter((t) => t.id !== id)) });
         });
     };
 
     const addAnnouncement = (announcement) => {
         getAccessToken().then((accessToken) => {
             axios
-                .post(
-                    process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/announcements/",
-                    {
-                        code: classroom.code,
-                        ...announcement,
-                    },
-                    {
-                        headers: { Authorization: "Bearer " + accessToken },
-                    }
+                .post( process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/announcements/",
+                    { code: classroom.code, ...announcement },
+                    { headers: { Authorization: "Bearer " + accessToken } }
                 )
-                .then((res) => {
-                    setAnnouncements([...announcements, res.data]);
-                });
+                .then((res) => { setAnnouncements([...announcements, res.data]) });
         });
     };
 
@@ -124,14 +100,8 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
 
             getAccessToken().then((accessToken) => {
                 axios
-                    .delete(
-                        process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-                            "core/announcements/" +
-                            id.toString() +
-                            "/",
-                        {
-                            headers: { Authorization: "Bearer " + accessToken },
-                        }
+                    .delete( process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/announcements/" + id.toString() + "/",
+                        { headers: { Authorization: "Bearer " + accessToken } }
                     )
                     .then((res) => {
                         setAnnouncements([
@@ -157,15 +127,8 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
 
             getAccessToken().then((accessToken) => {
                 axios
-                    .put(
-                        process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-                            "core/announcements/" +
-                            id.toString() +
-                            "/",
-                            formData,
-                        {
-                            headers: { Authorization: "Bearer " + accessToken },
-                        }
+                    .put( process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/announcements/" + id.toString() + "/", formData,
+                        { headers: { Authorization: "Bearer " + accessToken } }
                     )
                     .then((res) => {
                         setAnnouncements([
@@ -187,18 +150,9 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
         // push review to server
         getAccessToken().then((accessToken) => {
             axios
-                .put(
-                    process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-                        "core/submissions/" +
-                        id.toString() +
-                        "/",
-                    {
-                        stars,
-                        comment,
-                    },
-                    {
-                        headers: { Authorization: "Bearer " + accessToken },
-                    }
+                .put( process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/submissions/" + id.toString() + "/",
+                    { stars, comment },
+                    { headers: { Authorization: "Bearer " + accessToken } }
                 )
                 .then((res) => {
                     console.log(res.data);
