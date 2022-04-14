@@ -188,6 +188,30 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
         }
     };
 
+    const createOneResource = (existingResource, resource, id, index) => {
+        const formData = new FormData()
+        formData.append("resource_section_id", id)
+        formData.append("file", resource.new_file)
+
+        getAccessToken().then((accessToken) => {
+            axios
+                .post(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + 'core/resource/', formData,
+                { headers: {'Authorization': 'Bearer ' + accessToken} })
+                .then((res) => {
+                    existingResource.resources.push(res.data)
+                    console.log("Exis res:", existingResource)
+                    setResources([
+                        ...resources.filter(r => Object.keys(resources).find(key => resources[key] === r) < index),
+                        existingResource,
+                        ...resources.filter(r => Object.keys(resources).find(key => resources[key] === r) > index),
+                    ])
+                })
+                .catch(res => {
+                    console.log(res)
+                })
+        })
+};
+
     const addReview = (id, stars, comment) => {
         // push review to server
         getAccessToken().then((accessToken) => {
@@ -366,16 +390,13 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                                                         {resource.section.name}
                                                     </h3>
                                                     <div className="flex flex-row justify-end w-1/2 gap-2">
-                                                        {/* <UpdateAnnouncement 
-                                                            updateAnnouncement={updateAnnouncement} 
-                                                            existingAnnouncement={announcement} 
+                                                        <UpdateResource
+                                                            createOneResource={createOneResource} 
+                                                            // deleteOneResource={deleteOneResource}
+                                                            index={i}
+                                                            existingResource={resource} 
                                                             popupClose={close}
-                                                        /> */}
-                                                        {/* <DeleteResource
-                                                            id={resource.id}
-                                                            deleteAnnouncement={deleteResource}
-                                                            popupClose={close}
-                                                        /> */}
+                                                        />
                                                         <DeleteResourceSection
                                                             id={resource.section.id} 
                                                             index={i}
@@ -1760,6 +1781,76 @@ const DeleteResourceSection = ({ id, index, deleteResourceSection, popupClose })
                         </button>
                     </div>
                 </div>
+            )}
+        </CustomPopup>
+    );
+};
+
+const UpdateResource = ({ createOneResource, deleteOneResource, existingResource, popupClose, index }) => {
+    const [resource, setResource] = useState({
+        name: existingResource.section.name,
+        files: existingResource.resources,
+        new_file: []
+    });
+
+    return (
+        <CustomPopup
+            trigger={
+                <button className="focus:outline-none">
+                    <CreateOutline color={"#00000"} title={"Update"} height="20px" width="20px" />
+                </button>
+            }
+        >
+            {(close) => (
+                <form
+                    className="flex flex-col px-4 py-4 bg-white rounded-lg shadow-md popup"
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        createOneResource(existingResource, resource, existingResource.section.id.toString(), index)
+                        close();
+                    }}
+                >
+                    <h1 className="font-bold text-2xl border-b-2 border-gray-300 focus:border-gray-500 my-2 mx-2">
+                        Update Resource Section
+                    </h1>
+                    <p className="my-2 mx-2 font-bold text-xl">{resource.name}</p>
+
+                    {existingResource.resources.map((file, i) => (
+                        <a className="text-blue-600 hover:text-blue-700 mt-2 mx-2" href={file.file} target="_blank">
+                            {file.name}
+                        </a>
+                    ))}
+
+                    <input type="file" className="bg-gray-400 text-white px-2 py-1 w-min text-sm rounded-lg ml-2 mt-4" onChange={e => setResource({ ...resource, new_file: e.target.files[0] })} />
+
+
+
+
+                    {/* delete one resource */}
+
+
+
+
+
+                    <div className="flex flex-row justify-end gap-4">
+                        <button
+                            className="focus:outline-none mt-4 ml-2 px-2 py-1 w-min border bg-gray-500 hover:bg-gray-600 rounded text-white font-bold"
+                            onClick={() => {
+                                setResource({ name: existingResource.section.name, files: existingResource.resources, });
+                                close();
+                                popupClose();
+                            }}
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            className="focus:outline-none mt-4 ml-2 px-2 py-1 w-min bg-blue-500 text-white rounded hover:bg-blue-600 font-bold"
+                        >
+                            Done
+                        </button>
+                    </div>
+                </form>
             )}
         </CustomPopup>
     );
