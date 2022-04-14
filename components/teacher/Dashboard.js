@@ -199,7 +199,6 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                 { headers: {'Authorization': 'Bearer ' + accessToken} })
                 .then((res) => {
                     existingResource.resources.push(res.data)
-                    console.log("Exis res:", existingResource)
                     setResources([
                         ...resources.filter(r => Object.keys(resources).find(key => resources[key] === r) < index),
                         existingResource,
@@ -210,7 +209,30 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                     console.log(res)
                 })
         })
-};
+    };
+
+    const deleteOneResource = (existingResource, existingOneResource, id, index) => {
+        try {
+            getAccessToken().then((accessToken) => {
+                axios
+                    .delete( process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/resource/" + id + "/",
+                        { headers: { Authorization: "Bearer " + accessToken } }
+                    )
+                    .then((res) => {
+                        let indexRes = existingResource.resources.indexOf(existingOneResource)
+                        existingResource.resources.splice(indexRes, 1)
+
+                        setResources([
+                            ...resources.filter(r => Object.keys(resources).find(key => resources[key] === r) < index),
+                            existingResource,
+                            ...resources.filter(r => Object.keys(resources).find(key => resources[key] === r) > index),
+                        ])
+                    })
+            });
+        } catch (error) {
+            console.log("Something went wrong...")
+        }
+    };
 
     const addReview = (id, stars, comment) => {
         // push review to server
@@ -391,8 +413,7 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                                                     </h3>
                                                     <div className="flex flex-row justify-end w-1/2 gap-2">
                                                         <UpdateResource
-                                                            createOneResource={createOneResource} 
-                                                            // deleteOneResource={deleteOneResource}
+                                                            createOneResource={createOneResource}
                                                             index={i}
                                                             existingResource={resource} 
                                                             popupClose={close}
@@ -405,8 +426,17 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                                                         />
                                                     </div>
                                                 </div>
-                                                {resource.resources.map((file, i) => (
-                                                    <a className="text-blue-600 hover:text-blue-700 mt-2" href={file.file} target="_blank">{file.name}</a>
+                                                {resource.resources.map((file, _) => (
+                                                    <div className="flex flex-row items-center mt-2">
+                                                        <a className="text-blue-600 hover:text-blue-700" href={file.file} target="_blank">{file.name}</a>
+                                                        <DeleteResource 
+                                                            existingResource={resource}
+                                                            existingOneResource={file} 
+                                                            index={i} 
+                                                            deleteOneResource={deleteOneResource} 
+                                                            popupClose={close}
+                                                        />
+                                                    </div>
                                                 ))}
                                             </div>
                                         ) : (
@@ -1786,7 +1816,51 @@ const DeleteResourceSection = ({ id, index, deleteResourceSection, popupClose })
     );
 };
 
-const UpdateResource = ({ createOneResource, deleteOneResource, existingResource, popupClose, index }) => {
+const DeleteResource = ({ existingResource, existingOneResource, index, deleteOneResource, popupClose }) => {
+    return (
+        <CustomPopup
+            trigger={
+                <button className="focus:outline-none ml-2">
+                    <TrashOutline color={"#00000"} title={"Delete"} height="15px" width="15px" />
+                </button>
+            }
+        >
+            {(close) => (
+                <div className="flex flex-col px-6 py-8 bg-white rounded-lg w-56 sm:w-80">
+                    <h1 className="text-xl font-semibold text-center">
+                        Are you sure?
+                    </h1>
+                    <p className="text-gray-500 mt-2">
+                        This resource cannot be recovered.
+                    </p>
+                    <div className="flex flex-col mt-4">
+                        <button
+                            className="focus:outline-none px-2 py-1 border border-red-300 text-red-500 hover:bg-red-100 hover:border-red-500 hover:text-red-700 rounded mb-2"
+                            onClick={() => {
+                                deleteOneResource(existingResource, existingOneResource, existingOneResource.id.toString(), index);
+                                close();
+                                popupClose();
+                            }}
+                        >
+                            Delete
+                        </button>
+                        <button
+                            className="focus:outline-none px-2 py-1 border border-gray-300 hover:bg-gray-100 hover:border-gray-400 rounded"
+                            onClick={() => {
+                                close();
+                                popupClose();
+                            }}
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            )}
+        </CustomPopup>
+    );
+};
+
+const UpdateResource = ({ createOneResource, existingResource, popupClose, index }) => {
     const [resource, setResource] = useState({
         name: existingResource.section.name,
         files: existingResource.resources,
@@ -1822,15 +1896,6 @@ const UpdateResource = ({ createOneResource, deleteOneResource, existingResource
                     ))}
 
                     <input type="file" className="bg-gray-400 text-white px-2 py-1 w-min text-sm rounded-lg ml-2 mt-4" onChange={e => setResource({ ...resource, new_file: e.target.files[0] })} />
-
-
-
-
-                    {/* delete one resource */}
-
-
-
-
 
                     <div className="flex flex-row justify-end gap-4">
                         <button
