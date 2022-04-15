@@ -1568,7 +1568,6 @@ const NewAnnouncement = ({ addAnnouncement, popupClose }) => {
                             onClick={() => {
                                 setAnnouncement({ name: "", description: "" });
                                 close();
-                                // popupClose();
                             }}
                         >
                             Cancel
@@ -1609,7 +1608,6 @@ const DeleteAnnouncement = ({ id, deleteAnnouncement, popupClose }) => {
                             onClick={() => {
                                 deleteAnnouncement(id);
                                 close();
-                                popupClose();
                             }}
                         >
                             Delete
@@ -1618,7 +1616,6 @@ const DeleteAnnouncement = ({ id, deleteAnnouncement, popupClose }) => {
                             className="focus:outline-none px-2 py-1 border border-gray-300 hover:bg-gray-100 hover:border-gray-400 rounded"
                             onClick={() => {
                                 close();
-                                popupClose();
                             }}
                         >
                             Cancel
@@ -1689,7 +1686,6 @@ const UpdateAnnouncement = ({ updateAnnouncement, existingAnnouncement, popupClo
                             onClick={() => {
                                 setAnnouncement({ name: existingAnnouncement.name, description: existingAnnouncement.description });
                                 close();
-                                popupClose();
                             }}
                         >
                             Cancel
@@ -1754,7 +1750,6 @@ const NewResource = ({ addResource, popupClose }) => {
                             onClick={() => {
                                 setResource({ name: "", files: [] });
                                 close();
-                                popupClose();
                             }}
                         >
                             Cancel
@@ -1795,7 +1790,6 @@ const DeleteResourceSection = ({ id, index, deleteResourceSection, popupClose })
                             onClick={() => {
                                 deleteResourceSection(id, index);
                                 close();
-                                popupClose();
                             }}
                         >
                             Delete
@@ -1804,7 +1798,6 @@ const DeleteResourceSection = ({ id, index, deleteResourceSection, popupClose })
                             className="focus:outline-none px-2 py-1 border border-gray-300 hover:bg-gray-100 hover:border-gray-400 rounded"
                             onClick={() => {
                                 close();
-                                popupClose();
                             }}
                         >
                             Cancel
@@ -1839,7 +1832,6 @@ const DeleteResource = ({ existingResource, existingOneResource, index, deleteOn
                             onClick={() => {
                                 deleteOneResource(existingResource, existingOneResource, existingOneResource.id.toString(), index);
                                 close();
-                                popupClose();
                             }}
                         >
                             Delete
@@ -1848,7 +1840,6 @@ const DeleteResource = ({ existingResource, existingOneResource, index, deleteOn
                             className="focus:outline-none px-2 py-1 border border-gray-300 hover:bg-gray-100 hover:border-gray-400 rounded"
                             onClick={() => {
                                 close();
-                                popupClose();
                             }}
                         >
                             Cancel
@@ -1903,7 +1894,6 @@ const UpdateResource = ({ createOneResource, existingResource, popupClose, index
                             onClick={() => {
                                 setResource({ name: existingResource.section.name, files: existingResource.resources, });
                                 close();
-                                popupClose();
                             }}
                         >
                             Cancel
