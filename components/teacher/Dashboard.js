@@ -333,7 +333,7 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                         </button>
                     </div>
                     <div
-                    className="grid grid-cols-2 overflow-y-auto px-8 py-8 w-max min-w-full gap-20"
+                    className="grid grid-cols-2 px-8 py-8 gap-20"
                     style={{ height: size.height - 173, borderSpacing: "50px", marginTop: "60px" }}
                 >
                         <section>
@@ -349,12 +349,12 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                                                 className="flex flex-col mt-6 bg-gray-200 shadow-md p-4 border rounded-lg"
                                                 key={i}
                                             >
-                                                <div className="flex flex-row flex-1">
-                                                    <h3 className="flex justify-start w-1/2 font-bold text-xl text-blue-600">{announcement.name}</h3>
-                                                    <div className="flex flex-row justify-end w-1/2 gap-2">
-                                                        <UpdateAnnouncement 
-                                                            updateAnnouncement={updateAnnouncement} 
-                                                            existingAnnouncement={announcement} 
+                                                <div className="flex flex-row">
+                                                    <h3 className="font-bold text-xl text-blue-600">{announcement.name}</h3>
+                                                    <div className="ml-auto flex flex-row gap-2">
+                                                        <UpdateAnnouncement
+                                                            updateAnnouncement={updateAnnouncement}
+                                                            existingAnnouncement={announcement}
                                                             popupClose={close}
                                                         />
                                                         <DeleteAnnouncement
@@ -364,7 +364,7 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                                                         />
                                                     </div>
                                                 </div>
-                                                <p className="my-2 w-ann-text whitespace-pre-wrap">
+                                                <p className="my-2 whitespace-pre-wrap">
                                                     {announcement.description}
                                                 </p>
                                             </div>
@@ -374,9 +374,9 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                                                     <h3 className="flex justify-start w-1/2 font-bold text-xl text-blue-600">{announcement.name}</h3>
                                                     <div className="flex flex-row justify-end w-1/2 gap-2">
                                                         <UpdateAnnouncement
-                                                            updateAnnouncement={updateAnnouncement} 
-                                                            existingAnnouncement={announcement} 
-                                                            popupClose={close} 
+                                                            updateAnnouncement={updateAnnouncement}
+                                                            existingAnnouncement={announcement}
+                                                            popupClose={close}
                                                         />
                                                         <DeleteAnnouncement
                                                             id={announcement.id}
@@ -407,21 +407,21 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                                                 className="flex flex-col mt-6 bg-gray-200 shadow-md p-4 border rounded-lg"
                                                 key={i}
                                             >
-                                                <div className="flex flex-row flex-1">
-                                                    <h3 className="flex justify-start w-1/2 font-bold text-xl">
+                                                <div className="flex flex-row">
+                                                    <h3 className="font-bold text-xl">
                                                         {resource.section.name}
                                                     </h3>
-                                                    <div className="flex flex-row justify-end w-1/2 gap-2">
+                                                    <div className="ml-auto flex flex-row gap-2">
                                                         <UpdateResource
                                                             createOneResource={createOneResource}
                                                             index={i}
-                                                            existingResource={resource} 
+                                                            existingResource={resource}
                                                             popupClose={close}
                                                         />
                                                         <DeleteResourceSection
-                                                            id={resource.section.id} 
+                                                            id={resource.section.id}
                                                             index={i}
-                                                            deleteResourceSection={deleteResourceSection} 
+                                                            deleteResourceSection={deleteResourceSection}
                                                             popupClose={close}
                                                         />
                                                     </div>
@@ -429,11 +429,11 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                                                 {resource.resources.map((file, _) => (
                                                     <div className="flex flex-row items-center mt-2">
                                                         <a className="text-blue-600 hover:text-blue-700" href={file.file} target="_blank">{file.name}</a>
-                                                        <DeleteResource 
+                                                        <DeleteResource
                                                             existingResource={resource}
-                                                            existingOneResource={file} 
-                                                            index={i} 
-                                                            deleteOneResource={deleteOneResource} 
+                                                            existingOneResource={file}
+                                                            index={i}
+                                                            deleteOneResource={deleteOneResource}
                                                             popupClose={close}
                                                         />
                                                     </div>
