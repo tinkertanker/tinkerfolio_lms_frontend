@@ -344,7 +344,7 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                             <div>
                                 {announcements.map((announcement, i) => (
                                     <>
-                                        {announcement.name ? (
+                                        {announcement.name && (
                                             <div
                                                 className="flex flex-col mt-6 bg-gray-200 shadow-md p-4 border rounded-lg"
                                                 key={i}
@@ -365,27 +365,6 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                                                     </div>
                                                 </div>
                                                 <p className="my-2 whitespace-pre-wrap">
-                                                    {announcement.description}
-                                                </p>
-                                            </div>
-                                        ) : (
-                                            <div className="hidden" key={i}>
-                                                <div className="flex flex-row flex-1">
-                                                    <h3 className="flex justify-start w-1/2 font-bold text-xl text-blue-600">{announcement.name}</h3>
-                                                    <div className="flex flex-row justify-end w-1/2 gap-2">
-                                                        <UpdateAnnouncement
-                                                            updateAnnouncement={updateAnnouncement}
-                                                            existingAnnouncement={announcement}
-                                                            popupClose={close}
-                                                        />
-                                                        <DeleteAnnouncement
-                                                            id={announcement.id}
-                                                            deleteAnnouncement={deleteAnnouncement}
-                                                            popupClose={close}
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <p className="my-2 w-ann-text whitespace-pre-wrap">
                                                     {announcement.description}
                                                 </p>
                                             </div>
