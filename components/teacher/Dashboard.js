@@ -1568,7 +1568,7 @@ const NewAnnouncement = ({ addAnnouncement, popupClose }) => {
                             onClick={() => {
                                 setAnnouncement({ name: "", description: "" });
                                 close();
-                                popupClose();
+                                // popupClose();
                             }}
                         >
                             Cancel
