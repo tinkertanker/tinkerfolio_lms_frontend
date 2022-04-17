@@ -14,11 +14,12 @@ import {
 const contentStyle = { paddingLeft: "0.5rem", paddingRight: "0.5rem" };
 const arrowStyle = { color: "#374151", paddingBottom: "0.25rem" }; // style for an svg element
 
-const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents, loadingAddStudent, setLoadingAddStudent, updateName, tasks, setTasks, submissionStatuses, submissions, setSubmissions, sendJsonMessage, size }) => {
+const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents, loadingAddStudent, setLoadingAddStudent, updateName, tasks, setTasks, submissionStatuses, submissions, setSubmissions, sendJsonMessage, size, student_id }) => {
     const { getAccessToken } = useContext(AuthContext);
     const [tableNames, setTableNames] = useState();
     const [tasksToHide, setTasksToHide] = useState([]);
     const [sortBy, setSortBy] = useState("indexLowToHigh");
+
 
     useEffect(() => {
         setTableNames(names);
@@ -38,9 +39,9 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                 axios
                     .put(
                         process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-                            "core/tasks/" +
-                            newTask.id.toString() +
-                            "/",
+                        "core/tasks/" +
+                        newTask.id.toString() +
+                        "/",
                         newTask,
                         {
                             headers: { Authorization: "Bearer " + accessToken },
@@ -80,9 +81,9 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
             axios
                 .delete(
                     process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-                        "core/tasks/" +
-                        id.toString() +
-                        "/",
+                    "core/tasks/" +
+                    id.toString() +
+                    "/",
                     {
                         headers: { Authorization: "Bearer " + accessToken },
                     }
@@ -99,9 +100,9 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
             axios
                 .put(
                     process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-                        "core/submissions/" +
-                        id.toString() +
-                        "/",
+                    "core/submissions/" +
+                    id.toString() +
+                    "/",
                     {
                         stars,
                         comment,
@@ -135,6 +136,10 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
         (task) => !tasksToHide.includes(task.id)
     );
 
+    const sortedStudents = () => names.sort((a, b) => (a.id > b.id ? 1 : -1));
+
+
+
     const sortTableTasks = () => {
         let tasksToShow = tasks.filter(
             (task) => !tasksToHide.includes(task.id)
@@ -159,27 +164,25 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                 );
                 break;
             case "starsHighToLow":
-                sortedTableNames = tableNames.sort((a, b) =>
-                    {
-                        if (a.score < b.score) return 1
-                        else if (a.score > b.score) return -1
-                        else {
-                            if (a.index > b.index) return 1
-                            else return -1
-                        }
+                sortedTableNames = tableNames.sort((a, b) => {
+                    if (a.score < b.score) return 1
+                    else if (a.score > b.score) return -1
+                    else {
+                        if (a.index > b.index) return 1
+                        else return -1
                     }
+                }
                 );
                 break;
             case "starsLowToHigh":
-                sortedTableNames = tableNames.sort((a, b) =>
-                    {
-                        if (a.score < b.score) return -1
-                        else if (a.score > b.score) return 1
-                        else {
-                            if (a.index > b.index) return 1
-                            else return -1
-                        }
+                sortedTableNames = tableNames.sort((a, b) => {
+                    if (a.score < b.score) return -1
+                    else if (a.score > b.score) return 1
+                    else {
+                        if (a.index > b.index) return 1
+                        else return -1
                     }
+                }
                 );
                 break;
         }
@@ -231,28 +234,161 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                         <th className="border-r-2 px-2 py-2 w-16">
                             <p className="text-xl">★</p>
                         </th>
-                        {sortTableTasks().map((task, i) => (
-                            <th
-                                className="border-r-2 px-2 py-2"
-                                key={i}
-                                style={{ width: "200px" }}
-                            >
-                                {/* this image below is a quick fix to give HTML table a min-width property. DO NOT DELETE */}
-                                <img style={{ float: "left", minWidth: "200px", visibility: "hidden", width: "0px", }} />
-                                <div className="flex flex-row items-center">
-                                    <p className="font-normal ml-1 mr-2 py-0.5 px-1 text-sm text-white bg-gray-700 rounded">
-                                        Task
-                                    </p>
-                                    <p
-                                        className="truncate text-left"
-                                        style={{ width: "150px" }}
-                                    >
-                                        {task.name}
-                                    </p>
-                                    <TaskMenu {...{ task, setOneTask, deleteTask, submissions, }} />
-                                </div>
-                            </th>
-                        ))}
+                        {sortTableTasks().map((task, i) => {
+                            let completedSubmissions = 0;
+                            let incompleteSubmissions = 0;
+                            let ungradedSubmissions = 0;
+                            return (
+
+                                <th
+                                    className="border-r-2 px-2 py-2"
+                                    key={i}
+                                    style={{ width: "200px" }}
+                                >
+                                    {/* this image below is a quick fix to give HTML table a min-width property. DO NOT DELETE */}
+                                    <img style={{ float: "left", minWidth: "200px", visibility: "hidden", width: "0px", }} />
+                                    <div className="flex flex-row items-center">
+                                        {/*Task Label*/}
+                                        {//Fetch submissionStatus statistics for task summary
+                                            sortedStudents().map((student, i) => {
+                                                const sub = submissions.filter(
+                                                    (submission) =>
+                                                        submission.student === student.id &&
+                                                        submission.task === task.id
+                                                )[0];
+
+
+                                                const status = submissionStatuses.filter(
+                                                    (status) =>
+                                                        status.student === student.id && status.task === task.id
+
+                                                )[0];
+
+                                                if (!sub) {
+                                                    // no submission
+                                                    if (!status) {
+                                                        // no status indicated
+                                                        // has not started
+                                                        incompleteSubmissions += 1;
+                                                    } else {
+                                                        // status indicated
+                                                        if (status.status === 0) {
+                                                            // has not started
+                                                            incompleteSubmissions += 1;
+
+                                                        } else if (status.status === 1) {
+                                                            // working on it
+                                                            incompleteSubmissions += 1;
+                                                        } else if (status.status === 2) {
+                                                            //need help
+                                                            incompleteSubmissions += 1;
+                                                        }
+                                                    }
+                                                } else if (![0, 1, 2, 3, 4, 5].includes(sub.stars)) {
+                                                    // submitted but not reviewed
+                                                    completedSubmissions += 1;
+                                                    ungradedSubmissions += 1;
+
+                                                } else {
+                                                    //submitted and reviewed
+                                                    completedSubmissions += 1;
+                                                }
+
+
+                                            })}
+                                        <Popup
+                                            trigger={<p className="font-normal ml-1 mr-2 py-0.5 px-1 text-sm text-white bg-gray-700 rounded">
+                                                Task
+                                            </p>}
+                                            position="bottom center"
+                                            on={["hover", "focus"]}
+                                        >
+                                            <div className="py-3 px-4 bg-gray-100 rounded mb-2 shadow-lg flex flex-col gap-2">
+                                                <div className="flex justify-between">
+                                                    <div className="flex">
+                                                        <svg width="20" height="20" className="pr-0.5 left-0 mr-2">
+                                                            <rect
+                                                                width="14"
+                                                                height="14"
+                                                                x="2"
+                                                                y="2"
+                                                                rx="2"
+                                                                ry="2"
+                                                                className="rounded"
+                                                                style={{
+                                                                    fill: "#6EE7B7",
+                                                                    stroke: "#34D399",
+                                                                    strokeWidth: "2",
+                                                                }}
+                                                            ></rect>
+                                                        </svg>
+                                                        <p className="text-black text-sm font-semibold">Completed:</p>
+                                                    </div>
+                                                    <p className="text-gray-700  text-sm font-medium right-0 ml-8">
+
+                                                        {completedSubmissions}/{names.length}</p>
+                                                </div>
+                                                <div className="flex justify-between">
+                                                    <div className="flex">
+                                                        <svg width="20" height="20" className="pr-0.5 left-0 mr-2">
+                                                            <rect
+                                                                width="14"
+                                                                height="14"
+                                                                x="2"
+                                                                y="2"
+                                                                rx="2"
+                                                                ry="2"
+                                                                className="rounded"
+                                                                style={{
+                                                                    fill: "#FCA5A5",
+                                                                    stroke: "#F87171",
+                                                                    strokeWidth: "2",
+                                                                }}
+                                                            ></rect>
+                                                        </svg>
+                                                        <p className="text-black text-sm font-semibold">Incomplete:</p>
+                                                    </div>
+                                                    <p className="text-gray-700 text-sm font-medium right-0 ml-8">{incompleteSubmissions}/{names.length}</p>
+                                                </div>
+                                                <div className="border-t border-gray-400"></div>
+                                                <div className="flex justify-between">
+                                                    <div className="flex">
+                                                        <svg width="20" height="20" className="pr-0.5 left-0 mr-2">
+                                                            <rect
+                                                                width="14"
+                                                                height="14"
+                                                                x="2"
+                                                                y="2"
+                                                                rx="2"
+                                                                ry="2"
+                                                                className="rounded"
+                                                                style={{
+                                                                    fill: "#D1D5DB",
+                                                                    stroke: "#9CA3AF",
+                                                                    strokeWidth: "2",
+                                                                }}
+                                                            ></rect>
+                                                        </svg>
+                                                        <p className="text-black text-sm font-semibold">Ungraded:</p>
+                                                    </div>
+                                                    <p className="text-gray-700 text-sm font-medium right-0">{ungradedSubmissions}</p>
+                                                </div>
+
+                                            </div>
+
+                                        </Popup>
+                                        <p
+                                            className="truncate text-left"
+                                            style={{ width: "150px" }}
+                                        >
+                                            {task.name}
+                                        </p>
+                                        <TaskMenu {...{ task, setOneTask, deleteTask, submissions }} />
+                                    </div>
+                                </th>
+                            )
+                        }
+                        )}
                     </tr>
                 </thead>
                 <tbody className="align-top">
@@ -271,7 +407,7 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                                 <td className="border-r-2 px-2 py-2 w-72">
                                     <div className="flex flex-row">
                                         <StudentName {...{ index, student_id, tableNames, setTableNames, updateName, bulkAddStudents, removeIndex, }} />
-                                        <StudentMenu index={index} removeIndex={ removeIndex } />
+                                        <StudentMenu index={index} removeIndex={removeIndex} />
                                     </div>
                                     <p className="mt-4 text-sm text-gray-700">
                                         Submissions
@@ -288,9 +424,9 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                                                 submissions.filter(
                                                     (s) =>
                                                         s.task ===
-                                                            task.id &&
+                                                        task.id &&
                                                         s.student ===
-                                                            student_id
+                                                        student_id
                                                 )[0];
                                             return sub ? (
                                                 <Submission {...{ sub, sp, task, addReview, sendJsonMessage, }} key={i} />
@@ -305,8 +441,9 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                                     )
                                 }
                             </tr>
-                        );})}
-                    </tbody>
+                        );
+                    })}
+                </tbody>
             </table>
         </>
     );
@@ -517,9 +654,12 @@ const SubmissionSummary = ({
                 const status = submissionStatuses.filter(
                     (status) =>
                         status.student === student_id && status.task === task.id
+
                 )[0];
 
+
                 let statusIcon = <h1></h1>;
+
                 if (!sub) {
                     // no submission
                     if (!status) {
@@ -625,6 +765,7 @@ const SubmissionSummary = ({
                                 }}
                             ></rect>
                         </svg>
+
                     );
                 } else {
                     statusIcon = (
@@ -648,6 +789,7 @@ const SubmissionSummary = ({
                 }
 
                 return (
+
                     <Popup
                         key={i}
                         trigger={statusIcon}
@@ -1323,3 +1465,4 @@ const DeleteStudent = ({
         </CustomPopup>
     );
 };
+
