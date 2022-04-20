@@ -3,6 +3,7 @@ import axios from "axios";
 import Popup from "reactjs-popup";
 import CustomPopup from "../../utils/CustomPopup";
 import CustomLinkify from "../../utils/CustomLinkify";
+import beautifyDate from "../../utils/beautifyDate";
 
 import { AuthContext } from "../../contexts/Auth.Context";
 
@@ -333,15 +334,15 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                         </button>
                     </div>
                     <div
-                    className="grid grid-cols-2 px-8 py-8 gap-20"
-                    style={{ height: size.height - 173, borderSpacing: "50px", marginTop: "60px" }}
-                >
+                        className="grid grid-cols-2 px-8 py-8 gap-20"
+                        style={{ height: size.height - 173, borderSpacing: "50px", marginTop: "60px" }}
+                    >
                         <section>
                             <div className="flex flex-row flex-1 items-center">
                                 <h1 className="font-bold text-2xl w-1/2">Announcements</h1>
                                 <NewAnnouncement addAnnouncement={addAnnouncement} popupClose={close} />
                             </div>
-                            <div>
+                            <div className="mb-4 flex flex-col-reverse">
                                 {announcements.map((announcement, i) => (
                                     <>
                                         {announcement.name && (
@@ -367,6 +368,9 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                                                 <p className="my-2 whitespace-pre-wrap">
                                                     {announcement.description}
                                                 </p>
+                                                <p className="my-2 text-xs text-gray-500">
+                                                    {beautifyDate(announcement.updated_at.slice(0, 10))}
+                                                </p>
                                             </div>
                                         )}
                                     </>
@@ -379,50 +383,50 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                                 <h1 className="font-bold text-2xl w-1/2">Resources</h1>
                                 <NewResource addResource={addResource} popupClose={close} />
                             </div>
-                            {resources.map((resource, i) => (
-                                    <>
-                                        {resource.section ? (
-                                            <div
-                                                className="flex flex-col mt-6 bg-gray-200 shadow-md p-4 border rounded-lg"
-                                                key={i}
-                                            >
-                                                <div className="flex flex-row">
-                                                    <h3 className="font-bold text-xl">
-                                                        {resource.section.name}
-                                                    </h3>
-                                                    <div className="ml-auto flex flex-row gap-2">
-                                                        <UpdateResource
-                                                            createOneResource={createOneResource}
-                                                            index={i}
-                                                            existingResource={resource}
-                                                            popupClose={close}
-                                                        />
-                                                        <DeleteResourceSection
-                                                            id={resource.section.id}
-                                                            index={i}
-                                                            deleteResourceSection={deleteResourceSection}
-                                                            popupClose={close}
-                                                        />
+                            <div className="mb-4">
+                                {resources.map((resource, i) => (
+                                        <>
+                                            {resource.section && (
+                                                <div
+                                                    className="flex flex-col mt-6 bg-gray-200 shadow-md p-4 border rounded-lg"
+                                                    key={i}
+                                                >
+                                                    <div className="flex flex-row">
+                                                        <h3 className="font-bold text-xl">
+                                                            {resource.section.name}
+                                                        </h3>
+                                                        <div className="ml-auto flex flex-row gap-2">
+                                                            <UpdateResource
+                                                                createOneResource={createOneResource}
+                                                                index={i}
+                                                                existingResource={resource}
+                                                                popupClose={close}
+                                                            />
+                                                            <DeleteResourceSection
+                                                                id={resource.section.id}
+                                                                index={i}
+                                                                deleteResourceSection={deleteResourceSection}
+                                                                popupClose={close}
+                                                            />
+                                                        </div>
                                                     </div>
+                                                    {resource.resources.map((file, _) => (
+                                                        <div className="flex flex-row items-center mt-2">
+                                                            <a className="text-blue-600 hover:text-blue-700" href={file.file} target="_blank">{file.name}</a>
+                                                            <DeleteResource
+                                                                existingResource={resource}
+                                                                existingOneResource={file}
+                                                                index={i}
+                                                                deleteOneResource={deleteOneResource}
+                                                                popupClose={close}
+                                                            />
+                                                        </div>
+                                                    ))}
                                                 </div>
-                                                {resource.resources.map((file, _) => (
-                                                    <div className="flex flex-row items-center mt-2">
-                                                        <a className="text-blue-600 hover:text-blue-700" href={file.file} target="_blank">{file.name}</a>
-                                                        <DeleteResource
-                                                            existingResource={resource}
-                                                            existingOneResource={file}
-                                                            index={i}
-                                                            deleteOneResource={deleteOneResource}
-                                                            popupClose={close}
-                                                        />
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        ) : (
-                                            <div className="hidden" key={i}></div>
-                                        )}
-                                    </>
-                                ))}
+                                            )}
+                                        </>
+                                    ))}
+                                </div>
                         </section>
                     </div>
                 </>
