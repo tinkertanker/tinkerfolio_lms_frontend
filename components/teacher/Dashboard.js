@@ -235,21 +235,6 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
         }
     };
 
-    const reloadResource = (id) => {
-        // When image URL expires
-        getAccessToken().then((accessToken) => {
-            axios.get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/resource/" + id.toString() + "/", {
-                headers: {'Authorization': 'Bearer ' + accessToken},
-            })
-            .then(res => {
-                setResources([...resources.filter(r => r.id !== res.data.id), res.data])
-            })
-            .catch(res => {
-                console.log(res)
-            })
-        })
-    }
-
     const addReview = (id, stars, comment) => {
         // push review to server
         getAccessToken().then((accessToken) => {
@@ -427,7 +412,7 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                                                     </div>
                                                     {resource.resources.map((file, _) => (
                                                         <div className="flex flex-row items-center mt-2">
-                                                            <a className="text-blue-600 hover:text-blue-700" href={file.file} target="_blank" onError={() => reloadResource(file.id)}>{file.name}</a>
+                                                            <a className="text-blue-600 hover:text-blue-700" href={file.file} target="_blank">{file.name}</a>
                                                             <DeleteResource
                                                                 existingResource={resource}
                                                                 existingOneResource={file}
