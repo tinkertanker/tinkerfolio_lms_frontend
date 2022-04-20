@@ -86,6 +86,8 @@ const StudentHome = () => {
             setTasks([...tasks.filter(t => t.id !== msg.task.id), msg.task])
         } else if (Object.keys(msg)[0] === 'submission') {
             setSubmissions([...submissions.filter(sub => sub.id !== msg.submission.id), msg.submission])
+        } else if (Object.keys(msg)[0] === 'announcement') {
+            setAnnouncements([...announcements.filter(sub => sub.id !== msg.announcement.id), msg.announcement])
         }
     }
 
@@ -133,7 +135,7 @@ const StudentHome = () => {
             </Head>
 
             <main className="flex sm:flex-row flex-col min-h-screen">
-                <div className="mt-8 ml-4 mr-2 min-w">
+                <div className="mt-8 ml-4 mr-2 min-w w-56">
                     { classroom && <h1 className="text-3xl font-bold px-2 mb-4">{classroom.name}</h1>}
 
                     <button className={`${(isTasks) ? "bg-gray-300" : "hover:bg-gray-200"} focus:outline-none text-lg font-semibold px-2 py-1 my-1 w-full text-left rounded-lg`} onClick={() => changeTabs("Tasks")}>Tasks</button>
