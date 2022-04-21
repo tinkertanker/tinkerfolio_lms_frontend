@@ -142,7 +142,7 @@ const Classroom = () => {
     }, [router.query, auth.tokens])
 
     const reloadResource = (id) => {
-        // When image URL expires
+        // When URL expires
         getAccessToken().then((accessToken) => {
             axios.get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/resource/" + id.toString() + "/", {
                 headers: {'Authorization': 'Bearer ' + accessToken},
