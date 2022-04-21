@@ -116,20 +116,22 @@ const Classroom = () => {
 
                 setInterval(
                     () => {
-                        for (let i = 0; i < resources.length; i++) {
-                            let subResources = resources[i].resources
-                            for (let j = 0; j < Object.keys(subResources).length; j++) {
-                                let resource_id = subResources[j].id
-                                let resource = subResources[j].file
-                                let expiresAt = resource.slice(resource.indexOf("&Expires=") + 9)
-                                
-                                let currentTime = new Date().getTime()
-                                let currentTimeInSeconds = Math.floor(currentTime / 1000)
-
-                                if (currentTimeInSeconds - Number(expiresAt) > 0) reloadResource(resource_id) 
+                        if (typeof(resources) !== "undefined" && resources) {
+                            for (let i = 0; i < Object.keys(resources).length; i++) {
+                                let subResources = resources[i].resources
+                                for (let j = 0; j < Object.keys(subResources).length; j++) {
+                                    let resource_id = subResources[j].id
+                                    let resource = subResources[j].file
+                                    let expiresAt = resource.slice(resource.indexOf("&Expires=") + 9)
+                                    
+                                    let currentTime = new Date().getTime()
+                                    let currentTimeInSeconds = Math.floor(currentTime / 1000)
+    
+                                    if (currentTimeInSeconds - Number(expiresAt) > 0) reloadResource(resource_id) 
+                                }
                             }
                         }
-                    }, 10000
+                    }, 1000
                 )
             })
             .catch(res => {
