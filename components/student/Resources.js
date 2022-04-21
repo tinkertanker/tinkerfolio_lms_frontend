@@ -1,4 +1,4 @@
-const Resources = ({resources}) => {
+const Resources = ({resources, reloadResource}) => {
     return (
         <>
             <h1 className="text-5xl font-semibold mb-8 ml-2">Resources</h1>
@@ -13,9 +13,9 @@ const Resources = ({resources}) => {
                                 <h3 className="font-bold text-xl text-black">{resource.section.name}</h3>
                                 <div className="mt-2 flex flex-col ">
                                     {resource.resources.map((file, _) => (
-                                        <a className="text-blue-600 hover:text-blue-700" href={file.file} target="_blank">
+                                        <p className="text-blue-600 hover:text-blue-700 cursor-pointer" onClick={() => reloadResource(file.id, file, resource, i)}>
                                             {file.name}
-                                        </a>
+                                        </p>
                                     ))}
                                 </div>
                             </div>

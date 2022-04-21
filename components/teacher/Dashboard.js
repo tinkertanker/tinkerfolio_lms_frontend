@@ -235,6 +235,29 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
         }
     };
 
+    const reloadResource = (id, existingOneResource, existingResource, index) => {
+        getAccessToken().then((accessToken) => {
+            axios.get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/resource/" + id.toString() + "/", {
+                headers: {'Authorization': 'Bearer ' + accessToken},
+            })
+            .then(res => {
+                let indexRes = existingResource.resources.indexOf(existingOneResource)
+                existingResource.resources = [...existingResource.resources.slice(0, indexRes), res.data, ...existingResource.resources.slice(indexRes + 1)]
+
+                setResources([
+                    ...resources.filter(r => Object.keys(resources).find(key => resources[key] === r) < index),
+                    existingResource,
+                    ...resources.filter(r => Object.keys(resources).find(key => resources[key] === r) > index),
+                ])
+
+                window.open(res.data.file)
+            })
+            .catch(res => {
+                console.log(res)
+            })
+        })
+    }
+
     const addReview = (id, stars, comment) => {
         // push review to server
         getAccessToken().then((accessToken) => {
@@ -412,7 +435,9 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                                                     </div>
                                                     {resource.resources.map((file, _) => (
                                                         <div className="flex flex-row items-center mt-2">
-                                                            <a className="text-blue-600 hover:text-blue-700" href={file.file} target="_blank">{file.name}</a>
+                                                            <p className="text-blue-600 hover:text-blue-700 cursor-pointer" onClick={() => reloadResource(file.id, file, resource, i)}>
+                                                                {file.name}
+                                                            </p>
                                                             <DeleteResource
                                                                 existingResource={resource}
                                                                 existingOneResource={file}

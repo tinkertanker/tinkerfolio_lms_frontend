@@ -70,26 +70,6 @@ const StudentHome = () => {
                 setSubmissionStatuses(res.data.submission_statuses)
                 setAnnouncements(res.data.announcements)
                 setResources(res.data.resources)
-
-                setInterval(
-                    () => {
-                        if (typeof(resources) !== "undefined" && resources) {
-                            for (let i = 0; i < Object.keys(resources).length; i++) {
-                                let subResources = resources[i].resources
-                                for (let j = 0; j < Object.keys(subResources).length; j++) {
-                                    let resource_id = subResources[j].id
-                                    let resource = subResources[j].file
-                                    let expiresAt = resource.slice(resource.indexOf("&Expires=") + 9)
-                                    
-                                    let currentTime = new Date().getTime()
-                                    let currentTimeInSeconds = Math.floor(currentTime / 1000)
-    
-                                    if (currentTimeInSeconds - Number(expiresAt) > 0) reloadResource(resource_id) 
-                                }
-                            }
-                        }
-                    }, 1000
-                )
             })
 
             axios.get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE+'student/leaderboard', {
@@ -101,14 +81,22 @@ const StudentHome = () => {
         })
     }, [])
 
-    const reloadResource = (id) => {
-        // When URL expires
+    const reloadResource = (id, existingOneResource, existingResource, index) => {
         getAccessToken().then((accessToken) => {
             axios.get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "student/resource/" + id.toString() + "/", {
                 headers: {'Authorization': 'Bearer ' + accessToken},
             })
             .then(res => {
-                setResources([...resources.filter(r => r.id !== res.data.id), res.data])
+                let indexRes = existingResource.resources.indexOf(existingOneResource)
+                existingResource.resources = [...existingResource.resources.slice(0, indexRes), res.data, ...existingResource.resources.slice(indexRes + 1)]
+
+                setResources([
+                    ...resources.filter(r => Object.keys(resources).find(key => resources[key] === r) < index),
+                    existingResource,
+                    ...resources.filter(r => Object.keys(resources).find(key => resources[key] === r) > index),
+                ])
+
+                window.open(res.data.file)
             })
             .catch(res => {
                 console.log(res)
@@ -183,7 +171,7 @@ const StudentHome = () => {
                     { isTasks ? <Dashboard {...{tasks, submissions, setSubmissions, submissionStatuses, setSubmissionStatuses, sendJsonMessage}}/> : <></>}
                     { isLeaderboard ? <Leaderboard {...{profile, leaderboard}} /> : <></> }
                     { isAnnouncements ? <Announcements announcements={announcements} /> : <></> }
-                    { isResources ? <Resources resources={resources} /> : <></> }
+                    { isResources ? <Resources resources={resources} reloadResource={reloadResource} /> : <></> }
                 </div>
                 <div className={`fixed bottom-4 right-4 flex flex-row items-center py-1 px-4 rounded-full bg-white shadow-lg ${statusColor[connectionStatus]}`}>
                     <p className="blinking pr-2">⬤</p>
