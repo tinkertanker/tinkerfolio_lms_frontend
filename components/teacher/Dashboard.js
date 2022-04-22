@@ -19,6 +19,8 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
     const [tableNames, setTableNames] = useState();
     const [tasksToHide, setTasksToHide] = useState([]);
     const [sortBy, setSortBy] = useState("indexLowToHigh");
+    
+
 
 
     useEffect(() => {
@@ -235,9 +237,7 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                             <p className="text-xl">★</p>
                         </th>
                         {sortTableTasks().map((task, i) => {
-                            let completedSubmissions = 0;
-                            let incompleteSubmissions = 0;
-                            let ungradedSubmissions = 0;
+                            
                             return (
 
                                 <th
@@ -249,142 +249,17 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                                     <img style={{ float: "left", minWidth: "200px", visibility: "hidden", width: "0px", }} />
                                     <div className="flex flex-row items-center">
                                         {/*Task Label*/}
-                                        {//Fetch submissionStatus statistics for task summary
-                                            sortedStudents().map((student, i) => {
-                                                const sub = submissions.filter(
-                                                    (submission) =>
-                                                        submission.student === student.id &&
-                                                        submission.task === task.id
-                                                )[0];
-
-
-                                                const status = submissionStatuses.filter(
-                                                    (status) =>
-                                                        status.student === student.id && status.task === task.id
-
-                                                )[0];
-
-                                                if (!sub) {
-                                                    // no submission
-                                                    if (!status) {
-                                                        // no status indicated
-                                                        // has not started
-                                                        incompleteSubmissions += 1;
-                                                    } else {
-                                                        // status indicated
-                                                        if (status.status === 0) {
-                                                            // has not started
-                                                            incompleteSubmissions += 1;
-
-                                                        } else if (status.status === 1) {
-                                                            // working on it
-                                                            incompleteSubmissions += 1;
-                                                        } else if (status.status === 2) {
-                                                            //need help
-                                                            incompleteSubmissions += 1;
-                                                        }
-                                                    }
-                                                } else if (![0, 1, 2, 3, 4, 5].includes(sub.stars)) {
-                                                    // submitted but not reviewed
-                                                    completedSubmissions += 1;
-                                                    ungradedSubmissions += 1;
-
-                                                } else {
-                                                    //submitted and reviewed
-                                                    completedSubmissions += 1;
-                                                }
-
-
-                                            })}
-                                        <Popup
-                                            trigger={<p className="font-normal ml-1 mr-2 py-0.5 px-1 text-sm text-white bg-gray-700 rounded">
-                                                Task
-                                            </p>}
-                                            position="bottom center"
-                                            on={["hover", "focus"]}
-                                        >
-                                            <div className="py-3 px-4 bg-gray-100 rounded mb-2 shadow-lg flex flex-col gap-2">
-                                                <div className="flex justify-between">
-                                                    <div className="flex">
-                                                        <svg width="20" height="20" className="pr-0.5 left-0 mr-2">
-                                                            <rect
-                                                                width="14"
-                                                                height="14"
-                                                                x="2"
-                                                                y="2"
-                                                                rx="2"
-                                                                ry="2"
-                                                                className="rounded"
-                                                                style={{
-                                                                    fill: "#6EE7B7",
-                                                                    stroke: "#34D399",
-                                                                    strokeWidth: "2",
-                                                                }}
-                                                            ></rect>
-                                                        </svg>
-                                                        <p className="text-black text-sm font-semibold">Completed:</p>
-                                                    </div>
-                                                    <p className="text-gray-700  text-sm font-medium right-0 ml-8">
-
-                                                        {completedSubmissions}/{names.length}</p>
-                                                </div>
-                                                <div className="flex justify-between">
-                                                    <div className="flex">
-                                                        <svg width="20" height="20" className="pr-0.5 left-0 mr-2">
-                                                            <rect
-                                                                width="14"
-                                                                height="14"
-                                                                x="2"
-                                                                y="2"
-                                                                rx="2"
-                                                                ry="2"
-                                                                className="rounded"
-                                                                style={{
-                                                                    fill: "#FCA5A5",
-                                                                    stroke: "#F87171",
-                                                                    strokeWidth: "2",
-                                                                }}
-                                                            ></rect>
-                                                        </svg>
-                                                        <p className="text-black text-sm font-semibold">Incomplete:</p>
-                                                    </div>
-                                                    <p className="text-gray-700 text-sm font-medium right-0 ml-8">{incompleteSubmissions}/{names.length}</p>
-                                                </div>
-                                                <div className="border-t border-gray-400"></div>
-                                                <div className="flex justify-between">
-                                                    <div className="flex">
-                                                        <svg width="20" height="20" className="pr-0.5 left-0 mr-2">
-                                                            <rect
-                                                                width="14"
-                                                                height="14"
-                                                                x="2"
-                                                                y="2"
-                                                                rx="2"
-                                                                ry="2"
-                                                                className="rounded"
-                                                                style={{
-                                                                    fill: "#D1D5DB",
-                                                                    stroke: "#9CA3AF",
-                                                                    strokeWidth: "2",
-                                                                }}
-                                                            ></rect>
-                                                        </svg>
-                                                        <p className="text-black text-sm font-semibold">Ungraded:</p>
-                                                    </div>
-                                                    <p className="text-gray-700 text-sm font-medium right-0">{ungradedSubmissions}</p>
-                                                </div>
-
-                                            </div>
-
-                                        </Popup>
+                                        <p className="font-normal ml-1 mr-2 py-0.5 px-1 text-sm text-white bg-gray-700 rounded">Task</p>
                                         <p
                                             className="truncate text-left"
                                             style={{ width: "150px" }}
                                         >
                                             {task.name}
                                         </p>
+                                        <TaskSummary {...{submissions, submissionStatuses, task, sortedStudents, names}}/>
                                         <TaskMenu {...{ task, setOneTask, deleteTask, submissions }} />
                                     </div>
+                                    <TaskSubmissionsBar {...{submissions, submissionStatuses, task, sortedStudents, names}}/>
                                 </th>
                             )
                         }
@@ -668,12 +543,9 @@ const SubmissionSummary = ({
                             (
                                 <svg width="20" height="20" className="pr-0.5">
                                     <rect
-                                        width="14"
-                                        height="14"
-                                        x="2"
-                                        y="2"
-                                        rx="2"
-                                        ry="2"
+                                        width="14" height="14"
+                                        x="2" y="2"
+                                        rx="2" ry="2"
                                         className="rounded"
                                         style={{
                                             fill: "#D1D5DB",
@@ -690,12 +562,9 @@ const SubmissionSummary = ({
                             statusIcon = (
                                 <svg width="20" height="20" className="pr-0.5">
                                     <rect
-                                        width="14"
-                                        height="14"
-                                        x="2"
-                                        y="2"
-                                        rx="2"
-                                        ry="2"
+                                        width="14" height="14"
+                                        x="2" y="2"
+                                        rx="2" ry="2"
                                         className="rounded"
                                         style={{
                                             fill: "#D1D5DB",
@@ -710,12 +579,9 @@ const SubmissionSummary = ({
                             statusIcon = (
                                 <svg width="20" height="20" className="pr-0.5">
                                     <rect
-                                        width="14"
-                                        height="14"
-                                        x="2"
-                                        y="2"
-                                        rx="2"
-                                        ry="2"
+                                        width="14" height="14"
+                                        x="2" y="2"
+                                        rx="2" ry="2"
                                         className="rounded"
                                         style={{
                                             fill: "#FCD34D",
@@ -729,12 +595,9 @@ const SubmissionSummary = ({
                             statusIcon = (
                                 <svg width="20" height="20" className="pr-0.5">
                                     <rect
-                                        width="14"
-                                        height="14"
-                                        x="2"
-                                        y="2"
-                                        rx="2"
-                                        ry="2"
+                                        width="14" height="14"
+                                        x="2" y="2"
+                                        rx="2" ry="2"
                                         className="rounded"
                                         style={{
                                             fill: "#FCA5A5",
@@ -751,12 +614,9 @@ const SubmissionSummary = ({
                     statusIcon = (
                         <svg width="20" height="20" className="pr-0.5">
                             <rect
-                                width="14"
-                                height="14"
-                                x="2"
-                                y="2"
-                                rx="2"
-                                ry="2"
+                                width="14" height="14"
+                                x="2" y="2"
+                                rx="2" ry="2"
                                 className="rounded"
                                 style={{
                                     fill: "#6EE7B7",
@@ -771,12 +631,9 @@ const SubmissionSummary = ({
                     statusIcon = (
                         <svg width="20" height="20" className="pr-0.5">
                             <rect
-                                width="14"
-                                height="14"
-                                x="2"
-                                y="2"
-                                rx="2"
-                                ry="2"
+                                width="14" height="14"
+                                x="2" y="2"
+                                rx="2" ry="2"
                                 className="rounded"
                                 style={{
                                     fill: "#10B981",
@@ -1466,3 +1323,161 @@ const DeleteStudent = ({
     );
 };
 
+const TaskSummary = ({
+    submissions,
+    submissionStatuses,
+    task,
+    sortedStudents,
+    names
+}) => {
+    let completedSubmissions = 0;
+    let incompleteSubmissions = 0;
+    let ungradedSubmissions = 0;
+    sortedStudents().map((student, i) => {
+        const sub = submissions.filter(
+            (submission) =>
+                submission.student === student.id &&
+                submission.task === task.id
+        )[0];
+
+
+        const status = submissionStatuses.filter(
+            (status) =>
+                status.student === student.id && status.task === task.id
+
+        )[0];
+
+        if (!sub) {
+            // no submission
+            if (!status) {
+                // no status indicated
+                // has not started
+                incompleteSubmissions += 1;
+            } else {
+                // status indicated
+                if (status.status === 0) {
+                    // has not started
+                    incompleteSubmissions += 1;
+
+                } else if (status.status === 1) {
+                    // working on it
+                    incompleteSubmissions += 1;
+                } else if (status.status === 2) {
+                    //need help
+                    incompleteSubmissions += 1;
+                }
+            }
+        } else if (![0, 1, 2, 3, 4, 5].includes(sub.stars)) {
+            // submitted but not reviewed
+            completedSubmissions += 1;
+            ungradedSubmissions += 1;
+
+        } else {
+            //submitted and reviewed
+            completedSubmissions += 1;
+        }
+
+    })
+    return (
+        <Popup
+            trigger={
+                <img src="/barchart.svg"  className="w-7 px-1.5 py-1.5 rounded hover:bg-gray-300"/>
+           }
+            position="bottom right"
+            on={["hover", "focus"]}
+        >
+            <div className="py-3 px-6 bg-gray-100 rounded mb-2 shadow-lg flex flex-col gap-2">
+                <div className="flex justify-between">
+                    <div className="flex items-center">
+                        <p className="text-black text-sm font-semibold">Completed:</p>
+                    </div>
+                    <p className="right-0 ml-8 text-sm text-green-500 font-medium">{completedSubmissions}</p>
+                </div>
+                <div className="flex justify-between">
+                    <div className="flex items-center">
+                        <p className="text-black text-sm font-semibold">Incomplete:</p>
+                    </div>
+                    <p className="right-0 ml-8 text-sm text-red-500 font-medium">{incompleteSubmissions}</p>
+                </div>
+                <div className="border-t border-gray-400"></div>
+                <div className="flex justify-between">
+                    <div className="flex items-center">
+                        <p className="text-black text-sm font-semibold">Ungraded:</p>
+                    </div>
+                    <p className="ml-8 text-gray-700 text-sm font-medium right-0">{ungradedSubmissions}</p>
+                </div>
+
+            </div>
+
+        </Popup>
+    )
+}
+
+
+const TaskSubmissionsBar = ({
+    submissions,
+    submissionStatuses,
+    task,
+    sortedStudents,
+    names
+}) => {
+    let completedSubmissions = 0;
+    let incompleteSubmissions = 0;
+    let ungradedSubmissions = 0;
+
+
+
+    sortedStudents().map((student, i) => {
+        const sub = submissions.filter(
+            (submission) =>
+                submission.student === student.id &&
+                submission.task === task.id
+        )[0];
+
+
+        const status = submissionStatuses.filter(
+            (status) =>
+                status.student === student.id && status.task === task.id
+
+        )[0];
+
+        if (!sub) {
+            // no submission
+            if (!status) {
+                // no status indicated
+                // has not started
+                incompleteSubmissions += 1;
+            } else {
+                // status indicated
+                if (status.status === 0) {
+                    // has not started
+                    incompleteSubmissions += 1;
+
+                } else if (status.status === 1) {
+                    // working on it
+                    incompleteSubmissions += 1;
+                } else if (status.status === 2) {
+                    //need help
+                    incompleteSubmissions += 1;
+                }
+            }
+        } else if (![0, 1, 2, 3, 4, 5].includes(sub.stars)) {
+            // submitted but not reviewed
+            completedSubmissions += 1;
+            ungradedSubmissions += 1;
+
+        } else {
+            //submitted and reviewed
+            completedSubmissions += 1;
+        }
+
+    })
+    
+    let percentCompleted = (completedSubmissions/names.length * 100).toFixed(1);
+    console.log(percentCompleted);
+    return (
+        <div className="w-full h-1 bg-red-500 my-2">
+            <div className="bg-green-500 h-full" style={{width: `${percentCompleted}%`}}></div>
+        </div>
+    )
+}
