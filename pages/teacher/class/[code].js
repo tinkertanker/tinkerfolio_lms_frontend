@@ -113,26 +113,6 @@ const Classroom = () => {
             })
             .then(res => {
                 setResources(res.data)
-
-                // setInterval(
-                //     () => {
-                //         if (typeof(resources) !== "undefined" && resources) {
-                //             for (let i = 0; i < Object.keys(resources).length; i++) {
-                //                 let subResources = resources[i].resources
-                //                 for (let j = 0; j < Object.keys(subResources).length; j++) {
-                //                     let resource_id = subResources[j].id
-                //                     let resource = subResources[j].file
-                //                     let expiresAt = resource.slice(resource.indexOf("&Expires=") + 9)
-                                    
-                //                     let currentTime = new Date().getTime()
-                //                     let currentTimeInSeconds = Math.floor(currentTime / 1000)
-    
-                //                     if (currentTimeInSeconds - Number(expiresAt) > 0) reloadResource(resource_id) 
-                //                 }
-                //             }
-                //         }
-                //     }, 1000
-                // )
             })
             .catch(res => {
                 console.log(res)
@@ -140,21 +120,6 @@ const Classroom = () => {
         })
 
     }, [router.query, auth.tokens])
-
-    // const reloadResource = (id) => {
-    //     // When URL expires
-    //     getAccessToken().then((accessToken) => {
-    //         axios.get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/resource/" + id.toString() + "/", {
-    //             headers: {'Authorization': 'Bearer ' + accessToken},
-    //         })
-    //         .then(res => {
-    //             setResources([...resources.filter(r => r.id !== res.data.id), res.data])
-    //         })
-    //         .catch(res => {
-    //             console.log(res)
-    //         })
-    //     })
-    // }
 
     useEffect(() => {
         if (!classroom) return

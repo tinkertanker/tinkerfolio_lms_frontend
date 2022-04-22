@@ -236,26 +236,33 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
     };
 
     const reloadResource = (id, existingOneResource, existingResource, index) => {
-        getAccessToken().then((accessToken) => {
-            axios.get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/resource/" + id.toString() + "/", {
-                headers: {'Authorization': 'Bearer ' + accessToken},
-            })
-            .then(res => {
-                let indexRes = existingResource.resources.indexOf(existingOneResource)
-                existingResource.resources = [...existingResource.resources.slice(0, indexRes), res.data, ...existingResource.resources.slice(indexRes + 1)]
 
-                setResources([
-                    ...resources.filter(r => Object.keys(resources).find(key => resources[key] === r) < index),
-                    existingResource,
-                    ...resources.filter(r => Object.keys(resources).find(key => resources[key] === r) > index),
-                ])
+        console.log(existingOneResource)
 
-                window.open(res.data.file)
+        if (existingOneResource.file.slice(existingOneResource.file.indexOf("&Expires=") + 9) > Math.floor(Date.now() / 1000)) {
+            window.open(existingOneResource.file)
+        } else {
+            getAccessToken().then((accessToken) => {
+                axios.get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/resource/" + id.toString() + "/", {
+                    headers: {'Authorization': 'Bearer ' + accessToken},
+                })
+                .then(res => {
+                    let indexRes = existingResource.resources.indexOf(existingOneResource)
+                    existingResource.resources = [...existingResource.resources.slice(0, indexRes), res.data, ...existingResource.resources.slice(indexRes + 1)]
+
+                    setResources([
+                        ...resources.filter(r => Object.keys(resources).find(key => resources[key] === r) < index),
+                        existingResource,
+                        ...resources.filter(r => Object.keys(resources).find(key => resources[key] === r) > index),
+                    ])
+
+                    window.open(res.data.file)
+                })
+                .catch(res => {
+                    console.log(res)
+                })
             })
-            .catch(res => {
-                console.log(res)
-            })
-        })
+        }
     }
 
     const addReview = (id, stars, comment) => {
