@@ -309,7 +309,7 @@ const SubmissionForm = ({task, addSubmission, updateSubmission, close, isUpdate,
     if (isUpdate) {
         if (!editing) {
             return (
-                <button className="mt-4 px-2 py-1 bg-green-600 hover:bg-green-700 text-white rounded m-2"
+                <button className="mt-4 px-2 py-1 bg-green-600 hover:bg-green-700 text-white rounded m-2 focus:outline-none"
                 onClick={() => setEditing(true)}>
                     Edit Submission
                 </button>
@@ -330,7 +330,7 @@ const SubmissionForm = ({task, addSubmission, updateSubmission, close, isUpdate,
                         <div className="flex flex-row-reverse items-center">
                             <input type="file" className="bg-gray-400 text-white px-2 py-1 w-min text-sm rounded-lg" onChange={e => setFileInput(e.target.files[0])} />
                         </div>
-                        <button type="submit" className="mt-4 px-2 py-1 bg-green-600 hover:bg-green-700 text-white rounded m-2">Submit</button>
+                        <button type="submit" className="mt-4 px-2 py-1 bg-green-600 hover:bg-green-700 text-white rounded m-2 focus:outline-none">Submit</button>
                     </form>
                 </div>
             )
@@ -351,7 +351,7 @@ const SubmissionForm = ({task, addSubmission, updateSubmission, close, isUpdate,
                     <div className="flex flex-row-reverse items-center">
                         <input type="file" className="bg-gray-400 text-white px-2 py-1 w-min text-sm rounded-lg" onChange={e => setFileInput(e.target.files[0])} />
                     </div>
-                    <button type="submit" className="mt-4 px-2 py-1 bg-green-600 hover:bg-green-700 text-white rounded">Submit</button>
+                    <button type="submit" className="mt-4 px-2 py-1 bg-green-600 hover:bg-green-700 text-white rounded focus:outline-none">Submit</button>
                 </form>
             </div>
         )
