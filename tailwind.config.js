@@ -26,7 +26,11 @@ module.exports = {
             '3/4': '75%',
             'full': '100%',
         },
-        extend: {},
+        extend: {
+            width: {
+                'ann-text': '37rem',
+            },
+        },
     },
     variants: {
         extend: {},
