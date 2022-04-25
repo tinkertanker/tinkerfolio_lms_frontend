@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useState, useEffect, useContext } from 'react'
+import { useState, useEffect, useContext, useRef } from 'react'
 import axios from 'axios'
 import Popup from 'reactjs-popup'
 import useWebSocket, { ReadyState } from 'react-use-websocket'
@@ -26,6 +26,7 @@ const Classroom = () => {
     const [submissionStatuses, setSubmissionStatuses] = useState()
     const [submissions, setSubmissions] = useState()
     const [names, setNames] = useState()
+    
 
     const [loadingAddStudent, setLoadingAddStudent] = useState(false)
 
@@ -73,6 +74,7 @@ const Classroom = () => {
         } else {
             const classroom = classrooms.filter(classroom => classroom.code === code)[0]
             setClassroom(classroom)
+            
         }
 
         // Get all task data
@@ -188,8 +190,8 @@ const Classroom = () => {
         console.log('newClassroom:', newClassroom)
         getAccessToken().then((accessToken) => {
             axios.put(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE+'core/classrooms/'+newClassroom.id+'/', newClassroom, {
-                headers: {'Authorization': 'Bearer '+accessToken},
-            })
+                headers: {'Authorization': 'Bearer '+ accessToken},
+            },)
             .then(res => {
                 console.log(res.data)
                 setClassroom(res.data)
@@ -211,6 +213,31 @@ const Classroom = () => {
                 let newName = names.filter(n => n.index === index)[0]
                 newName.name = name
                 setNames([...names.filter(n => n.index !== index), newName])
+            })
+        })
+    }
+
+    const updateClassName = (classroomName) => {
+        //console.log("broadcast: " + process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + 'core/classrooms/' + classroom.id.toString() + '/');
+        getAccessToken().then((accessToken) => {
+            axios
+                .put(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + 'core/classrooms/' + classroom.id + '/',
+                {
+                    name: classroomName,
+                    student_indexes: classroom.student_indexes,
+                    status: classroom.status,
+                    teacher: classroom.teacher,
+
+                },
+                {
+                    headers: {Authorization: "Bearer " + accessToken },
+                 })
+            .then((res) => {
+                console.log(res.data);
+                
+            })
+            .catch((res) => {
+                console.log(res); 
             })
         })
     }
@@ -245,7 +272,13 @@ const Classroom = () => {
                         className="fixed w-full flex flex-row gap-4 items-center bg-gray-600 py-2 px-4 sm:px-8"
                         style={{marginTop: "48px"}}
                     >
-                        <h1 className="text-xl font-bold px-2 py-0.5 rounded-lg bg-gray-500 text-white">{classroom.name}</h1>
+                        <h1 className="text-xl font-bold px-2 py-0.5 rounded-lg bg-gray-500 text-white">
+                            <EditableClassName 
+                                text={classroom.name}
+                                classroomID={classroom.id}
+                                updateClassName={updateClassName}
+                                />
+                        </h1>
                         <StudentJoinInfo code={classroom.code} />
                         <SettingsMenu {...{classroom, changeStatus}} />
                     </div>
@@ -384,3 +417,61 @@ const ClassCode = ({code}) => {
         </Popup>
     )
 }
+
+const EditableClassName = ({
+    text,
+    classroomID,
+    updateClassName,
+    ...props
+
+}) => {
+    const [isEditing, setEditing] = useState(false);
+    const [value, setValue] = useState(text);
+    const childRef = useRef();
+
+    //auto focus on input element when editing mode is enabled
+    useEffect(() => {
+        if (childRef && childRef.current && isEditing === true) {
+            childRef.current.focus();
+        }
+    }, [isEditing, childRef])
+
+    //exit editor when enter/esc key is pressed
+    const handleKeyDown = (event) => {
+        if (event.key === "Enter" || event.key === "Escape") {
+            event.target.blur();
+        }
+    }
+
+    const onBlur = () => {
+        setEditing(false);
+        updateClassName(value);
+    }
+
+    return (
+        <section {...props}>
+            {isEditing ? (
+                //editing mode enabled
+                <div
+                    onBlur={() => onBlur()}
+                    onKeyDown={e => handleKeyDown(e)}>
+                    <input
+                        ref={childRef}
+                        type="text"
+                        name="classroom name"
+                        value={value}
+                        onChange={e => setValue(e.target.value)}
+                        className="text-gray-700 font-semibold"
+                    />
+                </div>
+            ) : (
+                //editing mode disabled
+                <div onClick={() => setEditing(true)}>
+                    <span>
+                        {value}
+                    </span>
+                </div>
+            )}
+        </section>
+    );
+};
