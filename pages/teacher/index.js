@@ -115,7 +115,7 @@ const CreateClassForm = ({ createClass }) => {
                     <h2 className="text-lg mb-4 text-center">Create a new class?</h2>
                     <label>
                         <p className="font-semibold">Name</p>
-                        <input className="mt-2 outline-none border-2 rounded" type="text" name="class_name" autocomplete="off" onChange={e => setFormName(e.target.value)} />
+                        <input className="mt-2 outline-none border-2 rounded" type="text" name="class_name" autoComplete="off" onChange={e => setFormName(e.target.value)} />
                     </label>
                     <label>
                         <p className="mt-4 font-semibold">No. of Students</p>

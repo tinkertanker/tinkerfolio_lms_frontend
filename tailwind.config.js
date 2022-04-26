@@ -29,7 +29,10 @@ module.exports = {
         extend: {
             fontSize: {
                 'xxs': '.50rem'
-            }
+            },
+            width: {
+                'ann-text': '37rem',
+            },
         },
     },
     variants: {
