@@ -1,4 +1,5 @@
 import beautifyDate from "../../utils/beautifyDate";
+import CustomLinkify from "../../utils/CustomLinkify";
 
 const Announcements = ({announcements}) => {
     return (
@@ -13,7 +14,9 @@ const Announcements = ({announcements}) => {
                                 key={i}
                             >
                                 <h3 className="font-bold text-xl text-blue-600">{announcement.name}</h3>
-                                <p className="my-2 whitespace-pre-wrap">{announcement.description}</p>
+                                <p className="my-2 whitespace-pre-wrap">
+                                    <CustomLinkify>{announcement.description}</CustomLinkify>
+                                </p>
                                 <p className="my-2 text-xs text-gray-500">
                                     {beautifyDate(announcement.updated_at.slice(0, 10))}
                                 </p>
