@@ -32,6 +32,34 @@ const Dashboard = ({tasks, submissions, setSubmissions, submissionStatuses, setS
         })
     }
 
+    const updateSubmission = (textInput, fileInput, id, task_id) => {
+        try {
+            const existingSubmission = submissions.filter(subSubmission => subSubmission.id === id)
+
+            const formData = new FormData()
+            formData.append("task_id", task_id)
+            textInput && formData.append("text", textInput)
+            fileInput && formData.append("image", fileInput)
+
+            getAccessToken().then((accessToken) => {
+                axios.put(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE+'student/submission/'+ existingSubmission[0].id+'/', formData, {
+                    headers: {'Authorization': 'Bearer '+accessToken},
+                })
+                .then(res => {
+                    setSubmissions([
+                        ...submissions.filter(subSubmission => subSubmission.id !== id),
+                        res.data
+                    ])
+                })
+                .catch(res => {
+                    console.log("err:", res)
+                })
+            })
+        } catch (error) {
+            console.log("Something went wrong...")
+        }
+    }
+
     const updateStatus = ({taskID, status}) => {
         const existingStatus = submissionStatuses.filter(substatus => substatus.task === taskID)
         if (existingStatus.length === 1) {
@@ -108,7 +136,7 @@ const Dashboard = ({tasks, submissions, setSubmissions, submissionStatuses, setS
             <h1 className="text-5xl font-semibold mb-8 ml-2">Tasks</h1>
             { sortedTasks(tasks.filter(t => t.status === 1)).map((task, i) => {
                 const sub = submissions.filter(s => s.task === task.id)[0]
-                return <Task {...{task, sub, i, addSubmission, reloadSubmission, updateStatus, status: submissionStatuses.filter(status => status.task == task.id)[0]}} key={i} />
+                return <Task {...{task, sub, i, addSubmission, updateSubmission, reloadSubmission, updateStatus, status: submissionStatuses.filter(status => status.task == task.id)[0]}} key={i} />
             })}
 
             { tasks.filter(t => t.status !== 1).length > 0 && (
@@ -117,7 +145,7 @@ const Dashboard = ({tasks, submissions, setSubmissions, submissionStatuses, setS
 
             { sortedTasks(tasks.filter(t => t.status !== 1)).map((task, i) => {
                 const sub = submissions.filter(s => s.task === task.id)[0]
-                return <Task {...{task, sub, i, addSubmission, reloadSubmission, updateStatus, status: submissionStatuses.filter(status => status.task == task.id)[0]}} key={i} />
+                return <Task {...{task, sub, i, addSubmission, updateSubmission, reloadSubmission, updateStatus, status: submissionStatuses.filter(status => status.task == task.id)[0]}} key={i} />
             })}
         </div>
     )
@@ -125,7 +153,7 @@ const Dashboard = ({tasks, submissions, setSubmissions, submissionStatuses, setS
 
 export default Dashboard
 
-const Task = ({task, sub, i, addSubmission, reloadSubmission, status, updateStatus}) => {
+const Task = ({task, sub, i, addSubmission, updateSubmission, reloadSubmission, status, updateStatus}) => {
     const isSubmitted = sub ? true : false
     const isGraded = sub ? ([0,1,2,3,4,5].includes(sub.stars) ? true : false) : false
 
@@ -153,12 +181,17 @@ const Task = ({task, sub, i, addSubmission, reloadSubmission, status, updateStat
                     { isSubmitted ? (
                         <>
                             <Submission sub={sub} reloadSubmission={reloadSubmission} />
+                            { !isGraded ? (
+                                <SubmissionForm task={task} addSubmission={addSubmission} updateSubmission={updateSubmission} close={close} isUpdate={true} sub={sub} />
+                            ) : (
+                                <></>
+                            )}
                             <TeacherComment isGraded={isGraded} task={task} sub={sub} />
                         </>
                     ) : (
                         <>
                             <SubmissionStatus {...{task, status, updateStatus}}/>
-                            <SubmissionForm task={task} addSubmission={addSubmission} close={close} />
+                            <SubmissionForm task={task} addSubmission={addSubmission} updateSubmission={updateSubmission} close={close} isUpdate={false} sub={sub} />
                         </>
                     )}
 
@@ -251,9 +284,10 @@ const SubmissionStatusOption = ({task, imgPath, text, status, selected, updateSt
     )
 }
 
-const SubmissionForm = ({task, addSubmission, close}) => {
+const SubmissionForm = ({task, addSubmission, updateSubmission, close, isUpdate, sub}) => {
     const [textInput, setTextInput] = useState("")
     const [fileInput, setFileInput] = useState()
+    const [editing, setEditing] = useState(false)
 
     const submitForm = (e) => {
         e.preventDefault()
@@ -262,30 +296,64 @@ const SubmissionForm = ({task, addSubmission, close}) => {
             const n = fileInput.name
             if (!((n.includes('jpg')) | (n.includes('JPG')) | (n.includes('jpeg')) | (n.includes('JPEG')) | (n.includes('png')) | (n.includes('PNG')))) return
         }
-        addSubmission(textInput, fileInput, task.id)
+        if (isUpdate) {
+            updateSubmission(textInput, fileInput, sub.id, task.id)
+        } else {
+            addSubmission(textInput, fileInput, task.id)
+        }
         setTextInput("")
         setFileInput(null)
         close()
     }
 
-    return (
-        <div className="w-full">
-            <h2 className="text-xl pl-2 pt-4">Submit</h2>
-            <small className="text-gray-500 pl-2">Both text and images are accepted.</small>
-            <form onSubmit={e => submitForm(e)}>
-                <div className="px-2">
-                    <textarea
-                        onChange={e => setTextInput(e.target.value)}
-                        className="outline-none border-2 border-gray-100 focus:border-gray-300 px-2 py-2 my-2 rounded-lg w-full"
-                        rows="4" value={textInput} name="description"
-                    />
+    if (isUpdate) {
+        if (!editing) {
+            return (
+                <button className="mt-4 px-2 py-1 bg-green-600 hover:bg-green-700 text-white rounded m-2 focus:outline-none"
+                onClick={() => setEditing(true)}>
+                    Edit Submission
+                </button>
+            )
+        } else {
+            return (
+                <div className="w-full">
+                    <h2 className="text-xl pl-2 pt-4">Edit</h2>
+                    <small className="text-gray-500 pl-2">Both text and images are accepted.</small>
+                    <form onSubmit={e => submitForm(e)}>
+                        <div className="px-2">
+                            <textarea
+                                onChange={e => setTextInput(e.target.value)}
+                                className="outline-none border-2 border-gray-100 focus:border-gray-300 px-2 py-2 my-2 rounded-lg w-full"
+                                rows="4" value={textInput} name="description"
+                            />
+                        </div>
+                        <div className="flex flex-row-reverse items-center">
+                            <input type="file" className="bg-gray-400 text-white px-2 py-1 w-min text-sm rounded-lg" onChange={e => setFileInput(e.target.files[0])} />
+                        </div>
+                        <button type="submit" className="mt-4 px-2 py-1 bg-green-600 hover:bg-green-700 text-white rounded m-2 focus:outline-none">Submit</button>
+                    </form>
                 </div>
-                <div className="flex flex-row-reverse items-center">
-                    <input type="file" className="bg-gray-400 text-white px-2 py-1 w-min text-sm rounded-lg" onChange={e => setFileInput(e.target.files[0])} />
-                </div>
-                <button type="submit" className="mt-4 px-2 py-1 bg-green-600 hover:bg-green-700 text-white rounded">Submit</button>
-            </form>
-
-        </div>
-    )
+            )
+        }
+    } else {
+        return (
+            <div className="w-full">
+                <h2 className="text-xl pl-2 pt-4">Submit</h2>
+                <small className="text-gray-500 pl-2">Both text and images are accepted.</small>
+                <form onSubmit={e => submitForm(e)}>
+                    <div className="px-2">
+                        <textarea
+                            onChange={e => setTextInput(e.target.value)}
+                            className="outline-none border-2 border-gray-100 focus:border-gray-300 px-2 py-2 my-2 rounded-lg w-full"
+                            rows="4" value={textInput} name="description"
+                        />
+                    </div>
+                    <div className="flex flex-row-reverse items-center">
+                        <input type="file" className="bg-gray-400 text-white px-2 py-1 w-min text-sm rounded-lg" onChange={e => setFileInput(e.target.files[0])} />
+                    </div>
+                    <button type="submit" className="mt-4 px-2 py-1 bg-green-600 hover:bg-green-700 text-white rounded focus:outline-none">Submit</button>
+                </form>
+            </div>
+        )
+    }
 }

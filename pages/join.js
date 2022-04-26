@@ -100,11 +100,11 @@ const StudentLogin = () => {
                         <form onSubmit={e => {{e.preventDefault(); loginUser(e)}}} className="">
                             <label>
                                 <h2 className="font-semibold text-lg pb-0.5">Classroom Code</h2>
-                                <input className="outline-none border-b-2 text-xl sm:text-3xl" type="text" name="code" onChange={e => setCode(e.target.value)} autocomplete="off" />
+                                <input className="outline-none border-b-2 text-xl sm:text-3xl" type="text" name="code" onChange={e => setCode(e.target.value)} autoComplete="off" />
                             </label>
                             <label>
                                 <h2 className="font-semibold text-lg pt-4 pb-0.5">Index</h2>
-                                <input className="outline-none border-b-2 text-xl sm:text-3xl" type="text" name="index" onChange={e => setIndex(e.target.value)} autocomplete="off" />
+                                <input className="outline-none border-b-2 text-xl sm:text-3xl" type="text" name="index" onChange={e => setIndex(e.target.value)} autoComplete="off" />
                             </label>
                             <br />
                             { loginFailed && <p className="text-red-500 mt-2 text-sm">Invalid code or index.</p>}
@@ -130,11 +130,11 @@ const StudentLogin = () => {
                         <form onSubmit={e => {{e.preventDefault; signupUser(e)}}} className="">
                             <label>
                                 <h2 className="font-semibold text-lg pb-0.5">Classroom Code</h2>
-                                <input className="outline-none border-b-2 text-xl sm:text-3xl" type="text" name="code" onChange={e => setCode(e.target.value)} autocomplete="off" />
+                                <input className="outline-none border-b-2 text-xl sm:text-3xl" type="text" name="code" onChange={e => setCode(e.target.value)} autoComplete="off" />
                             </label>
                             <label>
                                 <h2 className="font-semibold text-lg pt-4 pb-0.5">Full Name</h2>
-                                <input className="outline-none border-b-2 text-xl sm:text-3xl" type="text" name="index" onChange={e => setName(e.target.value)} autocomplete="off" />
+                                <input className="outline-none border-b-2 text-xl sm:text-3xl" type="text" name="index" onChange={e => setName(e.target.value)} autoComplete="off" />
                             </label>
                             <br />
                             { loginFailed && <p className="text-red-500 mt-2 text-sm">Invalid code or name.</p>}
