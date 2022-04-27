@@ -27,8 +27,8 @@ module.exports = {
             'full': '100%',
         },
         extend: {
-            width: {
-                'ann-text': '37rem',
+            maxHeight: {
+                '500px': '500px',
             },
         },
     },

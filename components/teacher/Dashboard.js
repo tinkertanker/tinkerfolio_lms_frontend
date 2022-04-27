@@ -14,6 +14,8 @@ import {
     FunnelOutline,
     MegaphoneOutline,
     ChevronBackOutline,
+    ArrowBackOutline,
+    ArrowForwardOutline,
 } from "react-ionicons";
 
 const contentStyle = { paddingLeft: "0.5rem", paddingRight: "0.5rem" };
@@ -290,16 +292,14 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                                     {submissions &&
                                         sortTableTasks().map(
                                             (task, i) => {
-                                                let sub =
-                                                    submissions.filter(
-                                                        (s) =>
-                                                            s.task ===
-                                                                task.id &&
-                                                            s.student ===
-                                                                student_id
-                                                    )[0];
+                                                let sub = submissions.filter((s) => 
+                                                    s.task === task.id && s.student === student_id
+                                                )[0];
+                                                let subSubmission = submissions.filter((s) => 
+                                                    s.task === task.id
+                                                );
                                                 return sub ? (
-                                                    <Submission {...{ sub, sp, task, addReview, sendJsonMessage, }} key={i} />
+                                                    <Submission {...{ subSubmission, sub, sp, tableNames, task, addReview, sendJsonMessage, }} key={i} />
                                                 ) : (
                                                     <td
                                                         className="px-2 py-2 border-r-2"
@@ -674,12 +674,28 @@ const SubmissionSummary = ({
     );
 };
 
-const Submission = ({ sub, sp, task, addReview, sendJsonMessage }) => {
+const Submission = ({ subSubmission, sub, sp, tableNames, task, addReview, sendJsonMessage }) => {
+    const [submission, setSubmission] = useState(sub)
+    const [student, setStudent] = useState(sp)
+
     const shortened = (text, maxLength) => {
         if (text.length > maxLength)
             return text.substring(0, maxLength) + "...";
         return text;
     };
+
+    const toggleSubmissions = (direction) => {
+        switch (direction) {
+            case "forward":
+                setSubmission(subSubmission[tableNames.indexOf(student) + 1])
+                setStudent(tableNames[tableNames.indexOf(student) + 1])
+                break
+            case "backward":
+                setSubmission(subSubmission[tableNames.indexOf(student) - 1])
+                setStudent(tableNames[tableNames.indexOf(student) - 1])
+                break
+        }
+    }
 
     return (
         <CustomPopup
@@ -712,59 +728,80 @@ const Submission = ({ sub, sp, task, addReview, sendJsonMessage }) => {
                 </td>
             }
             contentStyle={{
-                overflowY: "auto",
-                marginTop: "min(5%)",
-                height: "max(80%)",
+                maxHeight: "500px",
+                position: "fixed",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+            }}
+            onClose={() => {
+                setSubmission(sub)
+                setStudent(sp)
             }}
         >
-            <div className="flex flex-col px-4 py-4 bg-white rounded-lg popup">
-                <div className="flex flex-row text-xl">
-                    <p>Index:</p>
-                    <p className="ml-2 font-bold">{sp.index}</p>
-                    {sp.name !== "" && (
-                        <>
-                            <p className="ml-4">Name:</p>
-                            <p className="ml-2 font-bold">{sp.name}</p>
-                        </>
-                    )}
-                </div>
-
-                <div className="flex flex-row mt-6 items-center">
-                    <h1 className="text-lg font-bold">Submission</h1>
-                    {sub.image && (
-                        <a
-                            href={sub.image}
-                            className="text-sm text-white py-0.5 px-1 ml-4 bg-gray-500 hover:bg-gray-600 rounded"
-                            download="submission.png"
-                            target="_blank"
-                        >
-                            Full Image
-                        </a>
-                    )}
-                </div>
-
-                <div className="border-2 border-gray-300 rounded mt-4">
-                    <p className="ml-2 px-2 py-2 whitespace-pre-wrap">
-                        <CustomLinkify>{sub.text}</CustomLinkify>
-                    </p>
-
-                    {sub.image && (
-                        <img
-                            src={sub.image}
-                            className="px-2 py-2 mx-auto"
-                            style={{ maxHeight: 300 }}
-                            onError={() => reloadSubmission(sub.id)}
-                        />
-                    )}
-                </div>
-
-                <p className="border-b-2 border-gray-200 mt-6"></p>
-
-                {[0, 1, 2, 3, 4, 5].includes(sub.stars) ? (
-                    <Review sub={sub} task={task} />
-                ) : (
-                    <ReviewForm sub={sub} task={task} addReview={addReview} />
+            <div className="flex flex-row items-center">
+                {student.index !== 1 && (
+                    <button className="fixed bg-gray-100 -left-16 rounded-md py-3 px-1 focus:outline-none hover:bg-gray-200" onClick={() => toggleSubmissions("backward")}>
+                        <ArrowBackOutline color={"#00000"} title={"Previous Submission"} height="40px" width="40px" />
+                    </button>
                 )}
+                
+                <div className="flex flex-col px-4 py-4 bg-white rounded-lg popup overflow-y-auto max-h-500px">
+                    <div className="flex flex-row text-xl">
+                        <p>Index:</p>
+                        <p className="ml-2 font-bold">{student.index}</p>
+                        {student.name !== "" && (
+                            <>
+                                <p className="ml-4">Name:</p>
+                                <p className="ml-2 font-bold">{student.name}</p>
+                            </>
+                        )}
+                    </div>
+
+                    <div className="flex flex-row mt-6 items-center">
+                        <h1 className="text-lg font-bold">Submission</h1>
+                        {submission.image && (
+                            <a
+                                href={submission.image}
+                                className="text-sm text-white py-0.5 px-1 ml-4 bg-gray-500 hover:bg-gray-600 rounded focus:outline-none"
+                                download="submission.png"
+                                target="_blank"
+                            >
+                                Full Image
+                            </a>
+                        )}
+                    </div>
+
+                    <div className="border-2 border-gray-300 rounded mt-4">
+                        <p className="ml-2 px-2 py-2 whitespace-pre-wrap">
+                            <CustomLinkify>{submission.text}</CustomLinkify>
+                        </p>
+
+                        {submission.image && (
+                            <img
+                                src={submission.image}
+                                className="px-2 py-2 mx-auto"
+                                style={{ maxHeight: 300 }}
+                                onError={() => reloadSubmission(submission.id)}
+                            />
+                        )}
+                    </div>
+
+                    <p className="border-b-2 border-gray-200 mt-6"></p>
+
+                    {[0, 1, 2, 3, 4, 5].includes(submission.stars) ? (
+                        <Review sub={submission} task={task} />
+                    ) : (
+                        <ReviewForm sub={submission} task={task} addReview={addReview} />
+                    )}
+                </div>
+
+                {student.index !== Object.keys(subSubmission).length && (
+                    <button className="fixed bg-gray-100 -right-16 rounded-md py-3 px-1 focus:outline-none hover:bg-gray-200" onClick={() => toggleSubmissions("forward")}>
+                        <ArrowForwardOutline color={"#00000"} title={"Previous Submission"} height="40px" width="40px" />
+                    </button>
+                )}
+                
             </div>
         </CustomPopup>
     );
