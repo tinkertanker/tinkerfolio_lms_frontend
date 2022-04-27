@@ -30,7 +30,6 @@ const Classroom = () => {
     const [names, setNames] = useState()
 
     const [loadingAddStudent, setLoadingAddStudent] = useState(false)
-    const inputRef = useRef();
 
     const [wsURL, setWSURL] = useState(null)
     const {
