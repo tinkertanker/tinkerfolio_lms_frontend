@@ -176,7 +176,9 @@ const Task = ({task, sub, i, addSubmission, updateSubmission, reloadSubmission, 
             { close => (
                 <div className="px-4 py-4 bg-white rounded-lg shadow-lg popup">
                     <h1 className="my-2 mx-2 text-2xl font-bold">{task.name}</h1>
-                    <p className="my-2 mx-2 pb-4 border-b-2 border-gray-200 whitespace-pre-wrap">{task.description}</p>
+                    <p className="my-2 mx-2 pb-4 border-b-2 border-gray-200 whitespace-pre-wrap">
+                        <CustomLinkify>{task.description}</CustomLinkify>
+                    </p>
 
                     { isSubmitted ? (
                         <>
