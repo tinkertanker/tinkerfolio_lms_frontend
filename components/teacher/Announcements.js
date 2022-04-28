@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import CustomPopup from "../../utils/CustomPopup";
+import CustomLinkify from "../../utils/CustomLinkify"
 import { AuthContext } from "../../contexts/Auth.Context";
 import beautifyDate from "../../utils/beautifyDate";
 
@@ -106,7 +107,7 @@ const Announcements = ({ classroom, announcements, setAnnouncements }) => {
                                     </div>
                                 </div>
                                 <p className="my-2 whitespace-pre-wrap">
-                                    {announcement.description}
+                                    <CustomLinkify>{announcement.description}</CustomLinkify>
                                 </p>
                                 <p className="my-2 text-xs text-gray-500">
                                     {beautifyDate(announcement.updated_at.slice(0, 10))}
