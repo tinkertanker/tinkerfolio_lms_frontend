@@ -33,7 +33,7 @@ const StudentHome = () => {
     const {
         sendJsonMessage, lastMessage, readyState,
     } = useWebSocket(wsURL, {
-        onOpen: () => console.log('opened'),
+        onOpen: () => console.log('opened'), // do not remove
         onMessage: (msg) => handleMessage(JSON.parse(msg.data)),
         shouldReconnect: (closeEvent) => true
     })
@@ -82,8 +82,6 @@ const StudentHome = () => {
     }, [])
 
     const reloadResource = (id, existingOneResource, existingResource, index) => {
-
-        console.log(existingOneResource)
 
         if (existingOneResource.file.slice(existingOneResource.file.indexOf("&Expires=") + 9) > Math.floor(Date.now() / 1000)) {
             window.open(existingOneResource.file)

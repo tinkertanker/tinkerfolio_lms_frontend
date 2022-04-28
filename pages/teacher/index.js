@@ -54,8 +54,6 @@ const TeacherHome = () => {
         })
     }
 
-    console.log(classrooms)
-
     return (
         <div>
             <Head>

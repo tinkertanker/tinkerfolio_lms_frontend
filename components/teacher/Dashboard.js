@@ -14,8 +14,6 @@ import {
     FunnelOutline,
     MegaphoneOutline,
     ChevronBackOutline,
-    ArrowBackOutline,
-    ArrowForwardOutline,
 } from "react-ionicons";
 
 const contentStyle = { paddingLeft: "0.5rem", paddingRight: "0.5rem" };
@@ -30,7 +28,6 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
 
     useEffect(() => {
         setTableNames(names);
-        console.log("update table names", names);
     }, [names]);
 
     useEffect(() => {
@@ -46,9 +43,9 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                 axios
                     .put(
                         process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-                            "core/tasks/" +
-                            newTask.id.toString() +
-                            "/",
+                        "core/tasks/" +
+                        newTask.id.toString() +
+                        "/",
                         newTask,
                         {
                             headers: { Authorization: "Bearer " + accessToken },
@@ -94,7 +91,6 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                     { headers: { Authorization: "Bearer " + accessToken } }
                 )
                 .then((res) => {
-                    console.log(res.data);
                     setSubmissions([
                         ...submissions.filter((s) => s.id !== res.data.id),
                         res.data,
@@ -118,6 +114,10 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
         (task) => !tasksToHide.includes(task.id)
     );
 
+    const sortedStudents = () => names.sort((a, b) => (a.id > b.id ? 1 : -1));
+
+
+
     const sortTableTasks = () => {
         let tasksToShow = tasks.filter(
             (task) => !tasksToHide.includes(task.id)
@@ -133,8 +133,6 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                 sortedTableNames = tableNames.sort((a, b) =>
                     a.index > b.index ? 1 : -1
                 );
-
-                console.log("tablenames:", tableNames)
                 break;
             case "indexHightoLow":
                 sortedTableNames = tableNames.sort((a, b) =>
@@ -142,27 +140,25 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                 );
                 break;
             case "starsHighToLow":
-                sortedTableNames = tableNames.sort((a, b) =>
-                    {
-                        if (a.score < b.score) return 1
-                        else if (a.score > b.score) return -1
-                        else {
-                            if (a.index > b.index) return 1
-                            else return -1
-                        }
+                sortedTableNames = tableNames.sort((a, b) => {
+                    if (a.score < b.score) return 1
+                    else if (a.score > b.score) return -1
+                    else {
+                        if (a.index > b.index) return 1
+                        else return -1
                     }
+                }
                 );
                 break;
             case "starsLowToHigh":
-                sortedTableNames = tableNames.sort((a, b) =>
-                    {
-                        if (a.score < b.score) return -1
-                        else if (a.score > b.score) return 1
-                        else {
-                            if (a.index > b.index) return 1
-                            else return -1
-                        }
+                sortedTableNames = tableNames.sort((a, b) => {
+                    if (a.score < b.score) return -1
+                    else if (a.score > b.score) return 1
+                    else {
+                        if (a.index > b.index) return 1
+                        else return -1
                     }
+                }
                 );
                 break;
         }
@@ -257,8 +253,11 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                                         >
                                             {task.name}
                                         </p>
+                                        <TaskSummary {...{submissions, submissionStatuses, task, sortedStudents, names}}/>
                                         <TaskMenu {...{ task, setOneTask, deleteTask, submissions, }} />
                                     </div>
+                                    <TaskSubmissionsBar {...{submissions, submissionStatuses, task, sortedStudents, names}}/>
+
                                 </th>
                             ))}
                         </tr>
@@ -292,14 +291,16 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                                     {submissions &&
                                         sortTableTasks().map(
                                             (task, i) => {
-                                                let sub = submissions.filter((s) => 
-                                                    s.task === task.id && s.student === student_id
-                                                )[0];
-                                                let subSubmission = submissions.filter((s) => 
-                                                    s.task === task.id
-                                                );
+                                                let sub =
+                                                    submissions.filter(
+                                                        (s) =>
+                                                            s.task ===
+                                                                task.id &&
+                                                            s.student ===
+                                                                student_id
+                                                    )[0];
                                                 return sub ? (
-                                                    <Submission {...{ subSubmission, sub, sp, tableNames, task, addReview, sendJsonMessage, }} key={i} />
+                                                    <Submission {...{ sub, sp, task, addReview, sendJsonMessage, }} key={i} />
                                                 ) : (
                                                     <td
                                                         className="px-2 py-2 border-r-2"
@@ -324,15 +325,11 @@ export default Dashboard;
 
 const Filter = ({ tasks, tasksToHide, setTasksToHide }) => {
     const handleCheck = (raw_id) => {
-        const id = parseInt(raw_id);
-        console.log(id);
-        console.log(tasksToHide);
+        const id = parseInt(raw_id)
         if (tasksToHide.includes(id)) {
-            console.log("delete");
-            setTasksToHide(tasksToHide.filter((t) => t != id));
+            setTasksToHide(tasksToHide.filter((t) => t != id))
         } else {
-            console.log("add");
-            setTasksToHide([...tasksToHide, id]);
+            setTasksToHide([...tasksToHide, id])
         }
     };
 
@@ -470,9 +467,6 @@ const StudentName = ({
     const nameChange = (input) => {
         if (/\r|\n/.exec(input)) {
             // if newline is found in string
-            console.log("multiline detected");
-            console.log(input.split("\n"));
-
             const inputNames = input.split("\n").filter((e) => e);
             // create new students with subsequent names
             bulkAddStudents(inputNames);
@@ -525,9 +519,12 @@ const SubmissionSummary = ({
                 const status = submissionStatuses.filter(
                     (status) =>
                         status.student === student_id && status.task === task.id
+
                 )[0];
 
+
                 let statusIcon = <h1></h1>;
+
                 if (!sub) {
                     // no submission
                     if (!status) {
@@ -536,12 +533,9 @@ const SubmissionSummary = ({
                             (
                                 <svg width="20" height="20" className="pr-0.5">
                                     <rect
-                                        width="14"
-                                        height="14"
-                                        x="2"
-                                        y="2"
-                                        rx="2"
-                                        ry="2"
+                                        width="14" height="14"
+                                        x="2" y="2"
+                                        rx="2" ry="2"
                                         className="rounded"
                                         style={{
                                             fill: "#D1D5DB",
@@ -558,12 +552,9 @@ const SubmissionSummary = ({
                             statusIcon = (
                                 <svg width="20" height="20" className="pr-0.5">
                                     <rect
-                                        width="14"
-                                        height="14"
-                                        x="2"
-                                        y="2"
-                                        rx="2"
-                                        ry="2"
+                                        width="14" height="14"
+                                        x="2" y="2"
+                                        rx="2" ry="2"
                                         className="rounded"
                                         style={{
                                             fill: "#D1D5DB",
@@ -578,12 +569,9 @@ const SubmissionSummary = ({
                             statusIcon = (
                                 <svg width="20" height="20" className="pr-0.5">
                                     <rect
-                                        width="14"
-                                        height="14"
-                                        x="2"
-                                        y="2"
-                                        rx="2"
-                                        ry="2"
+                                        width="14" height="14"
+                                        x="2" y="2"
+                                        rx="2" ry="2"
                                         className="rounded"
                                         style={{
                                             fill: "#FCD34D",
@@ -597,12 +585,9 @@ const SubmissionSummary = ({
                             statusIcon = (
                                 <svg width="20" height="20" className="pr-0.5">
                                     <rect
-                                        width="14"
-                                        height="14"
-                                        x="2"
-                                        y="2"
-                                        rx="2"
-                                        ry="2"
+                                        width="14" height="14"
+                                        x="2" y="2"
+                                        rx="2" ry="2"
                                         className="rounded"
                                         style={{
                                             fill: "#FCA5A5",
@@ -619,12 +604,9 @@ const SubmissionSummary = ({
                     statusIcon = (
                         <svg width="20" height="20" className="pr-0.5">
                             <rect
-                                width="14"
-                                height="14"
-                                x="2"
-                                y="2"
-                                rx="2"
-                                ry="2"
+                                width="14" height="14"
+                                x="2" y="2"
+                                rx="2" ry="2"
                                 className="rounded"
                                 style={{
                                     fill: "#6EE7B7",
@@ -633,17 +615,15 @@ const SubmissionSummary = ({
                                 }}
                             ></rect>
                         </svg>
+
                     );
                 } else {
                     statusIcon = (
                         <svg width="20" height="20" className="pr-0.5">
                             <rect
-                                width="14"
-                                height="14"
-                                x="2"
-                                y="2"
-                                rx="2"
-                                ry="2"
+                                width="14" height="14"
+                                x="2" y="2"
+                                rx="2" ry="2"
                                 className="rounded"
                                 style={{
                                     fill: "#10B981",
@@ -656,6 +636,7 @@ const SubmissionSummary = ({
                 }
 
                 return (
+
                     <Popup
                         key={i}
                         trigger={statusIcon}
@@ -674,28 +655,12 @@ const SubmissionSummary = ({
     );
 };
 
-const Submission = ({ subSubmission, sub, sp, tableNames, task, addReview, sendJsonMessage }) => {
-    const [submission, setSubmission] = useState(sub)
-    const [student, setStudent] = useState(sp)
-
+const Submission = ({ sub, sp, task, addReview, sendJsonMessage }) => {
     const shortened = (text, maxLength) => {
         if (text.length > maxLength)
             return text.substring(0, maxLength) + "...";
         return text;
     };
-
-    const toggleSubmissions = (direction) => {
-        switch (direction) {
-            case "forward":
-                setSubmission(subSubmission[tableNames.indexOf(student) + 1])
-                setStudent(tableNames[tableNames.indexOf(student) + 1])
-                break
-            case "backward":
-                setSubmission(subSubmission[tableNames.indexOf(student) - 1])
-                setStudent(tableNames[tableNames.indexOf(student) - 1])
-                break
-        }
-    }
 
     return (
         <CustomPopup
@@ -728,80 +693,59 @@ const Submission = ({ subSubmission, sub, sp, tableNames, task, addReview, sendJ
                 </td>
             }
             contentStyle={{
-                maxHeight: "500px",
-                position: "fixed",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-            }}
-            onClose={() => {
-                setSubmission(sub)
-                setStudent(sp)
+                overflowY: "auto",
+                marginTop: "min(5%)",
+                height: "max(80%)",
             }}
         >
-            <div className="flex flex-row items-center">
-                {student.index !== 1 && (
-                    <button className="fixed bg-gray-100 -left-16 rounded-md py-3 px-1 focus:outline-none hover:bg-gray-200" onClick={() => toggleSubmissions("backward")}>
-                        <ArrowBackOutline color={"#00000"} title={"Previous Submission"} height="40px" width="40px" />
-                    </button>
-                )}
-                
-                <div className="flex flex-col px-4 py-4 bg-white rounded-lg popup overflow-y-auto max-h-500px">
-                    <div className="flex flex-row text-xl">
-                        <p>Index:</p>
-                        <p className="ml-2 font-bold">{student.index}</p>
-                        {student.name !== "" && (
-                            <>
-                                <p className="ml-4">Name:</p>
-                                <p className="ml-2 font-bold">{student.name}</p>
-                            </>
-                        )}
-                    </div>
-
-                    <div className="flex flex-row mt-6 items-center">
-                        <h1 className="text-lg font-bold">Submission</h1>
-                        {submission.image && (
-                            <a
-                                href={submission.image}
-                                className="text-sm text-white py-0.5 px-1 ml-4 bg-gray-500 hover:bg-gray-600 rounded focus:outline-none"
-                                download="submission.png"
-                                target="_blank"
-                            >
-                                Full Image
-                            </a>
-                        )}
-                    </div>
-
-                    <div className="border-2 border-gray-300 rounded mt-4">
-                        <p className="ml-2 px-2 py-2 whitespace-pre-wrap">
-                            <CustomLinkify>{submission.text}</CustomLinkify>
-                        </p>
-
-                        {submission.image && (
-                            <img
-                                src={submission.image}
-                                className="px-2 py-2 mx-auto"
-                                style={{ maxHeight: 300 }}
-                                onError={() => reloadSubmission(submission.id)}
-                            />
-                        )}
-                    </div>
-
-                    <p className="border-b-2 border-gray-200 mt-6"></p>
-
-                    {[0, 1, 2, 3, 4, 5].includes(submission.stars) ? (
-                        <Review sub={submission} task={task} />
-                    ) : (
-                        <ReviewForm sub={submission} task={task} addReview={addReview} />
+            <div className="flex flex-col px-4 py-4 bg-white rounded-lg popup">
+                <div className="flex flex-row text-xl">
+                    <p>Index:</p>
+                    <p className="ml-2 font-bold">{sp.index}</p>
+                    {sp.name !== "" && (
+                        <>
+                            <p className="ml-4">Name:</p>
+                            <p className="ml-2 font-bold">{sp.name}</p>
+                        </>
                     )}
                 </div>
 
-                {student.index !== Object.keys(subSubmission).length && (
-                    <button className="fixed bg-gray-100 -right-16 rounded-md py-3 px-1 focus:outline-none hover:bg-gray-200" onClick={() => toggleSubmissions("forward")}>
-                        <ArrowForwardOutline color={"#00000"} title={"Previous Submission"} height="40px" width="40px" />
-                    </button>
+                <div className="flex flex-row mt-6 items-center">
+                    <h1 className="text-lg font-bold">Submission</h1>
+                    {sub.image && (
+                        <a
+                            href={sub.image}
+                            className="text-sm text-white py-0.5 px-1 ml-4 bg-gray-500 hover:bg-gray-600 rounded"
+                            download="submission.png"
+                            target="_blank"
+                        >
+                            Full Image
+                        </a>
+                    )}
+                </div>
+
+                <div className="border-2 border-gray-300 rounded mt-4">
+                    <p className="ml-2 px-2 py-2 whitespace-pre-wrap">
+                        <CustomLinkify>{sub.text}</CustomLinkify>
+                    </p>
+
+                    {sub.image && (
+                        <img
+                            src={sub.image}
+                            className="px-2 py-2 mx-auto"
+                            style={{ maxHeight: 300 }}
+                            onError={() => reloadSubmission(sub.id)}
+                        />
+                    )}
+                </div>
+
+                <p className="border-b-2 border-gray-200 mt-6"></p>
+
+                {[0, 1, 2, 3, 4, 5].includes(sub.stars) ? (
+                    <Review sub={sub} task={task} />
+                ) : (
+                    <ReviewForm sub={sub} task={task} addReview={addReview} />
                 )}
-                
             </div>
         </CustomPopup>
     );
@@ -935,13 +879,7 @@ const ReviewForm = ({ sub, task, addReview }) => {
         return false;
     };
 
-    console.log(task);
-
     const formSubmit = (e) => {
-        console.log(
-            "review form submitting",
-            savedStars !== false ? savedStars + 1 : 0
-        );
         e.preventDefault();
         setIsLoading(true);
         addReview(sub.id, savedStars !== false ? savedStars + 1 : 0, comment);
@@ -1095,7 +1033,6 @@ const TaskDetails = ({ task, setOneTask, setIsCloseOnDocClick, subs }) => {
                         </label>
                         <select
                             onChange={(e) => {
-                                console.log(e.target.value);
                                 setOneTask({
                                     ...newTask,
                                     [e.target.name]: e.target.value,
@@ -1349,6 +1286,7 @@ const DeleteStudent = ({
                                 removeIndex(index);
                                 close();
                                 menuClose();
+
                             }}
                         >
                             Delete
@@ -1368,3 +1306,163 @@ const DeleteStudent = ({
         </CustomPopup>
     );
 };
+
+const TaskSummary = ({
+    submissions,
+    submissionStatuses,
+    task,
+    sortedStudents,
+    names
+}) => {
+    if ((!submissions) || (!submissionStatuses)) return null
+
+    let completedSubmissions = 0;
+    let incompleteSubmissions = 0;
+    let ungradedSubmissions = 0;
+    sortedStudents().map((student, i) => {
+        const sub = submissions.filter(
+            (submission) =>
+                submission.student === student.id &&
+                submission.task === task.id
+        )[0];
+
+
+        const status = submissionStatuses.filter(
+            (status) =>
+                status.student === student.id && status.task === task.id
+
+        )[0];
+
+        if (!sub) {
+            // no submission
+            if (!status) {
+                // no status indicated
+                // has not started
+                incompleteSubmissions += 1;
+            } else {
+                // status indicated
+                if (status.status === 0) {
+                    // has not started
+                    incompleteSubmissions += 1;
+
+                } else if (status.status === 1) {
+                    // working on it
+                    incompleteSubmissions += 1;
+                } else if (status.status === 2) {
+                    //need help
+                    incompleteSubmissions += 1;
+                }
+            }
+        } else if (![0, 1, 2, 3, 4, 5].includes(sub.stars)) {
+            // submitted but not reviewed
+            completedSubmissions += 1;
+            ungradedSubmissions += 1;
+
+        } else {
+            //submitted and reviewed
+            completedSubmissions += 1;
+        }
+
+    })
+    return (
+        <Popup
+            trigger={
+                <img src="/barchart.svg"  className="w-7 px-1.5 py-1.5 rounded hover:bg-gray-300"/>
+           }
+            position="bottom right"
+            on={["hover", "focus"]}
+        >
+            <div className="py-3 px-6 bg-gray-100 rounded mb-2 shadow-lg flex flex-col gap-2">
+                <div className="flex justify-between">
+                    <div className="flex items-center">
+                        <p className="text-black text-sm font-semibold">Completed:</p>
+                    </div>
+                    <p className="right-0 ml-8 text-sm text-green-500 font-medium">{completedSubmissions}</p>
+                </div>
+                <div className="flex justify-between">
+                    <div className="flex items-center">
+                        <p className="text-black text-sm font-semibold">Incomplete:</p>
+                    </div>
+                    <p className="right-0 ml-8 text-sm text-red-500 font-medium">{incompleteSubmissions}</p>
+                </div>
+                <div className="border-t border-gray-400"></div>
+                <div className="flex justify-between">
+                    <div className="flex items-center">
+                        <p className="text-black text-sm font-semibold">Ungraded:</p>
+                    </div>
+                    <p className="ml-8 text-gray-700 text-sm font-medium right-0">{ungradedSubmissions}</p>
+                </div>
+
+            </div>
+
+        </Popup>
+    )
+}
+
+
+const TaskSubmissionsBar = ({
+    submissions,
+    submissionStatuses,
+    task,
+    sortedStudents,
+    names
+}) => {
+    if ((!submissions) || (!submissionStatuses)) return null
+
+    let completedSubmissions = 0;
+    let incompleteSubmissions = 0;
+    let ungradedSubmissions = 0;
+
+    sortedStudents().map((student, i) => {
+        const sub = submissions.filter(
+            (submission) =>
+                submission.student === student.id &&
+                submission.task === task.id
+        )[0];
+
+
+        const status = submissionStatuses.filter(
+            (status) =>
+                status.student === student.id && status.task === task.id
+
+        )[0];
+
+        if (!sub) {
+            // no submission
+            if (!status) {
+                // no status indicated
+                // has not started
+                incompleteSubmissions += 1;
+            } else {
+                // status indicated
+                if (status.status === 0) {
+                    // has not started
+                    incompleteSubmissions += 1;
+
+                } else if (status.status === 1) {
+                    // working on it
+                    incompleteSubmissions += 1;
+                } else if (status.status === 2) {
+                    //need help
+                    incompleteSubmissions += 1;
+                }
+            }
+        } else if (![0, 1, 2, 3, 4, 5].includes(sub.stars)) {
+            // submitted but not reviewed
+            completedSubmissions += 1;
+            ungradedSubmissions += 1;
+
+        } else {
+            //submitted and reviewed
+            completedSubmissions += 1;
+        }
+
+    })
+
+    let percentCompleted = (completedSubmissions/names.length * 100).toFixed(1);
+    return (
+        <div className="w-full h-1 bg-red-500 my-2">
+            <div className="bg-green-500 h-full" style={{width: `${percentCompleted}%`}}></div>
+        </div>
+    )
+}
