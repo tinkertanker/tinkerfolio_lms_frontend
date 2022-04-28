@@ -548,7 +548,7 @@ const DeleteClass = ({
     return (
         <CustomPopup
             trigger={
-                <p className="font-base bg-transparent border border-red-400 text-red-500 px-2 w-4/5 my-4 hover:bg-red-100 rounded text-center">Delete Class</p>
+                <p className="font-base bg-transparent border border-red-400 text-red-500 px-2 w-4/5 my-4 hover:bg-red-100 rounded text-center cursor-pointer">Delete Class</p>
             }
             onOpen={() => setIsCloseOnDocClick(false)}
            onClose={() => setIsCloseOnDocClick(true)}
