@@ -30,8 +30,8 @@ module.exports = {
             fontSize: {
                 'xxs': '.50rem'
             },
-            width: {
-                'ann-text': '37rem',
+            maxHeight: {
+                '500px': '500px',
             },
         },
     },
