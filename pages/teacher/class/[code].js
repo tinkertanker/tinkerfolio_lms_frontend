@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useState, useEffect, useContext } from 'react'
+import { useState, useEffect, useContext, useRef } from 'react'
 import axios from 'axios'
 import Popup from 'reactjs-popup'
 import useWebSocket, { ReadyState } from 'react-use-websocket'
@@ -33,12 +33,13 @@ const Classroom = () => {
 
     const [wsURL, setWSURL] = useState(null)
     const {
-        sendJsonMessage , lastMessage, readyState,
+        sendJsonMessage, lastMessage, readyState,
     } = useWebSocket(wsURL, {
         onOpen: () => console.log('opened'),
         onMessage: (msg) => handleMessage(JSON.parse(msg.data)),
         shouldReconnect: () => false
     })
+
 
     const connectionStatus = {
         [ReadyState.CONNECTING]: 'Connecting',
@@ -54,22 +55,22 @@ const Classroom = () => {
         if (!code) return
 
         if (auth.tokens) {
-            setWSURL(process.env.NEXT_PUBLIC_BACKEND_WS_BASE+'ws/teacher/?token='+auth.tokens.access+'&code='+code)
+            setWSURL(process.env.NEXT_PUBLIC_BACKEND_WS_BASE + 'ws/teacher/?token=' + auth.tokens.access + '&code=' + code)
         }
 
         if (!classrooms) {
             // Get classrooms data if user went directly to classroom link
             getAccessToken().then((accessToken) => {
-                axios.get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE+'core/classrooms/', {
-                    headers: {'Authorization': 'Bearer '+accessToken},
+                axios.get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + 'core/classrooms/', {
+                    headers: { 'Authorization': 'Bearer ' + accessToken },
                 })
-                .then(res => {
-                    setClassroom(res.data.filter(cr => cr.code === code)[0])
-                    setClassrooms(res.data)
-                })
-                .catch(res => {
-                    console.log(res)
-                })
+                    .then(res => {
+                        setClassroom(res.data.filter(cr => cr.code === code)[0])
+                        setClassrooms(res.data)
+                    })
+                    .catch(res => {
+                        console.log(res)
+                    })
             })
 
         } else {
@@ -79,16 +80,16 @@ const Classroom = () => {
 
         // Get all task data
         getAccessToken().then((accessToken) => {
-            axios.get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE+'core/tasks/', {
-                headers: {'Authorization': 'Bearer '+accessToken},
-                params: {'code': code}
+            axios.get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + 'core/tasks/', {
+                headers: { 'Authorization': 'Bearer ' + accessToken },
+                params: { 'code': code }
             })
-            .then(res => {
-                setTasks(res.data)
-            })
-            .catch(res => {
-                console.log(res)
-            })
+                .then(res => {
+                    setTasks(res.data)
+                })
+                .catch(res => {
+                    console.log(res)
+                })
         })
 
         // Get all announcement data
@@ -126,13 +127,13 @@ const Classroom = () => {
 
         // Get student profiles
         getAccessToken().then((accessToken) => {
-            axios.get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE+'core/student_profiles/', {
-                headers: {'Authorization': 'Bearer '+accessToken},
-                params: {'code': classroom.code}
+            axios.get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + 'core/student_profiles/', {
+                headers: { 'Authorization': 'Bearer ' + accessToken },
+                params: { 'code': classroom.code }
             })
-            .then(res => {
-                setNames(res.data)
-            })
+                .then(res => {
+                    setNames(res.data)
+                })
         })
     }, [classroom])
 
@@ -140,23 +141,23 @@ const Classroom = () => {
         // get all submissions
         if ((tasks) && (classroom) && (!submissions)) {
             getAccessToken().then((accessToken) => {
-                axios.get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE+'core/submissions/', {
-                    headers: {'Authorization': 'Bearer '+accessToken},
-                    params: {'code': classroom.code}
+                axios.get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + 'core/submissions/', {
+                    headers: { 'Authorization': 'Bearer ' + accessToken },
+                    params: { 'code': classroom.code }
                 })
-                .then(res => {
-                    setSubmissions(res.data)
-                })
+                    .then(res => {
+                        setSubmissions(res.data)
+                    })
             })
 
             getAccessToken().then((accessToken) => {
-                axios.get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE+'core/submission_status/', {
-                    headers: {'Authorization': 'Bearer '+accessToken},
-                    params: {'code': classroom.code}
+                axios.get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + 'core/submission_status/', {
+                    headers: { 'Authorization': 'Bearer ' + accessToken },
+                    params: { 'code': classroom.code }
                 })
-                .then(res => {
-                    setSubmissionStatuses(res.data)
-                })
+                    .then(res => {
+                        setSubmissionStatuses(res.data)
+                    })
             })
         }
     }, [tasks, classroom, submissions])
@@ -178,19 +179,19 @@ const Classroom = () => {
                 ...names.filter(name => name.index !== msg.student_profile.index),
                 msg.student_profile
             ])
-            let newClassroom = {...classroom, student_indexes: classroom.student_indexes.concat([msg.student_profile.index])}
+            let newClassroom = { ...classroom, student_indexes: classroom.student_indexes.concat([msg.student_profile.index]) }
             setClassroom(newClassroom)
             setClassrooms([...classrooms.filter(cr => cr.id !== newClassroom.id), newClassroom])
         }
     }
 
     const changeStatus = () => {
-        const newClassroom = {...classroom, status: classroom.status === 1 ? 2 : 1}
+        const newClassroom = { ...classroom, status: classroom.status === 1 ? 2 : 1 }
         updateClassroom(newClassroom)
     }
 
     const removeIndex = (index) => {
-        const newClassroom = {...classroom, student_indexes: classroom.student_indexes.filter(i => i !== parseInt(index))}
+        const newClassroom = { ...classroom, student_indexes: classroom.student_indexes.filter(i => i !== parseInt(index)) }
         updateClassroom(newClassroom)
     }
 
@@ -198,56 +199,56 @@ const Classroom = () => {
         // New student will have the largest index number
         let newIndex = 1
         if (classroom.student_indexes.length > 0) {
-            newIndex = Math.max(...classroom.student_indexes)+1
+            newIndex = Math.max(...classroom.student_indexes) + 1
         }
-        const newClassroom = {...classroom, student_indexes: [...classroom.student_indexes, newIndex]}
-        setNames([...names, {index:newIndex, name}])
+        const newClassroom = { ...classroom, student_indexes: [...classroom.student_indexes, newIndex] }
+        setNames([...names, { index: newIndex, name }])
         updateClassroom(newClassroom)
     }
 
     const bulkAddStudents = (rawNames) => {
-        const newIndexes = [...Array(rawNames.length).keys()].map(i => i+1+Math.max(...classroom.student_indexes))
-        const newClassroom = {...classroom, student_indexes: [...classroom.student_indexes, ...newIndexes]}
-        const newNames = newIndexes.map((index, i) => ({index, name: rawNames[i]}))
+        const newIndexes = [...Array(rawNames.length).keys()].map(i => i + 1 + Math.max(...classroom.student_indexes))
+        const newClassroom = { ...classroom, student_indexes: [...classroom.student_indexes, ...newIndexes] }
+        const newNames = newIndexes.map((index, i) => ({ index, name: rawNames[i] }))
 
         console.log([...names, ...newNames])
         setNames([...names, ...newNames])
-        updateClassroom({...newClassroom, newNames})
+        updateClassroom({ ...newClassroom, newNames })
     }
 
     const updateClassroom = (newClassroom) => {
         console.log('newClassroom:', newClassroom)
         getAccessToken().then((accessToken) => {
-            axios.put(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE+'core/classrooms/'+newClassroom.id+'/', newClassroom, {
-                headers: {'Authorization': 'Bearer '+accessToken},
+            axios.put(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + 'core/classrooms/' + newClassroom.id + '/', newClassroom, {
+                headers: { 'Authorization': 'Bearer ' + accessToken },
             })
-            .then(res => {
-                console.log(res.data)
-                setClassroom(res.data)
-                setClassrooms([...classrooms.filter(cr => cr.id !== res.data.id), res.data])
-                // setLoadingAddStudent(false)
-            })
+                .then(res => {
+                    console.log(res.data)
+                    setClassroom(res.data)
+                    setClassrooms([...classrooms.filter(cr => cr.id !== res.data.id), res.data])
+                    // setLoadingAddStudent(false)
+                })
         })
     }
 
     const updateName = (index, name, id) => {
         console.log(index, name, id)
         getAccessToken().then((accessToken) => {
-            axios.put(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE+'core/student_profiles/'+classroom.id+'/', {
+            axios.put(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + 'core/student_profiles/' + classroom.id + '/', {
                 code: classroom.code, index, name
             }, {
-                headers: {'Authorization': 'Bearer '+accessToken},
+                headers: { 'Authorization': 'Bearer ' + accessToken },
             })
-            .then(res => {
-                let newName = names.filter(n => n.index === index)[0]
-                newName.name = name
-                setNames([...names.filter(n => n.index !== index), newName])
-            })
+                .then(res => {
+                    let newName = names.filter(n => n.index === index)[0]
+                    newName.name = name
+                    setNames([...names.filter(n => n.index !== index), newName])
+                })
         })
     }
 
-    const statusColor = {Connecting:"text-yellow-600", Connected:"text-green-600", Disconnected:"text-red-600"}
-    const statusHexColor = {Connecting:"#D97706", Connected:"#059669", Disconnected:"#DC2626"}
+    const statusColor = { Connecting: "text-yellow-600", Connected: "text-green-600", Disconnected: "text-red-600" }
+    const statusHexColor = { Connecting: "#D97706", Connected: "#059669", Disconnected: "#DC2626" }
 
     return (
         <div>
@@ -270,15 +271,18 @@ const Classroom = () => {
                 `}</style>
             </Head>
 
-            { classroom && (
+            {classroom && (
                 <div className="flex flex-col">
                     <div
                         className="fixed w-full flex flex-row gap-4 items-center bg-gray-600 py-2 px-4 sm:px-8"
-                        style={{marginTop: "48px"}}
+                        style={{ marginTop: "48px" }}
                     >
-                        <h1 className="text-xl font-bold px-2 py-0.5 rounded-lg bg-gray-500 text-white">{classroom.name}</h1>
+                        <h1 className="text-xl font-bold px-2 py-0.5 rounded-lg bg-gray-500 text-white">
+                            {classroom.name}
+                          
+                        </h1>
                         <StudentJoinInfo code={classroom.code} />
-                        <SettingsMenu {...{classroom, changeStatus}} />
+                        <SettingsMenu {...{ classroom, changeStatus }} />
                     </div>
                     <div className="bg-white">
                         <Dashboard {...{
@@ -307,7 +311,7 @@ const Classroom = () => {
 
 export default Classroom
 
-const SettingsMenu = ({classroom, changeStatus}) => {
+const SettingsMenu = ({ classroom, changeStatus }) => {
     console.log(classroom.status)
     return (
         <Popup
@@ -319,7 +323,7 @@ const SettingsMenu = ({classroom, changeStatus}) => {
             }
             position="bottom right" arrow={false}
         >
-            { close => (
+            {close => (
                 <div className="mt-4 px-4 py-4 w-72 bg-white shadow-lg rounded">
                     <h2 className="text-gray-500 text-center">Settings</h2>
                     <div className="flex mt-2 mb-4 border"></div>
@@ -336,7 +340,7 @@ const SettingsMenu = ({classroom, changeStatus}) => {
     )
 }
 
-const StudentJoinInfo = ({code}) => {
+const StudentJoinInfo = ({ code }) => {
 
     const [isCopied, setIsCopied] = useState(false)
 
@@ -355,7 +359,7 @@ const StudentJoinInfo = ({code}) => {
             }
             modal overlayStyle={{ background: 'rgba(0,0,0,0.4)' }}
         >
-            { close => (
+            {close => (
                 <div className="flex flex-col px-4 py-4 bg-white rounded-lg shadow-md">
                     <div className="flex flex-row items-center justify-center">
                         <h1 className="text-lg sm:text-xl text-center">Join at <a className="text-blue-500 hover:underline" href="https://joinclass.me" target="_blank" rel="noreferrer">joinclass.me</a> using this code.</h1>
@@ -363,7 +367,7 @@ const StudentJoinInfo = ({code}) => {
                     </div>
                     <div className="flex flex-row items-center justify-center mt-4">
                         <p className="font-mono text-5xl sm:text-7xl tracking-widest text-white py-2 px-2 bg-black ml-1">{code}</p>
-                        { isCopied ? (
+                        {isCopied ? (
                             <CheckmarkSharp color={'#10B981'} cssClasses="ml-2" height="45px" width="45px" />
                         ) : (
                             <CopyToClipboard className="cursor-pointer" text={code} onCopy={hasCopied}>
@@ -377,7 +381,7 @@ const StudentJoinInfo = ({code}) => {
     )
 }
 
-const ClassCode = ({code}) => {
+const ClassCode = ({ code }) => {
 
     const [isCopied, setIsCopied] = useState(false)
 
@@ -396,7 +400,7 @@ const ClassCode = ({code}) => {
             }
             modal overlayStyle={{ background: 'rgba(0,0,0,0.4)' }}
         >
-            { close => (
+            {close => (
                 <div className="flex flex-col px-4 py-4 bg-white rounded-lg shadow-md">
                     <div className="flex flex-row items-center justify-center">
                         <h1 className="text-lg sm:text-xl text-center">Join at <a className="text-blue-500 hover:underline" href="https://www.echoclass.com/join" target="_blank" rel="noreferrer">echoclass.com/join</a> using this code.</h1>
@@ -404,7 +408,7 @@ const ClassCode = ({code}) => {
                     </div>
                     <div className="flex flex-row items-center justify-center mt-4">
                         <p className="font-mono text-5xl sm:text-7xl tracking-widest text-white py-2 px-2 bg-black ml-1">{code}</p>
-                        { isCopied ? (
+                        {isCopied ? (
                             <CheckmarkSharp color={'#10B981'} cssClasses="ml-2" height="45px" width="45px" />
                         ) : (
                             <CopyToClipboard className="cursor-pointer" text={code} onCopy={hasCopied}>
@@ -417,3 +421,5 @@ const ClassCode = ({code}) => {
         </Popup>
     )
 }
+
+

@@ -28,8 +28,11 @@ module.exports = {
         },
         extend: {
             maxHeight: {
-                '500px': '500px',
+                '500px': '500px'
             },
+            fontSize: {
+                'xxs': '.50rem'
+            }
         },
     },
     variants: {
