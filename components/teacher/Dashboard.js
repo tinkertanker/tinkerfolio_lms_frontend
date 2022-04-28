@@ -28,7 +28,6 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
 
     useEffect(() => {
         setTableNames(names);
-        console.log("update table names", names);
     }, [names]);
 
     useEffect(() => {
@@ -92,7 +91,6 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                     { headers: { Authorization: "Bearer " + accessToken } }
                 )
                 .then((res) => {
-                    console.log(res.data);
                     setSubmissions([
                         ...submissions.filter((s) => s.id !== res.data.id),
                         res.data,
@@ -135,8 +133,6 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                 sortedTableNames = tableNames.sort((a, b) =>
                     a.index > b.index ? 1 : -1
                 );
-
-                console.log("tablenames:", tableNames)
                 break;
             case "indexHightoLow":
                 sortedTableNames = tableNames.sort((a, b) =>
@@ -329,15 +325,11 @@ export default Dashboard;
 
 const Filter = ({ tasks, tasksToHide, setTasksToHide }) => {
     const handleCheck = (raw_id) => {
-        const id = parseInt(raw_id);
-        console.log(id);
-        console.log(tasksToHide);
+        const id = parseInt(raw_id)
         if (tasksToHide.includes(id)) {
-            console.log("delete");
-            setTasksToHide(tasksToHide.filter((t) => t != id));
+            setTasksToHide(tasksToHide.filter((t) => t != id))
         } else {
-            console.log("add");
-            setTasksToHide([...tasksToHide, id]);
+            setTasksToHide([...tasksToHide, id])
         }
     };
 
@@ -475,9 +467,6 @@ const StudentName = ({
     const nameChange = (input) => {
         if (/\r|\n/.exec(input)) {
             // if newline is found in string
-            console.log("multiline detected");
-            console.log(input.split("\n"));
-
             const inputNames = input.split("\n").filter((e) => e);
             // create new students with subsequent names
             bulkAddStudents(inputNames);
@@ -890,13 +879,7 @@ const ReviewForm = ({ sub, task, addReview }) => {
         return false;
     };
 
-    console.log(task);
-
     const formSubmit = (e) => {
-        console.log(
-            "review form submitting",
-            savedStars !== false ? savedStars + 1 : 0
-        );
         e.preventDefault();
         setIsLoading(true);
         addReview(sub.id, savedStars !== false ? savedStars + 1 : 0, comment);
@@ -1050,7 +1033,6 @@ const TaskDetails = ({ task, setOneTask, setIsCloseOnDocClick, subs }) => {
                         </label>
                         <select
                             onChange={(e) => {
-                                console.log(e.target.value);
                                 setOneTask({
                                     ...newTask,
                                     [e.target.name]: e.target.value,
@@ -1304,7 +1286,7 @@ const DeleteStudent = ({
                                 removeIndex(index);
                                 close();
                                 menuClose();
-                                
+
                             }}
                         >
                             Delete
@@ -1332,6 +1314,8 @@ const TaskSummary = ({
     sortedStudents,
     names
 }) => {
+    if ((!submissions) || (!submissionStatuses)) return null
+
     let completedSubmissions = 0;
     let incompleteSubmissions = 0;
     let ungradedSubmissions = 0;
@@ -1423,11 +1407,11 @@ const TaskSubmissionsBar = ({
     sortedStudents,
     names
 }) => {
+    if ((!submissions) || (!submissionStatuses)) return null
+
     let completedSubmissions = 0;
     let incompleteSubmissions = 0;
     let ungradedSubmissions = 0;
-
-
 
     sortedStudents().map((student, i) => {
         const sub = submissions.filter(
@@ -1474,9 +1458,8 @@ const TaskSubmissionsBar = ({
         }
 
     })
-    
+
     let percentCompleted = (completedSubmissions/names.length * 100).toFixed(1);
-    console.log(percentCompleted);
     return (
         <div className="w-full h-1 bg-red-500 my-2">
             <div className="bg-green-500 h-full" style={{width: `${percentCompleted}%`}}></div>

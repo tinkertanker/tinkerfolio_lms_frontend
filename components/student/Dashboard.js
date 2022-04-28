@@ -119,7 +119,6 @@ const Dashboard = ({tasks, submissions, setSubmissions, submissionStatuses, setS
     const sortedTasks = (tasks) => {
         const getPriority = (id) => {
             const sub = submissions.filter(s => s.task === id)[0]
-            console.log(sub)
             const isSubmitted = sub ? true : false
             const isGraded = sub ? ([0,1,2,3,4,5].includes(sub.stars) ? true : false) : false
 
@@ -236,7 +235,6 @@ const TeacherComment = ({isGraded, task, sub}) => {
 }
 
 const SubmissionStatus = ({task, status, updateStatus}) => {
-    console.log(status)
 
     let subStatus = {status: 0}
     if (status) subStatus = status
@@ -270,8 +268,6 @@ const SubmissionStatus = ({task, status, updateStatus}) => {
 }
 
 const SubmissionStatusOption = ({task, imgPath, text, status, selected, updateStatus}) => {
-
-    console.log(selected)
 
     let optionStyle = "flex flex-col items-center gap-2 px-2 py-2 border rounded cursor-pointer hover:border-blue-500"
     if (selected) optionStyle = "flex flex-col items-center gap-2 px-2 py-2 border-2 border-blue-500 rounded cursor-pointer"

@@ -29,7 +29,7 @@ const Classroom = () => {
     const [submissionStatuses, setSubmissionStatuses] = useState()
     const [submissions, setSubmissions] = useState()
     const [names, setNames] = useState()
-    
+
 
     const [loadingAddStudent, setLoadingAddStudent] = useState(false)
 
@@ -37,7 +37,7 @@ const Classroom = () => {
     const {
         sendJsonMessage, lastMessage, readyState,
     } = useWebSocket(wsURL, {
-        onOpen: () => console.log('opened'),
+        onOpen: () => console.log('websocket opened'), // do not remove
         onMessage: (msg) => handleMessage(JSON.parse(msg.data)),
         shouldReconnect: () => false
     })
@@ -52,7 +52,6 @@ const Classroom = () => {
     }[readyState];
 
     useEffect(() => {
-        console.log('router.query')
         const { code } = router.query
         if (!code) return
 
@@ -78,7 +77,7 @@ const Classroom = () => {
         } else {
             const classroom = classrooms.filter(classroom => classroom.code === code)[0]
             setClassroom(classroom)
-            
+
         }
 
         // Get all task data
@@ -166,7 +165,6 @@ const Classroom = () => {
     }, [tasks, classroom, submissions])
 
     const handleMessage = (msg) => {
-        console.log(msg)
         if (Object.keys(msg)[0] === 'submission') {
             setSubmissions([
                 ...submissions.filter(sub => sub.id !== msg.submission.id),
@@ -214,19 +212,16 @@ const Classroom = () => {
         const newClassroom = { ...classroom, student_indexes: [...classroom.student_indexes, ...newIndexes] }
         const newNames = newIndexes.map((index, i) => ({ index, name: rawNames[i] }))
 
-        console.log([...names, ...newNames])
         setNames([...names, ...newNames])
         updateClassroom({ ...newClassroom, newNames })
     }
 
     const updateClassroom = (newClassroom) => {
-        console.log('newClassroom:', newClassroom)
         getAccessToken().then((accessToken) => {
             axios.put(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + 'core/classrooms/' + newClassroom.id + '/', newClassroom, {
                 headers: { 'Authorization': 'Bearer ' + accessToken },
             })
                 .then(res => {
-                    console.log(res.data)
                     setClassroom(res.data)
                     setClassrooms([...classrooms.filter(cr => cr.id !== res.data.id), res.data])
                     // setLoadingAddStudent(false)
@@ -235,7 +230,6 @@ const Classroom = () => {
     }
 
     const updateName = (index, name, id) => {
-        console.log(index, name, id)
         getAccessToken().then((accessToken) => {
             axios.put(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + 'core/student_profiles/' + classroom.id + '/', {
                 code: classroom.code, index, name
@@ -296,7 +290,7 @@ const Classroom = () => {
                     >
                         <h1 className="text-xl font-bold px-2 py-0.5 rounded-lg bg-gray-500 text-white">
                             {classroom.name}
-                          
+
                         </h1>
                         <StudentJoinInfo code={classroom.code} />
                         <SettingsMenu {...{ classroom, changeStatus, deleteClass }} />
@@ -329,10 +323,9 @@ const Classroom = () => {
 export default Classroom
 
 const SettingsMenu = ({classroom, changeStatus, deleteClass}) => {
-    console.log(classroom.status)
-    
+
     const [isCloseOnDocClick, setIsCloseOnDocClick] = useState(true);
-    
+
 
     return (
         <Popup
@@ -357,7 +350,7 @@ const SettingsMenu = ({classroom, changeStatus, deleteClass}) => {
                         </select>
                     </div>
                     <div className="flex flex-row items-center justify-center">
-                        <DeleteClass 
+                        <DeleteClass
                         {...{
                             classroom,
                             deleteClass,
@@ -461,7 +454,7 @@ const DeleteClass = ({
     setIsCloseOnDocClick,
     menuClose
 }) => {
-    
+
     return (
         <CustomPopup
             trigger={
@@ -486,20 +479,18 @@ const DeleteClass = ({
                                         deleteClass(classroom.id);
                                         close();
                                         menuClose();
-                                    console.log("done");
                                     }}
                                 >
                                     Delete
                                 </button>
                             </Link>
-                       
-                        
+
+
                         <button
                             className="focus:outline-none px-2 py-1 border border-gray-300 hover:bg-gray-100 hover:border-gray-400 rounded"
                             onClick={() => {
                                 close();
                                 menuClose();
-                                console.log("cancel");
                             }}
                         >
                             Cancel
