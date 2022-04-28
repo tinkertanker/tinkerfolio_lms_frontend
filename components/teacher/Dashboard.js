@@ -1341,6 +1341,7 @@ const DeleteStudent = ({
                                 removeIndex(index);
                                 close();
                                 menuClose();
+                                
                             }}
                         >
                             Delete

@@ -14,6 +14,7 @@ import { ClassroomsContext } from '../../../contexts/Classrooms.Context'
 import Dashboard from '../../../components/teacher/Dashboard'
 
 import useWindowSize from '../../../utils/windowSize'
+import CustomPopup from '../../../utils/CustomPopup'
 
 const Classroom = () => {
     const router = useRouter()
@@ -28,6 +29,7 @@ const Classroom = () => {
     const [submissionStatuses, setSubmissionStatuses] = useState()
     const [submissions, setSubmissions] = useState()
     const [names, setNames] = useState()
+    
 
     const [loadingAddStudent, setLoadingAddStudent] = useState(false)
 
@@ -76,6 +78,7 @@ const Classroom = () => {
         } else {
             const classroom = classrooms.filter(classroom => classroom.code === code)[0]
             setClassroom(classroom)
+            
         }
 
         // Get all task data
@@ -247,8 +250,22 @@ const Classroom = () => {
         })
     }
 
-    const statusColor = { Connecting: "text-yellow-600", Connected: "text-green-600", Disconnected: "text-red-600" }
-    const statusHexColor = { Connecting: "#D97706", Connected: "#059669", Disconnected: "#DC2626" }
+
+    const deleteClass = (id) => {
+        getAccessToken().then((accessToken) => {
+            axios
+                .delete(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/classrooms/" + id + "/",
+                    { headers: { Authorization: "Bearer " + accessToken },
+                 }
+                )
+                .then((res) => {
+                    setClassrooms(classrooms.filter((cr) => cr.id !== id));
+                });
+        });
+    };
+
+    const statusColor = {Connecting:"text-yellow-600", Connected:"text-green-600", Disconnected:"text-red-600"}
+    const statusHexColor = {Connecting:"#D97706", Connected:"#059669", Disconnected:"#DC2626"}
 
     return (
         <div>
@@ -282,7 +299,7 @@ const Classroom = () => {
                           
                         </h1>
                         <StudentJoinInfo code={classroom.code} />
-                        <SettingsMenu {...{ classroom, changeStatus }} />
+                        <SettingsMenu {...{ classroom, changeStatus, deleteClass }} />
                     </div>
                     <div className="bg-white">
                         <Dashboard {...{
@@ -311,8 +328,12 @@ const Classroom = () => {
 
 export default Classroom
 
-const SettingsMenu = ({ classroom, changeStatus }) => {
+const SettingsMenu = ({classroom, changeStatus, deleteClass}) => {
     console.log(classroom.status)
+    
+    const [isCloseOnDocClick, setIsCloseOnDocClick] = useState(true);
+    
+
     return (
         <Popup
             trigger={
@@ -322,6 +343,7 @@ const SettingsMenu = ({ classroom, changeStatus }) => {
                 </div>
             }
             position="bottom right" arrow={false}
+            closeOnDocumentClick={isCloseOnDocClick}
         >
             {close => (
                 <div className="mt-4 px-4 py-4 w-72 bg-white shadow-lg rounded">
@@ -333,6 +355,16 @@ const SettingsMenu = ({ classroom, changeStatus }) => {
                             <option value={1}>Active</option>
                             <option value={2}>Archive</option>
                         </select>
+                    </div>
+                    <div className="flex flex-row items-center justify-center">
+                        <DeleteClass 
+                        {...{
+                            classroom,
+                            deleteClass,
+                            menuClose: close,
+                            setIsCloseOnDocClick,
+                        }}
+                        />
                     </div>
                 </div>
             )}
@@ -423,3 +455,58 @@ const ClassCode = ({ code }) => {
 }
 
 
+const DeleteClass = ({
+    classroom,
+    deleteClass,
+    setIsCloseOnDocClick,
+    menuClose
+}) => {
+    
+    return (
+        <CustomPopup
+            trigger={
+                <p className="font-base bg-transparent border border-red-400 text-red-500 px-2 w-4/5 my-4 hover:bg-red-100 rounded text-center cursor-pointer">Delete Class</p>
+            }
+            onOpen={() => setIsCloseOnDocClick(false)}
+           onClose={() => setIsCloseOnDocClick(true)}
+            >
+            {(close) => (
+                <div className="flex flex-col px-6 py-8 bg-white rounded-lg w-56 sm:w-80">
+                    <h1 className="text-xl font-semibold text-center">
+                        Are you sure?
+                    </h1>
+                    <p className="text-gray-500 mt-2">
+                        This classroom and its students, tasks, and submissions cannot be recovered.
+                    </p>
+                    <div className="flex flex-col mt-4">
+                            <Link href="/teacher">
+                                <button
+                                    className="focus:outline-none px-2 py-1 border border-red-300 text-red-500 hover:bg-red-100 hover:border-red-500 hover:text-red-700 rounded mb-2"
+                                    onClick={() => {
+                                        deleteClass(classroom.id);
+                                        close();
+                                        menuClose();
+                                    console.log("done");
+                                    }}
+                                >
+                                    Delete
+                                </button>
+                            </Link>
+                       
+                        
+                        <button
+                            className="focus:outline-none px-2 py-1 border border-gray-300 hover:bg-gray-100 hover:border-gray-400 rounded"
+                            onClick={() => {
+                                close();
+                                menuClose();
+                                console.log("cancel");
+                            }}
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            )}
+        </CustomPopup>
+    )
+}
