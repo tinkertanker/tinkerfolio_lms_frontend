@@ -27,12 +27,12 @@ module.exports = {
             'full': '100%',
         },
         extend: {
+            maxHeight: {
+                '500px': '500px'
+            },
             fontSize: {
                 'xxs': '.50rem'
-            },
-            width: {
-                'ann-text': '37rem',
-            },
+            }
         },
     },
     variants: {
