@@ -44,9 +44,9 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                 axios
                     .put(
                         process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-                            "core/tasks/" +
-                            newTask.id.toString() +
-                            "/",
+                        "core/tasks/" +
+                        newTask.id.toString() +
+                        "/",
                         newTask,
                         {
                             headers: { Authorization: "Bearer " + accessToken },
@@ -116,6 +116,10 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
         (task) => !tasksToHide.includes(task.id)
     );
 
+    const sortedStudents = () => names.sort((a, b) => (a.id > b.id ? 1 : -1));
+
+
+
     const sortTableTasks = () => {
         let tasksToShow = tasks.filter(
             (task) => !tasksToHide.includes(task.id)
@@ -140,27 +144,25 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                 );
                 break;
             case "starsHighToLow":
-                sortedTableNames = tableNames.sort((a, b) =>
-                    {
-                        if (a.score < b.score) return 1
-                        else if (a.score > b.score) return -1
-                        else {
-                            if (a.index > b.index) return 1
-                            else return -1
-                        }
+                sortedTableNames = tableNames.sort((a, b) => {
+                    if (a.score < b.score) return 1
+                    else if (a.score > b.score) return -1
+                    else {
+                        if (a.index > b.index) return 1
+                        else return -1
                     }
+                }
                 );
                 break;
             case "starsLowToHigh":
-                sortedTableNames = tableNames.sort((a, b) =>
-                    {
-                        if (a.score < b.score) return -1
-                        else if (a.score > b.score) return 1
-                        else {
-                            if (a.index > b.index) return 1
-                            else return -1
-                        }
+                sortedTableNames = tableNames.sort((a, b) => {
+                    if (a.score < b.score) return -1
+                    else if (a.score > b.score) return 1
+                    else {
+                        if (a.index > b.index) return 1
+                        else return -1
                     }
+                }
                 );
                 break;
         }
@@ -255,8 +257,11 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                                         >
                                             {task.name}
                                         </p>
+                                        <TaskSummary {...{submissions, submissionStatuses, task, sortedStudents, names}}/>
                                         <TaskMenu {...{ task, setOneTask, deleteTask, submissions, }} />
                                     </div>
+                                    <TaskSubmissionsBar {...{submissions, submissionStatuses, task, sortedStudents, names}}/>
+
                                 </th>
                             ))}
                         </tr>
@@ -525,9 +530,12 @@ const SubmissionSummary = ({
                 const status = submissionStatuses.filter(
                     (status) =>
                         status.student === student_id && status.task === task.id
+
                 )[0];
 
+
                 let statusIcon = <h1></h1>;
+
                 if (!sub) {
                     // no submission
                     if (!status) {
@@ -536,12 +544,9 @@ const SubmissionSummary = ({
                             (
                                 <svg width="20" height="20" className="pr-0.5">
                                     <rect
-                                        width="14"
-                                        height="14"
-                                        x="2"
-                                        y="2"
-                                        rx="2"
-                                        ry="2"
+                                        width="14" height="14"
+                                        x="2" y="2"
+                                        rx="2" ry="2"
                                         className="rounded"
                                         style={{
                                             fill: "#D1D5DB",
@@ -558,12 +563,9 @@ const SubmissionSummary = ({
                             statusIcon = (
                                 <svg width="20" height="20" className="pr-0.5">
                                     <rect
-                                        width="14"
-                                        height="14"
-                                        x="2"
-                                        y="2"
-                                        rx="2"
-                                        ry="2"
+                                        width="14" height="14"
+                                        x="2" y="2"
+                                        rx="2" ry="2"
                                         className="rounded"
                                         style={{
                                             fill: "#D1D5DB",
@@ -578,12 +580,9 @@ const SubmissionSummary = ({
                             statusIcon = (
                                 <svg width="20" height="20" className="pr-0.5">
                                     <rect
-                                        width="14"
-                                        height="14"
-                                        x="2"
-                                        y="2"
-                                        rx="2"
-                                        ry="2"
+                                        width="14" height="14"
+                                        x="2" y="2"
+                                        rx="2" ry="2"
                                         className="rounded"
                                         style={{
                                             fill: "#FCD34D",
@@ -597,12 +596,9 @@ const SubmissionSummary = ({
                             statusIcon = (
                                 <svg width="20" height="20" className="pr-0.5">
                                     <rect
-                                        width="14"
-                                        height="14"
-                                        x="2"
-                                        y="2"
-                                        rx="2"
-                                        ry="2"
+                                        width="14" height="14"
+                                        x="2" y="2"
+                                        rx="2" ry="2"
                                         className="rounded"
                                         style={{
                                             fill: "#FCA5A5",
@@ -619,12 +615,9 @@ const SubmissionSummary = ({
                     statusIcon = (
                         <svg width="20" height="20" className="pr-0.5">
                             <rect
-                                width="14"
-                                height="14"
-                                x="2"
-                                y="2"
-                                rx="2"
-                                ry="2"
+                                width="14" height="14"
+                                x="2" y="2"
+                                rx="2" ry="2"
                                 className="rounded"
                                 style={{
                                     fill: "#6EE7B7",
@@ -633,17 +626,15 @@ const SubmissionSummary = ({
                                 }}
                             ></rect>
                         </svg>
+
                     );
                 } else {
                     statusIcon = (
                         <svg width="20" height="20" className="pr-0.5">
                             <rect
-                                width="14"
-                                height="14"
-                                x="2"
-                                y="2"
-                                rx="2"
-                                ry="2"
+                                width="14" height="14"
+                                x="2" y="2"
+                                rx="2" ry="2"
                                 className="rounded"
                                 style={{
                                     fill: "#10B981",
@@ -656,6 +647,7 @@ const SubmissionSummary = ({
                 }
 
                 return (
+
                     <Popup
                         key={i}
                         trigger={statusIcon}
@@ -1331,3 +1323,162 @@ const DeleteStudent = ({
         </CustomPopup>
     );
 };
+
+const TaskSummary = ({
+    submissions,
+    submissionStatuses,
+    task,
+    sortedStudents,
+    names
+}) => {
+    let completedSubmissions = 0;
+    let incompleteSubmissions = 0;
+    let ungradedSubmissions = 0;
+    sortedStudents().map((student, i) => {
+        const sub = submissions.filter(
+            (submission) =>
+                submission.student === student.id &&
+                submission.task === task.id
+        )[0];
+
+
+        const status = submissionStatuses.filter(
+            (status) =>
+                status.student === student.id && status.task === task.id
+
+        )[0];
+
+        if (!sub) {
+            // no submission
+            if (!status) {
+                // no status indicated
+                // has not started
+                incompleteSubmissions += 1;
+            } else {
+                // status indicated
+                if (status.status === 0) {
+                    // has not started
+                    incompleteSubmissions += 1;
+
+                } else if (status.status === 1) {
+                    // working on it
+                    incompleteSubmissions += 1;
+                } else if (status.status === 2) {
+                    //need help
+                    incompleteSubmissions += 1;
+                }
+            }
+        } else if (![0, 1, 2, 3, 4, 5].includes(sub.stars)) {
+            // submitted but not reviewed
+            completedSubmissions += 1;
+            ungradedSubmissions += 1;
+
+        } else {
+            //submitted and reviewed
+            completedSubmissions += 1;
+        }
+
+    })
+    return (
+        <Popup
+            trigger={
+                <img src="/barchart.svg"  className="w-7 px-1.5 py-1.5 rounded hover:bg-gray-300"/>
+           }
+            position="bottom right"
+            on={["hover", "focus"]}
+        >
+            <div className="py-3 px-6 bg-gray-100 rounded mb-2 shadow-lg flex flex-col gap-2">
+                <div className="flex justify-between">
+                    <div className="flex items-center">
+                        <p className="text-black text-sm font-semibold">Completed:</p>
+                    </div>
+                    <p className="right-0 ml-8 text-sm text-green-500 font-medium">{completedSubmissions}</p>
+                </div>
+                <div className="flex justify-between">
+                    <div className="flex items-center">
+                        <p className="text-black text-sm font-semibold">Incomplete:</p>
+                    </div>
+                    <p className="right-0 ml-8 text-sm text-red-500 font-medium">{incompleteSubmissions}</p>
+                </div>
+                <div className="border-t border-gray-400"></div>
+                <div className="flex justify-between">
+                    <div className="flex items-center">
+                        <p className="text-black text-sm font-semibold">Ungraded:</p>
+                    </div>
+                    <p className="ml-8 text-gray-700 text-sm font-medium right-0">{ungradedSubmissions}</p>
+                </div>
+
+            </div>
+
+        </Popup>
+    )
+}
+
+
+const TaskSubmissionsBar = ({
+    submissions,
+    submissionStatuses,
+    task,
+    sortedStudents,
+    names
+}) => {
+    let completedSubmissions = 0;
+    let incompleteSubmissions = 0;
+    let ungradedSubmissions = 0;
+
+
+
+    sortedStudents().map((student, i) => {
+        const sub = submissions.filter(
+            (submission) =>
+                submission.student === student.id &&
+                submission.task === task.id
+        )[0];
+
+
+        const status = submissionStatuses.filter(
+            (status) =>
+                status.student === student.id && status.task === task.id
+
+        )[0];
+
+        if (!sub) {
+            // no submission
+            if (!status) {
+                // no status indicated
+                // has not started
+                incompleteSubmissions += 1;
+            } else {
+                // status indicated
+                if (status.status === 0) {
+                    // has not started
+                    incompleteSubmissions += 1;
+
+                } else if (status.status === 1) {
+                    // working on it
+                    incompleteSubmissions += 1;
+                } else if (status.status === 2) {
+                    //need help
+                    incompleteSubmissions += 1;
+                }
+            }
+        } else if (![0, 1, 2, 3, 4, 5].includes(sub.stars)) {
+            // submitted but not reviewed
+            completedSubmissions += 1;
+            ungradedSubmissions += 1;
+
+        } else {
+            //submitted and reviewed
+            completedSubmissions += 1;
+        }
+
+    })
+    
+    let percentCompleted = (completedSubmissions/names.length * 100).toFixed(1);
+    console.log(percentCompleted);
+    return (
+        <div className="w-full h-1 bg-red-500 my-2">
+            <div className="bg-green-500 h-full" style={{width: `${percentCompleted}%`}}></div>
+        </div>
+    )
+}
