@@ -304,13 +304,13 @@ const Classroom = () => {
                         className="fixed w-full flex flex-row gap-4 items-center bg-gray-600 py-2 px-4 sm:px-8"
                         style={{ marginTop: "48px" }}
                     >
-                        <h1 className="text-xl font-bold px-2 py-0.5 rounded-lg bg-gray-500 text-white cursor-pointer hover:bg-gray-400">
+                        
                             <EditableClassName 
                                 text={classroom.name}
                                 classroomID={classroom.id}
                                 updateClassName={updateClassName}
                                 />
-                        </h1>
+                        
                         <StudentJoinInfo code={classroom.code} />
                         <SettingsMenu {...{ classroom, changeStatus }} />
                     </div>
@@ -499,16 +499,16 @@ const EditableClassName = ({
                         value={value}
                         onFocus={onFocus}
                         onChange={e => setValue(e.target.value)}
-                        className="text-gray-700 font-semibold text-justify pl-1"
-                        style={{width: `${(value.length + 1)* 12}px`}}
+                        className="text-xl text-gray-700 font-bold text-justify px-2 py-0.5 rounded-lg"
+                        style={{width: `${(value.length+1)*11.25}px`}}
                     />
                 </div>
             ) : (
                 //editing mode disabled
                 <div onClick={() => setEditing(true)}>
-                    <span>
+                    <h1 className="text-xl font-bold px-2 py-0.5 rounded-lg bg-gray-500 text-white cursor-pointer hover:bg-gray-400">
                         {value}
-                    </span>
+                    </h1>
                 </div>
             )}
         </section>
