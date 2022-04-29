@@ -500,7 +500,7 @@ const EditableClassName = ({
                         onFocus={onFocus}
                         onChange={e => setValue(e.target.value)}
                         className="text-xl text-gray-700 font-bold text-justify px-2 py-0.5 rounded-lg"
-                        style={{width: `${(value.length+1)*11.25}px`}}
+                        style={{width: `${(value.length+1.25)}ch`}}
                     />
                 </div>
             ) : (
