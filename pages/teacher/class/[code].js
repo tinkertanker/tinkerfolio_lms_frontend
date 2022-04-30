@@ -244,7 +244,30 @@ const Classroom = () => {
         })
     }
 
+    const updateClassName = (classroomName) => {
+        getAccessToken().then((accessToken) => {
+            axios
+                .put(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + 'core/classrooms/' + classroom.id + '/',
+                {
+                    name: classroomName,
+                    student_indexes: classroom.student_indexes,
+                    status: classroom.status,
+                    teacher: classroom.teacher,
 
+                },
+                {
+                    headers: {Authorization: "Bearer " + accessToken },
+                 })
+            .then((res) => {
+                console.log(res.data);
+                
+            })
+            .catch((res) => {
+                console.log(res); 
+            })
+        })
+    }
+    
     const deleteClass = (id) => {
         getAccessToken().then((accessToken) => {
             axios
@@ -288,10 +311,13 @@ const Classroom = () => {
                         className="fixed w-full flex flex-row gap-4 items-center bg-gray-600 py-2 px-4 sm:px-8"
                         style={{ marginTop: "48px" }}
                     >
-                        <h1 className="text-xl font-bold px-2 py-0.5 rounded-lg bg-gray-500 text-white">
-                            {classroom.name}
-
-                        </h1>
+                        
+                            <EditableClassName 
+                                text={classroom.name}
+                                classroomID={classroom.id}
+                                updateClassName={updateClassName}
+                                />
+                        
                         <StudentJoinInfo code={classroom.code} />
                         <SettingsMenu {...{ classroom, changeStatus, deleteClass }} />
                     </div>
@@ -447,6 +473,68 @@ const ClassCode = ({ code }) => {
     )
 }
 
+const EditableClassName = ({
+    text,
+    classroomID,
+    updateClassName,
+    ...props
+
+}) => {
+    const [isEditing, setEditing] = useState(false);
+    const [value, setValue] = useState(text);
+    const childRef = useRef();
+
+    //auto focus on input element when editing mode is enabled
+    useEffect(() => {
+        if (childRef && childRef.current && isEditing === true) {
+            childRef.current.focus();
+        }
+    }, [isEditing, childRef])
+
+    //exit editor when enter/esc key is pressed
+    const handleKeyDown = (event) => {
+        if (event.key === "Enter" || event.key === "Escape") {
+            event.target.blur();
+        }
+    }
+
+    const onBlur = () => {
+        setEditing(false);
+        updateClassName(value);
+    }
+
+    const onFocus = (event) => event.target.select();
+
+
+    return (
+        <section {...props}>
+            {isEditing ? (
+                //editing mode enabled
+                <div
+                    onBlur={() => onBlur()}
+                    onKeyDown={e => handleKeyDown(e)}>
+                    <input
+                        ref={childRef}
+                        type="text"
+                        name="classroom name"
+                        value={value}
+                        onFocus={onFocus}
+                        onChange={e => setValue(e.target.value)}
+                        className="text-xl text-gray-700 font-bold text-justify px-2 py-0.5 rounded-lg"
+                        style={{width: `${(value.length+1.25)}ch`}}
+                    />
+                </div>
+            ) : (
+                //editing mode disabled
+                <div onClick={() => setEditing(true)}>
+                    <h1 className="text-xl font-bold px-2 py-0.5 rounded-lg bg-gray-500 text-white cursor-pointer hover:bg-gray-400">
+                        {value}
+                    </h1>
+                </div>
+            )}
+        </section>
+    );
+};
 
 const DeleteClass = ({
     classroom,
