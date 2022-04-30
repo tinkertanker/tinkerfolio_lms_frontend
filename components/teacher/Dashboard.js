@@ -84,7 +84,7 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
         });
     };
 
-    const addReview = (id, stars, comment) => {
+    const addReview = (id, stars, comment, setSubmission) => {
         // push review to server
         getAccessToken().then((accessToken) => {
             axios
@@ -97,6 +97,7 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                         ...submissions.filter((s) => s.id !== res.data.id),
                         res.data,
                     ]);
+                    setSubmission(res.data)
                 });
         });
 
@@ -117,8 +118,6 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
     );
 
     const sortedStudents = () => names.sort((a, b) => (a.id > b.id ? 1 : -1));
-
-
 
     const sortTableTasks = () => {
         let tasksToShow = tasks.filter(
@@ -787,7 +786,7 @@ const Submission = ({ submissions, sub, tableNames, sp, task, addReview, sendJso
                     {[0, 1, 2, 3, 4, 5].includes(submission.stars) ? (
                         <Review sub={submission} task={task} />
                     ) : (
-                        <ReviewForm sub={submission} task={task} addReview={addReview} />
+                        <ReviewForm sub={submission} task={task} addReview={addReview} setSubmission={setSubmission} />
                     )}
                 </div>
                 {Object.values(students).indexOf(student) !== students.length - 1 && (
@@ -814,7 +813,7 @@ const Review = ({ sub, task }) => {
     );
 };
 
-const ReviewForm = ({ sub, task, addReview }) => {
+const ReviewForm = ({ sub, task, addReview, setSubmission }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [isHover, setIsHover] = useState(false);
     const [tempStars, setTempStars] = useState(0);
@@ -835,7 +834,7 @@ const ReviewForm = ({ sub, task, addReview }) => {
     const formSubmit = (e) => {
         e.preventDefault();
         setIsLoading(true);
-        addReview(sub.id, savedStars !== false ? savedStars + 1 : 0, comment);
+        addReview(sub.id, savedStars !== false ? savedStars + 1 : 0, comment, setSubmission);
     };
 
     return (
