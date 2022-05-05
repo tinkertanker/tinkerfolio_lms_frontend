@@ -24,9 +24,14 @@ const arrowStyle = { color: "#374151", paddingBottom: "0.25rem" }; // style for 
 const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents, loadingAddStudent, setLoadingAddStudent, updateName, tasks, setTasks, submissionStatuses, submissions, setSubmissions, sendJsonMessage, size, announcements, setAnnouncements, resources, setResources }) => {
     const { getAccessToken } = useContext(AuthContext);
     const [tableNames, setTableNames] = useState();
-    const [tasksToHide, setTasksToHide] = useState([]);
     const [sortBy, setSortBy] = useState("indexLowToHigh");
     const [showAnnouncements, setShowAnnouncements] = useState(false)
+    const [tasksToHide, setTasksToHide] = useState(() => {
+        const saved = localStorage.getItem("tasksToHide")
+        let initial = []
+        if (saved !== null && saved !== undefined && saved !== "") initial = JSON.parse(saved)
+        return initial
+    })
 
     useEffect(() => {
         setTableNames(names);
@@ -325,12 +330,18 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
 export default Dashboard;
 
 const Filter = ({ tasks, tasksToHide, setTasksToHide }) => {
+    const trackSettings = (newSettings) => {
+        localStorage.setItem("tasksToHide", JSON.stringify(newSettings))
+    }
+
     const handleCheck = (raw_id) => {
         const id = parseInt(raw_id)
         if (tasksToHide.includes(id)) {
             setTasksToHide(tasksToHide.filter((t) => t != id))
+            trackSettings(tasksToHide.filter((t) => t != id))
         } else {
             setTasksToHide([...tasksToHide, id])
+            trackSettings([...tasksToHide, id])
         }
     };
 
@@ -354,16 +365,20 @@ const Filter = ({ tasks, tasksToHide, setTasksToHide }) => {
                     <div className="flex flex-row items-center mb-4 text-sm">
                         <p
                             className="text-blue-600 hover:underline cursor-pointer"
-                            onClick={() => setTasksToHide([])}
+                            onClick={() => {
+                                setTasksToHide([])
+                                trackSettings([])
+                            }}
                         >
                             Select All
                         </p>
                         <p className="mx-2">|</p>
                         <p
                             className="text-blue-600 hover:underline cursor-pointer"
-                            onClick={() =>
+                            onClick={() => {
                                 setTasksToHide(tasks.map((t) => t.id))
-                            }
+                                trackSettings(tasks.map((t) => t.id))
+                            }}
                         >
                             Unselect All
                         </p>
