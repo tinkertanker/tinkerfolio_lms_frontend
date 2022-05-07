@@ -27,7 +27,7 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
     const [sortBy, setSortBy] = useState("indexLowToHigh");
     const [showAnnouncements, setShowAnnouncements] = useState(false)
     const [tasksToHide, setTasksToHide] = useState(() => {
-        const saved = localStorage.getItem("tasksToHide")
+        const saved = localStorage.getItem("tasksToHide" + classroom.code)
         let initial = []
         if (saved !== null && saved !== undefined && saved !== "") initial = JSON.parse(saved)
         return initial
@@ -197,7 +197,7 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                 <>
                     <div className="py-4 px-8 bg-gray-100 shadow-md w-full fixed grid grid-cols-2">
                         <div className="flex flex-row flex-wrap gap-4">
-                            <Filter {...{ tasks, tasksToHide, setTasksToHide }} />
+                            <Filter {...{ tasks, tasksToHide, setTasksToHide, classroom }} />
                             <Sort {...{ sortBy, setSortBy }} />
                             <NewTask addTask={addTask} />
                             <button
@@ -329,9 +329,9 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
 
 export default Dashboard;
 
-const Filter = ({ tasks, tasksToHide, setTasksToHide }) => {
+const Filter = ({ tasks, tasksToHide, setTasksToHide, classroom }) => {
     const trackSettings = (newSettings) => {
-        localStorage.setItem("tasksToHide", JSON.stringify(newSettings))
+        localStorage.setItem("tasksToHide" + classroom.code, JSON.stringify(newSettings))
     }
 
     const handleCheck = (raw_id) => {
