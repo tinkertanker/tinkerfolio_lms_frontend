@@ -260,7 +260,7 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                                             {task.name}
                                         </p>
                                         <TaskSummary {...{submissions, submissionStatuses, task, sortedStudents, names}}/>
-                                        <TaskMenu {...{ task, setOneTask, deleteTask, submissions, }} />
+                                        <TaskMenu {...{ task, setOneTask, deleteTask, submissions, tasksToHide, setTasksToHide, classroom }} />
                                     </div>
                                     <TaskSubmissionsBar {...{submissions, submissionStatuses, task, sortedStudents, names}}/>
 
@@ -903,7 +903,7 @@ const ReviewForm = ({ sub, task, addReview, setSubmission }) => {
     );
 };
 
-const TaskMenu = ({ task, setOneTask, deleteTask, submissions }) => {
+const TaskMenu = ({ task, setOneTask, deleteTask, submissions, tasksToHide, setTasksToHide, classroom }) => {
     const [isCloseOnDocClick, setIsCloseOnDocClick] = useState(true);
 
     if (!submissions) return <h1></h1>;
@@ -928,6 +928,12 @@ const TaskMenu = ({ task, setOneTask, deleteTask, submissions }) => {
                         setIsCloseOnDocClick={setIsCloseOnDocClick}
                         subs={submissions.filter((s) => s.task === task.id)}
                     />
+                    <HideTask
+                        task={task}
+                        tasksToHide={tasksToHide}
+                        setTasksToHide={setTasksToHide}
+                        classroom={classroom}
+                    />
                     <DeleteTask
                         id={task.id}
                         setIsCloseOnDocClick={setIsCloseOnDocClick}
@@ -939,6 +945,23 @@ const TaskMenu = ({ task, setOneTask, deleteTask, submissions }) => {
         </Popup>
     );
 };
+
+const HideTask = ({ task, tasksToHide, setTasksToHide, classroom }) => {
+    const trackSettings = (newSettings) => {
+        localStorage.setItem("tasksToHide" + classroom.code, JSON.stringify(newSettings))
+    }
+    
+    const handleChange = () => {
+        setTasksToHide([...tasksToHide, task.id])
+        trackSettings([...tasksToHide, task.id])
+    }
+   
+    return (
+        <p className="border-b-2 border-gray-500 py-1 hover:text-white cursor-pointer" onClick={() => handleChange()} >
+            Hide
+        </p>
+    )
+}
 
 const TaskDetails = ({ task, setOneTask, setIsCloseOnDocClick, subs }) => {
     const [newTask, setNewTask] = useState();
