@@ -10,15 +10,17 @@ import Dashboard from '../../components/student/Dashboard'
 import Leaderboard from '../../components/student/Leaderboard'
 import Announcements from '../../components/student/Announcements'
 import Resources from '../../components/student/Resources'
+import AnnouncementsPreview from '../../components/student/AnnouncementsPreview'
+import ResourcesPreview from '../../components/student/ResourcesPreview'
+
+import {
+    ChevronBackOutline,
+} from "react-ionicons";
+
 
 const StudentHome = () => {
     const router = useRouter()
     const { auth, getAccessToken } = useContext(AuthContext)
-
-    const [isTasks, setIsTasks] = useState(true)
-    const [isLeaderboard, setIsLeaderboard] = useState(false)
-    const [isAnnouncements, setIsAnnouncements] = useState(false)
-    const [isResources, setIsResources] = useState(false)
 
     const [profile, setProfile] = useState()
     const [classroom, setClassroom] = useState()
@@ -28,6 +30,10 @@ const StudentHome = () => {
     const [announcements, setAnnouncements] = useState()
     const [resources, setResources] = useState()
     const [leaderboard, setLeaderboard] = useState()
+
+    const [showMain, setShowMain] = useState(true)
+    const [showAllAnnouncements, setShowAllAnnouncements] = useState(false)
+    const [showAllResources, setShowAllResources] = useState(false)
 
     const [wsURL, setWSURL] = useState(null)
     const {
@@ -46,38 +52,39 @@ const StudentHome = () => {
         [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
     }[readyState];
 
+
     useEffect(() => {
         if (auth.tokens) {
-            setWSURL(process.env.NEXT_PUBLIC_BACKEND_WS_BASE+'ws/student/?token='+auth.tokens.access)
+            setWSURL(process.env.NEXT_PUBLIC_BACKEND_WS_BASE + 'ws/student/?token=' + auth.tokens.access)
         }
     }, [auth.tokens])
 
     useEffect(() => {
         if (auth.tokens) {
-            setWSURL(process.env.NEXT_PUBLIC_BACKEND_WS_BASE+'ws/student/?token='+auth.tokens.access)
+            setWSURL(process.env.NEXT_PUBLIC_BACKEND_WS_BASE + 'ws/student/?token=' + auth.tokens.access)
         }
 
         // Get initial data
         getAccessToken().then((accessToken) => {
-            axios.get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE+'student/initial/', {
-                headers: {'Authorization': 'Bearer '+accessToken},
+            axios.get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + 'student/initial/', {
+                headers: { 'Authorization': 'Bearer ' + accessToken },
             })
-            .then(res => {
-                setProfile(res.data.profile)
-                setClassroom(res.data.classroom)
-                setTasks(res.data.tasks)
-                setSubmissions(res.data.submissions)
-                setSubmissionStatuses(res.data.submission_statuses)
-                setAnnouncements(res.data.announcements)
-                setResources(res.data.resources)
-            })
+                .then(res => {
+                    setProfile(res.data.profile)
+                    setClassroom(res.data.classroom)
+                    setTasks(res.data.tasks)
+                    setSubmissions(res.data.submissions)
+                    setSubmissionStatuses(res.data.submission_statuses)
+                    setAnnouncements(res.data.announcements)
+                    setResources(res.data.resources)
+                })
 
-            axios.get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE+'student/leaderboard', {
-                headers: {'Authorization': 'Bearer '+accessToken},
+            axios.get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + 'student/leaderboard', {
+                headers: { 'Authorization': 'Bearer ' + accessToken },
             })
-            .then(res => {
-                setLeaderboard(res.data)
-            })
+                .then(res => {
+                    setLeaderboard(res.data)
+                })
         })
     }, [])
 
@@ -88,23 +95,23 @@ const StudentHome = () => {
         } else {
             getAccessToken().then((accessToken) => {
                 axios.get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "student/resource/" + id.toString() + "/", {
-                    headers: {'Authorization': 'Bearer ' + accessToken},
+                    headers: { 'Authorization': 'Bearer ' + accessToken },
                 })
-                .then(res => {
-                    let indexRes = existingResource.resources.indexOf(existingOneResource)
-                    existingResource.resources = [...existingResource.resources.slice(0, indexRes), res.data, ...existingResource.resources.slice(indexRes + 1)]
+                    .then(res => {
+                        let indexRes = existingResource.resources.indexOf(existingOneResource)
+                        existingResource.resources = [...existingResource.resources.slice(0, indexRes), res.data, ...existingResource.resources.slice(indexRes + 1)]
 
-                    setResources([
-                        ...resources.filter(r => Object.keys(resources).find(key => resources[key] === r) < index),
-                        existingResource,
-                        ...resources.filter(r => Object.keys(resources).find(key => resources[key] === r) > index),
-                    ])
+                        setResources([
+                            ...resources.filter(r => Object.keys(resources).find(key => resources[key] === r) < index),
+                            existingResource,
+                            ...resources.filter(r => Object.keys(resources).find(key => resources[key] === r) > index),
+                        ])
 
-                    window.open(res.data.file)
-                })
-                .catch(res => {
-                    console.log(res)
-                })
+                        window.open(res.data.file)
+                    })
+                    .catch(res => {
+                        console.log(res)
+                    })
             })
         }
     }
@@ -119,74 +126,110 @@ const StudentHome = () => {
         }
     }
 
-    const statusColor = {Connecting:"text-yellow-600", Connected:"text-green-600", Disconnected:"text-red-600"}
-    const statusHexColor = {Connecting:"#D97706", Connected:"#059669", Disconnected:"#DC2626"}
+    const statusColor = { Connecting: "text-yellow-600", Connected: "text-green-600", Disconnected: "text-red-600" }
+    const statusHexColor = { Connecting: "#D97706", Connected: "#059669", Disconnected: "#DC2626" }
 
-    const changeTabs = (currentTab) => {
-        if (isTasks) setIsTasks(false);
-        if (isLeaderboard) setIsLeaderboard(false);
-        if (isAnnouncements) setIsAnnouncements(false);
-        if (isResources) setIsResources(false);
+    const changePage = (currentPage) => {
+        if (showMain) setShowMain(false);
+        if (showAllAnnouncements) setShowAllAnnouncements(false);
+        if (showAllResources) setShowAllResources(false);
+        
 
-        switch (currentTab) {
-            case "Tasks":
-                setIsTasks(true);
-                break;
-            case "Leaderboard":
-                setIsLeaderboard(true);
+        switch (currentPage) {
+            case "Main":
+                setShowMain(true);
                 break;
             case "Announcements":
-                setIsAnnouncements(true);
+                setShowAllAnnouncements(true);
                 break;
             case "Resources":
-                setIsResources(true);
+                setShowAllResources(true);
                 break;
         }
     }
 
     return (
-        <div>
+
+        <div className="overflow-hidden">
             <Head>
                 <title>Student | EchoClass</title>
                 <style>{`\
-                    .blinking {\
-                        animation:blinkingText 3s infinite;\
-                    }\
-                    @keyframes blinkingText{\
-                        0% {color: ${statusHexColor[connectionStatus]}}\
-                        49% {color: ${statusHexColor[connectionStatus]}}\
-                        70% {color: transparent}\
-                        99% {color:transparent}\
-                        100% {color: ${statusHexColor[connectionStatus]}}\
-                    }\
-                `}</style>
+                        .blinking {\
+                            animation:blinkingText 3s infinite;\
+                        }\
+                        @keyframes blinkingText{\
+                            0% {color: ${statusHexColor[connectionStatus]}}\
+                            49% {color: ${statusHexColor[connectionStatus]}}\
+                            70% {color: transparent}\
+                            99% {color:transparent}\
+                            100% {color: ${statusHexColor[connectionStatus]}}\
+                        }\
+                    `}</style>
             </Head>
 
-            <main className="flex sm:flex-row flex-col min-h-screen">
-                <div className="mt-8 ml-4 mr-2 min-w w-56">
-                    { classroom && <h1 className="text-3xl font-bold px-2 mb-4">{classroom.name}</h1>}
+            {showMain ? <main className="min-h-full lg:max-h-screen max-w-screen min-w-screen mt-8 mx-5 relative grid grid-cols-1 lg:grid-cols-3 grid-rows-10 lg:grid-rows-dashboard grid-flow-row-dense gap-6 pb-10">
+                <div className="flex bg-blue-600 py-5 rounded-2xl shadow-lg px-5col-span-1 lg:col-span-2 row-span-1 items-center justify-between">
+                    <div className="flex flex-col mx-3">
+                        {classroom && <h1 className="text-3xl font-bold px-2 text-white">{classroom.name}</h1>}
+                        {classroom && <h2 className="text-2xl font-semibold px-2 text-white">{classroom.code}</h2>}
+                    </div>
+                    <div className="mx-3">
+                        <Leaderboard {...{ profile, leaderboard }} />
+                    </div>
+                </div>
+                <div className="bg-white shadow-lg rounded-2xl col-span-1 lg:col-span-2 row-span-4 ">
 
-                    <button className={`${(isTasks) ? "bg-gray-300" : "hover:bg-gray-200"} focus:outline-none text-lg font-semibold px-2 py-1 my-1 w-full text-left rounded-lg`} onClick={() => changeTabs("Tasks")}>Tasks</button>
-                    <button className={`${(isLeaderboard) ? "bg-gray-300" : "hover:bg-gray-200"} focus:outline-none text-lg font-semibold px-2 py-1 my-1 w-full text-left rounded-lg`} onClick={() => changeTabs("Leaderboard")}>Leaderboard</button>
-                    <button className={`${(isAnnouncements) ? "bg-gray-300" : "hover:bg-gray-200"} focus:outline-none text-lg font-semibold px-2 py-1 my-1 w-full text-left rounded-lg`} onClick={() => changeTabs("Announcements")}>Announcements</button>
-                    <button className={`${(isResources) ? "bg-gray-300" : "hover:bg-gray-200"} focus:outline-none text-lg font-semibold px-2 py-1 my-1 w-full text-left rounded-lg`} onClick={() => changeTabs("Resources")}>Resources</button>
+                    <Dashboard {...{ tasks, submissions, setSubmissions, submissionStatuses, setSubmissionStatuses, sendJsonMessage }} />
 
                 </div>
-                <div className="bg-gray-100 w-full pt-8 px-8">
-                    { isTasks ? <Dashboard {...{tasks, submissions, setSubmissions, submissionStatuses, setSubmissionStatuses, sendJsonMessage}}/> : <></>}
-                    { isLeaderboard ? <Leaderboard {...{profile, leaderboard}} /> : <></> }
-                    { isAnnouncements ? <Announcements announcements={announcements} /> : <></> }
-                    { isResources ? <Resources resources={resources} reloadResource={reloadResource} /> : <></> }
+                <div className="bg-white shadow-lg px-5 py-5 rounded-2xl row-span-2 col-span-1">
+                    <AnnouncementsPreview announcements={announcements} />
+                    <div className="relative flex justify-end bottom-0 mt-2">
+                        <button className="text-sm font-medium text-blue-600 hover:underline focus:outline-none" onClick={() => changePage("Announcements")}>
+                            View All Announcements ({announcements.length})
+                        </button>
+                    </div>
+                </div>
+                <div className=" bg-white shadow-lg px-5 py-5 rounded-2xl row-span-3 col-span-1">
+                    <ResourcesPreview resources={resources} reloadResource={reloadResource}/>
+                    <div className="relative flex justify-end bottom-0 mt-3">
+                        <button className="text-sm font-medium text-blue-600 hover:underline focus:outline-none" onClick={() => changePage("Resources")}>
+                            View All Resources
+                        </button>
+                    </div>
                 </div>
                 <div className={`fixed bottom-4 right-4 flex flex-row items-center py-1 px-4 rounded-full bg-white shadow-lg ${statusColor[connectionStatus]}`}>
                     <p className="blinking pr-2">⬤</p>
                     <p>{connectionStatus}</p>
                 </div>
-            </main>
-
+            </main> : <></>}
+            {showAllAnnouncements ? 
+                <div className="mt-12 mx-5 min-h-screen max-w-screen min-w-screen">
+                    <div className="flex items-center justify-between mb-6">
+                        <h1 className="text-5xl font-semibold ml-2">Announcements</h1>
+                        <button className="focus:outline-none mt-4 ml-2 px-3 py-1 w-min bg-blue-500 text-white rounded hover:bg-blue-600 font-bold flex items-center justify-center" onClick={() => changePage("Main")}>
+                            <ChevronBackOutline color={"#00000"} title={"Back"} height="28px" width="28px" />
+                            <p className="text-lg mx-2">Back</p>
+                        </button>
+                    </div>
+                        <Announcements announcements={announcements} />
+                </div>:  <></> }
+            {showAllResources ? 
+                <div className="mt-12 mx-5 min-h-screen max-w-screen min-w-screen">
+                    <div className="flex items-center justify-between mb-6 mx-5">
+                        <h1 className="text-5xl font-semibold ml-2">Resources</h1>
+                        <button className="focus:outline-none mt-4 px-3 py-1 w-min bg-blue-500 text-white rounded hover:bg-blue-600 font-bold flex items-center justify-center" onClick={() => changePage("Main")}>
+                            <ChevronBackOutline color={"#00000"} title={"Back"} height="28px" width="28px" />
+                            <p className="text-lg mx-2">Back</p>
+                        </button>
+                    </div>
+                    <Resources resources={resources} reloadResource={reloadResource} />
+                </div> : <></>}
             <footer>
             </footer>
         </div>
+
+
     )
 }
 
