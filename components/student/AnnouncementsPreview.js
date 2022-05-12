@@ -3,6 +3,9 @@ import CustomLinkify from "../../utils/CustomLinkify";
 import CustomPopup from "../../utils/CustomPopup";
 
 const AnnouncementsPreview = ({ announcements }) => {
+
+    if (!announcements) return null
+    
     return (
         <>  <div className="flex items-center gap-3">
             <img src="/megaphone_icon.svg" width="25px"/>

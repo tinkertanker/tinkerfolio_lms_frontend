@@ -186,7 +186,7 @@ const StudentHome = () => {
                     <AnnouncementsPreview announcements={announcements} />
                     <div className="relative flex justify-end bottom-0 mt-2">
                         <button className="text-sm font-medium text-blue-600 hover:underline focus:outline-none" onClick={() => changePage("Announcements")}>
-                            View All Announcements ({announcements.length})
+                            View All Announcements ({announcements? announcements.length : <></>})
                         </button>
                     </div>
                 </div>

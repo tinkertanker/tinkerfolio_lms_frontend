@@ -1,4 +1,5 @@
 const ResourcesPreview = ({ resources, reloadResource }) => {
+    if (!resources) return null
     return (
         <>
             <div className="flex items-center gap-3 pb-2">

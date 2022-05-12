@@ -2,6 +2,7 @@ import beautifyDate from "../../utils/beautifyDate";
 import CustomLinkify from "../../utils/CustomLinkify";
 
 const Announcements = ({announcements}) => {
+    if (!announcements) return null
     return (
         <>
             

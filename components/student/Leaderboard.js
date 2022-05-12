@@ -38,7 +38,8 @@ const Leaderboard = ({ profile, leaderboard }) => {
         return sortedLeaderboard[1].score
     }
 
-
+    if ((!profile) || (!leaderboard)) return null
+    
     return (
         <StudentStats {...{ profile, getLeaderboard, getRankAboveScore, getRankAbove, getSecondScore }} />
 
