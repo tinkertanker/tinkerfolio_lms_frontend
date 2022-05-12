@@ -6,7 +6,7 @@ const Announcements = ({announcements}) => {
     return (
         <>
             
-            <div className="mb-4 flex flex-col-reverse">
+            <div className="mb-4 flex flex-col-reverse mx-20">
                 {(announcements.length > 0) ? announcements.map((announcement, i) => (
                     <>
                         {announcement.name && (

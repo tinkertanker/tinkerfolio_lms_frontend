@@ -133,7 +133,7 @@ const StudentHome = () => {
         if (showMain) setShowMain(false);
         if (showAllAnnouncements) setShowAllAnnouncements(false);
         if (showAllResources) setShowAllResources(false);
-        
+
 
         switch (currentPage) {
             case "Main":
@@ -150,7 +150,7 @@ const StudentHome = () => {
 
     return (
 
-        <div className="overflow-hidden">
+        <div>
             <Head>
                 <title>Student | EchoClass</title>
                 <style>{`\
@@ -167,15 +167,9 @@ const StudentHome = () => {
                     `}</style>
             </Head>
 
-            {showMain ? <main className="min-h-full lg:max-h-screen max-w-screen min-w-screen mt-8 mx-5 relative grid grid-cols-1 lg:grid-cols-3 grid-rows-10 lg:grid-rows-dashboard grid-flow-row-dense gap-6 pb-10">
-                <div className="flex bg-blue-600 py-5 rounded-2xl shadow-lg px-5col-span-1 lg:col-span-2 row-span-1 items-center justify-between">
-                    <div className="flex flex-col mx-3">
-                        {classroom && <h1 className="text-3xl font-bold px-2 text-white">{classroom.name}</h1>}
-                        {classroom && <h2 className="text-2xl font-semibold px-2 text-white">{classroom.code}</h2>}
-                    </div>
-                    <div className="mx-3">
-                        <Leaderboard {...{ profile, leaderboard }} />
-                    </div>
+            {showMain ? <main className="h-full max-w-screen min-w-screen mt-8 mx-5 relative grid grid-cols-1 lg:grid-cols-3 grid-rows-10 lg:grid-rows-dashboard grid-flow-row-dense gap-6 pb-10">
+                <div className="px-5col-span-1 lg:col-span-2 row-span-1">
+                        <Leaderboard {...{ profile, leaderboard, classroom }} />
                 </div>
                 <div className="bg-white shadow-lg rounded-2xl col-span-1 lg:col-span-2 row-span-4 ">
 
@@ -184,15 +178,15 @@ const StudentHome = () => {
                 </div>
                 <div className="bg-white shadow-lg px-5 py-5 rounded-2xl row-span-2 col-span-1">
                     <AnnouncementsPreview announcements={announcements} />
-                    <div className="relative flex justify-end bottom-0 mt-2">
+                    <div className="relative flex justify-end bottom-0 mt-5">
                         <button className="text-sm font-medium text-blue-600 hover:underline focus:outline-none" onClick={() => changePage("Announcements")}>
-                            View All Announcements ({announcements? announcements.length : <></>})
+                            View All Announcements ({announcements ? announcements.length : <></>})
                         </button>
                     </div>
                 </div>
                 <div className=" bg-white shadow-lg px-5 py-5 rounded-2xl row-span-3 col-span-1">
-                    <ResourcesPreview resources={resources} reloadResource={reloadResource}/>
-                    <div className="relative flex justify-end bottom-0 mt-3">
+                    <ResourcesPreview resources={resources} reloadResource={reloadResource} />
+                    <div className="relative flex justify-end bottom-0 mt-5">
                         <button className="text-sm font-medium text-blue-600 hover:underline focus:outline-none" onClick={() => changePage("Resources")}>
                             View All Resources
                         </button>
@@ -203,24 +197,24 @@ const StudentHome = () => {
                     <p>{connectionStatus}</p>
                 </div>
             </main> : <></>}
-            {showAllAnnouncements ? 
-                <div className="mt-12 mx-5 min-h-screen max-w-screen min-w-screen">
-                    <div className="flex items-center justify-between mb-6">
-                        <h1 className="text-5xl font-semibold ml-2">Announcements</h1>
+            {showAllAnnouncements ?
+                <div className="mt-12 mx-5 pb-10 min-h-screen max-w-screen min-w-screen">
+                    <div className="flex items-center justify-between mb-6 mx-20">
+                        <h1 className="text-4xl font-semibold">Announcements</h1>
                         <button className="focus:outline-none mt-4 ml-2 px-3 py-1 w-min bg-blue-500 text-white rounded hover:bg-blue-600 font-bold flex items-center justify-center" onClick={() => changePage("Main")}>
                             <ChevronBackOutline color={"#00000"} title={"Back"} height="28px" width="28px" />
-                            <p className="text-lg mx-2">Back</p>
+                            <p className="text-base mx-2">Back</p>
                         </button>
                     </div>
-                        <Announcements announcements={announcements} />
-                </div>:  <></> }
-            {showAllResources ? 
-                <div className="mt-12 mx-5 min-h-screen max-w-screen min-w-screen">
-                    <div className="flex items-center justify-between mb-6 mx-5">
-                        <h1 className="text-5xl font-semibold ml-2">Resources</h1>
+                    <Announcements announcements={announcements} />
+                </div> : <></>}
+            {showAllResources ?
+                <div className="mt-12 mx-5 pb-10 min-h-screen max-w-screen min-w-screen">
+                    <div className="flex items-center justify-between mb-6 mx-20">
+                        <h1 className="text-4xl font-semibold">Resources</h1>
                         <button className="focus:outline-none mt-4 px-3 py-1 w-min bg-blue-500 text-white rounded hover:bg-blue-600 font-bold flex items-center justify-center" onClick={() => changePage("Main")}>
                             <ChevronBackOutline color={"#00000"} title={"Back"} height="28px" width="28px" />
-                            <p className="text-lg mx-2">Back</p>
+                            <p className="text-base mx-2">Back</p>
                         </button>
                     </div>
                     <Resources resources={resources} reloadResource={reloadResource} />

@@ -134,12 +134,12 @@ const Dashboard = ({ tasks, submissions, setSubmissions, submissionStatuses, set
 
     return (
         <>
-            <div className="flex items-center mb-3 ml-2 px-5 pt-5 pb-2 justify-between">
+            <div className="flex items-center mb-2 ml-2 px-5 pt-5 pb-2 justify-between">
                 <div className="flex items-center gap-3">
-                    <img src="/tasks_icon.svg" width="25px"/>
-                    <h1 className="text-3xl font-semibold bg-white rounded-2xl">Tasks</h1>
+                    <img src="/tasks_icon.svg" width="20px"/>
+                    <h1 className="text-2xl font-semibold bg-white rounded-2xl">Tasks</h1>
                 </div>
-                <p className="font-medium text-base py-1.5 px-3 bg-gray-500 text-white rounded-lg">Incomplete: {tasks.length - submissions.length}</p>
+                <p className="font-medium text-sm py-1.5 px-3 bg-gray-500 text-white rounded-lg">Incomplete: {tasks.length - submissions.length}</p>
             </div>
             <div className="flex flex-col overflow-auto h-4/5 mx-3">
                 {(tasks.length > 0) ? sortedTasks(tasks.filter(t => t.status === 1)).map((task, i) => {
@@ -183,10 +183,10 @@ const Task = ({ task, sub, i, addSubmission, updateSubmission, reloadSubmission,
                                     <p className={`${isSubmitted ? 'bg-green-600' : 'bg-red-500'} py-0.5 px-1 text-sm text-white rounded`}>{isSubmitted ? 'Done' : 'Not Done'}</p>
                                     {isGraded && <p className="ml-2 py-0.5 px-1 text-sm text-white bg-gray-700 rounded">Graded</p>}
                                 </div>
-                                <p className="ml-4 my-2 font-medium text-gray-500">{task.description ? task.description : 'No Description'}</p>
+                                {task.description ? (<p className="ml-4 my-1 font-medium text-gray-500 text-sm">{task.description}</p>) : <p className="ml-4 my-1 font-regular italic text-gray-400 text-sm">No Description</p>}
                             </div>
                         </div>
-                        {(task.max_stars > 0) ? <h1 className={`text-2xl mr-4 ${isGraded ? "text-blue-600" : "text-gray-500"}`}>{isGraded ? sub.stars : '-'}/{task.max_stars} ★</h1> : <div style={{ height: "48px" }}></div>}
+                        {(task.max_stars > 0) ? <h1 className={`text-xl mr-4 ${isGraded ? "text-blue-600" : "text-gray-500"}`}>{isGraded ? sub.stars : '-'}/{task.max_stars} ★</h1> : <div style={{ height: "48px" }}></div>}
                     </div>
 
                 </div>

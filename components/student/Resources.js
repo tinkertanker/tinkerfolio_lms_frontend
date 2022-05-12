@@ -1,24 +1,24 @@
 
 const Resources = ({ resources, reloadResource }) => {
-
+    if (!resources) return null
 
     return (
         <>
-            <div>
+            <div className="mx-20">
                 {(resources.length > 0) ? resources.map((resource, i) => (
                     <>
                         {resource.section && (
                             <div
-                                className="flex flex-col my-6 bg-white shadow-md p-6 rounded-lg mx-5 mb-10"
+                                className="flex flex-col my-6 bg-white shadow-md p-6 rounded-lg mb-10"
                                 key={i}
                             >
-                                <h3 className="font-bold text-2xl text-black">{resource.section.name}</h3>
-                                <div className="mt-2 grid grid-cols-1 lg:grid-cols-3 gap-8">
+                                <h3 className="font-bold text-xl text-black">{resource.section.name}</h3>
+                                <div className="mt-3 grid grid-cols-1 lg:grid-cols-3 gap-8">
                                     {resource.resources.map((file, _) =>
                                         <div className="bg-gray-100 hover:bg-gray-200 py-4 px-5 rounded-lg cursor-pointer" onClick={() => reloadResource(file.id, file, resource, i)}>
                                             <div className="flex items-center gap-2">
                                                 <FileIcon {...{file}}/>
-                                                <p className="text-blue-600 font-medium truncate ml-2">
+                                                <p className="text-blue-600 text-sm font-medium truncate ml-2">
                                                     {file.name}
                                                 </p>
                                             </div>
@@ -52,19 +52,19 @@ const FileIcon = ({
 
     if (videoFormats.indexOf(file.name.slice(-4)) > -1) {
         //video files
-        icon = <img src="/video_icon.svg" width="25px"/>
+        icon = <img src="/video_icon.svg" width="20px"/>
     } else if (imageFormats1.indexOf(file.name.slice(-4)) > -1) {
         //image files (3-character extension)
-        icon = <img src="/image_icon.svg" width="25px"/>
+        icon = <img src="/image_icon.svg" width="20px"/>
     } else if (imageFormats2.indexOf(file.name.slice(-5)) > -1) {
         //image files (4-character extension)
-        icon = <img src="/image_icon.svg" width="25px"/>
+        icon = <img src="/image_icon.svg" width="20px"/>
     } else if (audioFormats.indexOf(file.name.slice(-4)) > -1) {
         //audio files
-        icon = <img src="/audio_icon.svg" width="25px"/>
+        icon = <img src="/audio_icon.svg" width="20px"/>
     } else {
         //other files
-        icon = <img src="/document_icon.svg" width="25px"/>
+        icon = <img src="/document_icon.svg" width="20px"/>
     }
 
     return icon 
