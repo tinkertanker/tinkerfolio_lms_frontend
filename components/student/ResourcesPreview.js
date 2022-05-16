@@ -8,7 +8,7 @@ const ResourcesPreview = ({ resources, reloadResource }) => {
                 <h1 className="text-xl font-semibold bg-white rounded-2xl">Resources</h1>
             </div>
 
-            <div className="overflow-y-auto h-4/5">
+            <div className="overflow-y-auto h-72">
                 {(resources.length > 0) ? resources.map((resource, i) => (
                     <>
                         {resource.section && (

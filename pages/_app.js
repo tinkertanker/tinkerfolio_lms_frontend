@@ -2,10 +2,10 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import '../styles/globals.css'
 import AuthContextProvider from "../contexts/Auth.Context"
-import ClassroomsContextProvider from "../contexts/Classrooms.Context"
+import ClassroomsContextProvider, { ClassroomsContext } from "../contexts/Classrooms.Context"
 import PrivateRoute from "../utils/PrivateRoute"
 
 import { AuthContext } from '../contexts/Auth.Context'
@@ -29,7 +29,8 @@ export default MyApp
 const Layout = ({children}) => {
     const router = useRouter()
     const { auth, setAuth } = useContext(AuthContext)
-
+    const {classroom, setClassroom} = useContext(ClassroomsContext)
+    
     const logout = () => {
         setAuth({...auth, loading: true})
         setAuth({ loading: false, isAuthenticated: false, tokens: null, userType: null })
@@ -81,14 +82,17 @@ const Layout = ({children}) => {
                             <p className="text-gray-500 hover:text-gray-700 px-6 sm:px-12 cursor-pointer" >Classes</p>
                         </Link></div>
                     )}
+                    
                     { auth.isAuthenticated &&
                         <div className="ml-auto">
                             <button onClick={logout} className="border-2 border-gray-300 text-sm text-gray-500 py-0.5 px-2 rounded hover:bg-gray-100">Logout</button>
                         </div>
                     }
+
                 </nav>
                 {children}
             </div>
         </>
     )
 }
+

@@ -62,7 +62,7 @@ const StudentHome = () => {
     useEffect(() => {
         if (auth.tokens) {
             setWSURL(process.env.NEXT_PUBLIC_BACKEND_WS_BASE + 'ws/student/?token=' + auth.tokens.access)
-        }
+        } else return
 
         // Get initial data
         getAccessToken().then((accessToken) => {
@@ -184,9 +184,9 @@ const StudentHome = () => {
                         </button>
                     </div>
                 </div>
-                <div className=" bg-white shadow-lg px-5 py-5 rounded-2xl row-span-3 col-span-1">
+                <div className=" bg-white shadow-lg px-5 pt-5 pb-4 rounded-2xl row-span-3 col-span-1">
                     <ResourcesPreview resources={resources} reloadResource={reloadResource} />
-                    <div className="relative flex justify-end bottom-0 mt-5">
+                    <div className="relative flex justify-end bottom-0 mt-3">
                         <button className="text-sm font-medium text-blue-600 hover:underline focus:outline-none" onClick={() => changePage("Resources")}>
                             View All Resources
                         </button>

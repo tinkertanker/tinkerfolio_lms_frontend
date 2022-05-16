@@ -57,7 +57,7 @@ const Classroom = () => {
 
         if (auth.tokens) {
             setWSURL(process.env.NEXT_PUBLIC_BACKEND_WS_BASE + 'ws/teacher/?token=' + auth.tokens.access + '&code=' + code)
-        }
+        } else return
 
         if (!classrooms) {
             // Get classrooms data if user went directly to classroom link
