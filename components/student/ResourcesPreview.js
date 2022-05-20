@@ -1,19 +1,19 @@
 const ResourcesPreview = ({ resources, reloadResource }) => {
     if (!resources) return null
     return (
-        <>
+        <>  
             <div className="flex items-center gap-3 pb-2">
                 <img src="/folder_icon.svg" width="25px"/>
 
                 <h1 className="text-xl font-semibold bg-white rounded-2xl">Resources</h1>
             </div>
 
-            <div className="overflow-y-auto h-72">
+            <div className="overflow-y-auto h-4/5">
                 {(resources.length > 0) ? resources.map((resource, i) => (
                     <>
                         {resource.section && (
                             <div
-                                className="flex flex-col mt-3 bg-gray-100 p-4 rounded-lg mr-3"
+                                className="flex flex-col mt-3 bg-gray-100 p-4 rounded-lg"
                                 key={i}
                             >
                                 <h3 className="font-semibold text-base text-blue-600 truncate">{resource.section.name}</h3>

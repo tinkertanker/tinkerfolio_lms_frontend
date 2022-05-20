@@ -167,35 +167,49 @@ const StudentHome = () => {
                     `}</style>
             </Head>
 
-            {showMain ? <main className="h-full max-w-screen min-w-screen mt-8 mx-5 relative grid grid-cols-1 lg:grid-cols-3 grid-rows-10 lg:grid-rows-dashboard grid-flow-row-dense gap-6 pb-10">
-                <div className="px-5col-span-1 lg:col-span-2 row-span-1">
-                        <Leaderboard {...{ profile, leaderboard, classroom }} />
-                </div>
-                <div className="bg-white shadow-lg rounded-2xl col-span-1 lg:col-span-2 row-span-4 ">
+            {showMain ? <main className="h-full max-w-screen min-w-screen mt-8 mx-5 relative pb-20 lg:flex lg:gap-6">
+                    <div className="lg:h-screen lg:w-4/6">
+                        <div>
+                            <div className="mb-6">
+                                    <Leaderboard {...{ profile, leaderboard, classroom }} />
+                            </div>
+                        </div>
+                        
 
-                    <Dashboard {...{ tasks, submissions, setSubmissions, submissionStatuses, setSubmissionStatuses, sendJsonMessage }} />
+                        <div className="bg-white shadow-lg rounded-2xl mb-6 h-4/5">
 
-                </div>
-                <div className="bg-white shadow-lg px-5 py-5 rounded-2xl row-span-2 col-span-1">
-                    <AnnouncementsPreview announcements={announcements} />
-                    <div className="relative flex justify-end bottom-0 mt-5">
-                        <button className="text-sm font-medium text-blue-600 hover:underline focus:outline-none" onClick={() => changePage("Announcements")}>
-                            View All Announcements ({announcements ? announcements.length : <></>})
-                        </button>
+                            <Dashboard {...{ tasks, submissions, setSubmissions, submissionStatuses, setSubmissionStatuses, sendJsonMessage }} />
+
+                        </div>
+                
                     </div>
-                </div>
-                <div className=" bg-white shadow-lg px-5 pt-5 pb-4 rounded-2xl row-span-3 col-span-1">
-                    <ResourcesPreview resources={resources} reloadResource={reloadResource} />
-                    <div className="relative flex justify-end bottom-0 mt-3">
-                        <button className="text-sm font-medium text-blue-600 hover:underline focus:outline-none" onClick={() => changePage("Resources")}>
-                            View All Resources
-                        </button>
+                  
+                    <div className="lg:h-screen lg:w-2/6">
+                    <div className="bg-white shadow-lg px-5 py-5 rounded-2xl mb-6 ">
+                        <AnnouncementsPreview announcements={announcements} />
+                        <div className="relative flex justify-end bottom-0 mt-5">
+                            <button className="text-sm font-medium text-blue-600 hover:underline focus:outline-none" onClick={() => changePage("Announcements")}>
+                                View All Announcements ({announcements ? announcements.length : <></>})
+                            </button>
+                        </div>
                     </div>
-                </div>
+
+                    <div className=" bg-white shadow-lg px-5 pt-5 pb-4 rounded-2xl mb-6 h-3/5">
+                        <ResourcesPreview resources={resources} reloadResource={reloadResource} />
+                        <div className="relative flex justify-end bottom-0 mt-3">
+                            <button className="text-sm font-medium text-blue-600 hover:underline focus:outline-none" onClick={() => changePage("Resources")}>
+                                View All Resources
+                            </button>
+                        </div>
+              
                 <div className={`fixed bottom-4 right-4 flex flex-row items-center py-1 px-4 rounded-full bg-white shadow-lg ${statusColor[connectionStatus]}`}>
                     <p className="blinking pr-2">⬤</p>
                     <p>{connectionStatus}</p>
                 </div>
+                </div>
+                    </div>
+                    
+                
             </main> : <></>}
             {showAllAnnouncements ?
                 <div className="mt-12 mx-5 pb-10 min-h-screen max-w-screen min-w-screen">

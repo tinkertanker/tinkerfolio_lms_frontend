@@ -70,7 +70,7 @@ const StudentStats = ({ profile, getLeaderboard, getRankAboveScore, getStudentAb
     return (
         <CustomPopup
             trigger={
-                <div className="flex items-center justify-between bg-blue-600 hover:bg-blue-700 py-5 px-4 rounded-2xl shadow-lg cursor-pointer h-full">
+                <div className="flex items-center justify-between bg-blue-600 hover:bg-blue-700 py-5 px-6 rounded-2xl shadow-lg cursor-pointer h-full">
                     {classroom && <h1 className="text-3xl font-bold px-2 text-white mx-3">{classroom.name}</h1>}
 
                     <div className="text-white px-3 rounded-lg mr-4">
