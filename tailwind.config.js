@@ -33,6 +33,9 @@ module.exports = {
             maxHeight: {
                 '500px': '500px',
             },
+            gridTemplateRows: {
+                'dashboard': 'repeat(5, 120px)'
+              }
         },
     },
     variants: {

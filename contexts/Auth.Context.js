@@ -76,7 +76,7 @@ const AuthContextProvider = (props) => {
 
     const getAccessToken = async () => {
         let accessToken = null
-
+        
         await axios.post(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE+'auth/token/verify/',{
             token: auth.tokens.access
         }, { headers: { "Content-Type": "application/json" } })
