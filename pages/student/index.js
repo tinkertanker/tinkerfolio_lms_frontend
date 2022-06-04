@@ -13,9 +13,12 @@ import Resources from '../../components/student/Resources'
 import AnnouncementsPreview from '../../components/student/AnnouncementsPreview'
 import ResourcesPreview from '../../components/student/ResourcesPreview'
 
+
+
 import {
     ChevronBackOutline,
 } from "react-ionicons";
+import Popup from 'reactjs-popup'
 
 
 const StudentHome = () => {
@@ -34,6 +37,8 @@ const StudentHome = () => {
     const [showMain, setShowMain] = useState(true)
     const [showAllAnnouncements, setShowAllAnnouncements] = useState(false)
     const [showAllResources, setShowAllResources] = useState(false)
+    const [sidebar, setSideBar] = useState(false)
+
 
     const [wsURL, setWSURL] = useState(null)
     const {
@@ -129,6 +134,7 @@ const StudentHome = () => {
     const statusColor = { Connecting: "text-yellow-600", Connected: "text-green-600", Disconnected: "text-red-600" }
     const statusHexColor = { Connecting: "#D97706", Connected: "#059669", Disconnected: "#DC2626" }
 
+
     const changePage = (currentPage) => {
         if (showMain) setShowMain(false);
         if (showAllAnnouncements) setShowAllAnnouncements(false);
@@ -147,6 +153,8 @@ const StudentHome = () => {
                 break;
         }
     }
+
+    const toggleSidebar = () => setSideBar(!sidebar)
 
     return (
 
@@ -167,52 +175,72 @@ const StudentHome = () => {
                     `}</style>
             </Head>
 
-            {showMain ? <main className="h-full max-w-screen min-w-screen mt-8 mx-5 relative pb-20 lg:flex lg:gap-6">
-                    <div className="lg:h-screen lg:w-4/6">
-                        <div>
-                            <div className="mb-6">
-                                    <Leaderboard {...{ profile, leaderboard, classroom }} />
+            {showMain ? <main className="h-full max-w-screen min-w-screen relative lg:flex lg:gap-6">
+                <div className="bg-gray-200 h-full lg:max-h-screen lg:h-screen w-screen grid grid-cols-1 lg:flex">
+                <div className={`${!sidebar ? "hidden" : ""} z-10 h-full w-full bg-black fixed opacity-50`}></div>
+                    {<div className="lg:hidden min-w-full w-full  p-4  bg-white shadow-lg flex items-center justify-between ">
+                        <button className="focus:outline-none font-bold text-2xl mx-2 cursor-pointer text-gray-600" onClick={() => toggleSidebar()}>
+                            <img src="hamburger_menu_icon.svg" width="30px"  />
+                        </button>
+                        <img src="linear_logo.svg" width="160px"/>
+                        <div></div>
+                    </div>}
+                    <Sidebar {...{ changePage, toggleSidebar, profile, classroom, sidebar }} />
+
+                    <div className="w-1/12 pr-2 pl-4 lg:flex flex-col justify-between hidden">
+                        <div className="h-1/2">
+                            <div className="h-1/3 flex items-center">
+                                <img src="/main_logo_1.png"></img>
+                            </div>
+                            <div className="h-2/3 py-3 px-1">
+                                <div className="bg-white rounded-2xl flex flex-col items-center justify-center gap-12 py-12 px-3">
+                                    <AnnouncementsNav {...{ changePage }} />
+                                    <ResourcesNav {...{ changePage }} />
+
+                                </div>
                             </div>
                         </div>
-                        
 
-                        <div className="bg-white shadow-lg rounded-2xl mb-6 h-4/5">
+                        <div className="h-1/6 py-3 flex items-center justify-center">
 
+                            <Profile {...{ profile, classroom }} />
+
+                        </div>
+                    </div>
+
+                    <div className="lg:w-7/12 px-2">
+                        <div className="h-1/6 pb-3 pt-5 ">
+                            <Leaderboard {...{ profile, leaderboard, classroom }} />
+                        </div>
+                        <div className="h-5/6 py-3 overflow-hidden">
                             <Dashboard {...{ tasks, submissions, setSubmissions, submissionStatuses, setSubmissionStatuses, sendJsonMessage }} />
+                        </div>
+                    </div>
+                    <div className="lg:w-4/12 pl-2 pr-4">
+                        <div className="h-1/3 pb-3 pt-5">
+                            <div className="bg-white h-full rounded-2xl p-6 xl:p-4 shadow-lg">
+                                <AnnouncementsPreview announcements={announcements} changePage={changePage} />
 
+                            </div>
                         </div>
-                
-                    </div>
-                  
-                    <div className="lg:h-screen lg:w-2/6">
-                    <div className="bg-white shadow-lg px-5 py-5 rounded-2xl mb-6 ">
-                        <AnnouncementsPreview announcements={announcements} />
-                        <div className="relative flex justify-end bottom-0 mt-5">
-                            <button className="text-sm font-medium text-blue-600 hover:underline focus:outline-none" onClick={() => changePage("Announcements")}>
-                                View All Announcements ({announcements ? announcements.length : <></>})
-                            </button>
+                        <div className="h-2/3 py-3">
+                            <div className="bg-white h-full rounded-2xl p-6 xl:p-4 shadow-lg">
+                                <ResourcesPreview resources={resources} reloadResource={reloadResource} />
+                                <div className="relative flex justify-end bottom-0 mt-3">
+                                    <button className="text-sm font-medium text-blue-600 hover:underline focus:outline-none" onClick={() => changePage("Resources")}>
+                                        View All Resources
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                    </div>
 
-                    <div className=" bg-white shadow-lg px-5 pt-5 pb-4 rounded-2xl mb-6 h-3/5">
-                        <ResourcesPreview resources={resources} reloadResource={reloadResource} />
-                        <div className="relative flex justify-end bottom-0 mt-3">
-                            <button className="text-sm font-medium text-blue-600 hover:underline focus:outline-none" onClick={() => changePage("Resources")}>
-                                View All Resources
-                            </button>
-                        </div>
-              
-                <div className={`fixed bottom-4 right-4 flex flex-row items-center py-1 px-4 rounded-full bg-white shadow-lg ${statusColor[connectionStatus]}`}>
-                    <p className="blinking pr-2">⬤</p>
-                    <p>{connectionStatus}</p>
-                </div>
-                </div>
                     </div>
-                    
-                
+                </div>
+
+
             </main> : <></>}
             {showAllAnnouncements ?
-                <div className="mt-12 mx-5 pb-10 min-h-screen max-w-screen min-w-screen">
+                <div className="mx-5 pt-12 pb-10 min-h-screen max-w-screen min-w-screen">
                     <div className="flex items-center justify-between mb-6 mx-20">
                         <h1 className="text-4xl font-semibold">Announcements</h1>
                         <button className="focus:outline-none mt-4 ml-2 px-3 py-1 w-min bg-blue-500 text-white rounded hover:bg-blue-600 font-bold flex items-center justify-center" onClick={() => changePage("Main")}>
@@ -223,7 +251,7 @@ const StudentHome = () => {
                     <Announcements announcements={announcements} />
                 </div> : <></>}
             {showAllResources ?
-                <div className="mt-12 mx-5 pb-10 min-h-screen max-w-screen min-w-screen">
+                <div className="mx-5 pt-12 pb-10 min-h-screen max-w-screen min-w-screen">
                     <div className="flex items-center justify-between mb-6 mx-20">
                         <h1 className="text-4xl font-semibold">Resources</h1>
                         <button className="focus:outline-none mt-4 px-3 py-1 w-min bg-blue-500 text-white rounded hover:bg-blue-600 font-bold flex items-center justify-center" onClick={() => changePage("Main")}>
@@ -242,3 +270,138 @@ const StudentHome = () => {
 }
 
 export default StudentHome
+
+const Profile = ({ profile, classroom }) => {
+    const { auth, setAuth } = useContext(AuthContext)
+    const logout = () => {
+
+        setAuth({ ...auth, loading: true })
+        setAuth({ loading: false, isAuthenticated: false, tokens: null, userType: null })
+        localStorage.removeItem('tokens')
+        localStorage.removeItem('userType')
+    }
+
+    if (!profile) return null
+    if (!classroom) return null
+
+    return (
+        <Popup
+            trigger={
+                <div className="bg-white rounded-2xl shadow-lg hover:bg-gray-100 cursor-pointer p-4">
+                    <img src="/profile_icon.svg" width="40px" />
+                </div>
+            }
+            position="right bottom"
+            arrow={false}>
+            <div className="bg-white w-56 ml-6 p-5 shadow-xl rounded-2xl ">
+                <p className="font-semibold text-lg mb-2 truncate">{profile.name ? profile.name : <span className="italic">(Unnamed)</span>}</p>
+                <div className="flex justify-between items-center mb-2">
+                    <p className="font-medium text-white bg-gray-500 px-3 py-1 rounded-lg text-sm">Index:</p>
+                    <p className="font-medium">{profile.index}</p>
+                </div>
+
+                <div className="flex justify-between items-center mb-2">
+                    <p className="font-medium text-white bg-gray-500 px-3 py-1 rounded-lg text-sm">Class Code:</p>
+                    <p className="font-medium">{classroom.code}</p>
+                </div>
+                <div className="border-t border-gray-400"></div>
+                <button className="mt-2 py-2 w-full outline-none focus:outline-none hover:bg-gray-200 cursor-pointer rounded-lg ">
+                    <div onClick={logout} className="flex items-center px-2">
+                        <img src="/logout_icon.svg" width="20px" />
+                        <p className="font-semibold ml-3 text-red-500">Log Out</p>
+                    </div>
+                </button>
+            </div>
+        </Popup>
+    );
+};
+
+const AnnouncementsNav = ({ changePage }) => {
+    return (
+        <Popup
+            trigger={
+                <button onClick={() => changePage("Announcements")} className="focus:outline-none outline-none">
+                    <img src="/megaphone_icon.svg" width="40px" className="cursor-pointer" />
+                </button>
+            }
+            position="right"
+            on={["hover", "focus"]}
+            arrow={false}>
+
+            <div className="bg-gray-600 ml-10 p-3 rounded-lg shadow-xl">
+                <p className="font-semibold text-white">Announcements</p>
+            </div>
+        </Popup>
+    )
+}
+
+const ResourcesNav = ({ changePage }) => {
+    return (
+        <Popup
+            trigger={
+                <button onClick={() => changePage("Resources")} className="focus:outline-none outline-none">
+                    <img src="/folder_icon.svg" width="40px" className="cursor-pointer" />
+                </button>
+            }
+            position="right"
+            on={["hover", "focus"]}
+            arrow={false}>
+
+            <div className="bg-gray-600 ml-10 p-3 rounded-lg shadow-xl">
+                <p className="font-semibold text-white">Resources</p>
+            </div>
+        </Popup>
+    )
+}
+
+const Sidebar = ({ changePage, toggleSidebar, profile, classroom, sidebar }) => {
+    if ((!profile) || (!classroom)) return null
+
+    return (
+        <div className={`${!sidebar ? "hidden" : ""} z-20 h-full w-2/5 bg-white fixed p-5`}>
+        <button onClick={() => toggleSidebar()} className="focus:outline-none font-bold text-2xl mx-2 cursor-pointer text-gray-600">✕</button>
+
+            <div className="my-5 py-2">
+                <div>
+                    <p className="font-bold text-2xl truncate mb-3">{profile.name ? profile.name : <span className="italic">(Unnamed)</span>}</p>
+                    <div className="flex justify-between items-center mb-1">
+                        <p className="font-medium text-white bg-gray-500 px-3 py-1 rounded-lg text-sm">Index:</p>
+                        <p className="font-medium">{profile.index}</p>
+                    </div>
+
+                    <div className="flex justify-between items-center">
+                        <p className="font-medium text-white bg-gray-500 px-3 py-1 rounded-lg text-sm">Class Code:</p>
+                        <p className="font-medium">{classroom.code}</p>
+                    </div>
+                    <div className="border-t border-gray-400 my-6"></div>
+
+                    <button onClick={() => changePage("Announcements")} className="py-3 px-1 w-full outline-none focus:outline-none hover:bg-gray-200 cursor-pointer rounded-lg ">
+                        <div className="flex items-center px-2">
+                            <img src="/megaphone_icon.svg" width="20px" />
+                            <p className="font-semibold ml-3">Announcements</p>
+                        </div>
+                    </button>
+
+                    <button onClick={() => changePage("Resources")} className="py-3 px-1 w-full outline-none focus:outline-none hover:bg-gray-200 cursor-pointer rounded-lg ">
+                        <div className="flex items-center px-2">
+                            <img src="/folder_icon.svg" width="20px" />
+                            <p className="font-semibold ml-3">Resources</p>
+                        </div>
+                    </button>
+
+                </div>
+                <div>
+                    <button className="py-3 px-1 w-full outline-none focus:outline-none hover:bg-gray-200 cursor-pointer rounded-lg ">
+                        <div className="flex items-center px-2">
+                            <img src="/logout_icon.svg" width="20px" />
+                            <p className="font-semibold ml-3 text-red-500">Log Out</p>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+
+

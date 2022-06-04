@@ -70,28 +70,28 @@ const StudentStats = ({ profile, getLeaderboard, getRankAboveScore, getStudentAb
     return (
         <CustomPopup
             trigger={
-                <div className="flex items-center justify-between bg-blue-600 hover:bg-blue-700 py-5 px-6 rounded-2xl shadow-lg cursor-pointer h-full">
+                <div className="flex items-center justify-between bg-blue-600 hover:bg-blue-700 py-5 px-6 rounded-2xl shadow-lg cursor-pointer h-full min-h-full">
                     {classroom && <h1 className="text-3xl font-bold px-2 text-white mx-3">{classroom.name}</h1>}
 
                     <div className="text-white px-3 rounded-lg mr-4">
                         <div className="flex flex-col justify-center items-center">
                             <div>
                                 <div className="flex items-center gap-4">
-                                    <h1 className="font-semibold text-3xl">★</h1>
-                                    <h1 className="font-semibold text-3xl">{profile.score}</h1>
-                                    <h1 className="font-light text-4xl">|</h1>
+                                    <h1 className="font-semibold text-2xl xl:text-3xl">★</h1>
+                                    <h1 className="font-semibold text-2xl xl:text-3xl">{profile.score}</h1>
+                                    <h1 className="font-light text-3xl xl:text-4xl">|</h1>
                                     <img src="/ranking_icon_white.svg" width="30px" />
-                                    <h1 className="font-semibold text-3xl">#{
+                                    <h1 className="font-semibold text-2xl xl:text-3xl">#{
                                         getLeaderboard().findIndex(student => student.index === profile.index) + 1}
                                     </h1>
                                 </div>
                             </div>
-                            <div className="mt-3">
+                            <div className="mt-2 xl:mt-3">
                                 {
                                     (getLeaderboard().findIndex(student => student.index === profile.index) === 0) ? (
-                                        <h1 className="text-sm  text-center">{profile.score - getSecondScore()} stars ahead of <span className="font-medium">{getSecondStudent()}</span></h1>
+                                        <h1 className="text-sm text-center whitespace-nowrap">{profile.score - getSecondScore()} stars ahead of <span className="font-medium">{getSecondStudent()}</span></h1>
                                     ) : (
-                                        <h1 className="text-sm  text-center">{getRankAboveScore() - profile.score} stars behind <span className="font-medium">{getStudentAbove()}</span></h1>
+                                        <h1 className="text-sm text-center whitespace-nowrap">{getRankAboveScore() - profile.score} stars behind <span className="font-medium">{getStudentAbove()}</span></h1>
                                     )
                                 }
                             </div>
@@ -103,7 +103,7 @@ const StudentStats = ({ profile, getLeaderboard, getRankAboveScore, getStudentAb
             contentStyle={{ overflowY: 'auto', marginTop: 'min(60px, 100%)', marginBottom: 'min(60px, 100%)' }}
         >
             {close => (
-                <div className="px-5 py-5 bg-white rounded-xl shadow-lg popup">
+                <div className="px-5 py-5 bg-white rounded-xl shadow-lg ">
                     <div className="mx-4">
                         <div className="flex items-center justify-between py-2">
                             <div className="flex items-center gap-2">
