@@ -176,7 +176,7 @@ const StudentHome = () => {
             </Head>
 
             {showMain ? <main className="h-full max-w-screen min-w-screen relative lg:flex lg:gap-6">
-                <div className="bg-gray-200 h-full lg:max-h-screen lg:h-screen w-screen grid grid-cols-1 lg:flex">
+                <div className="bg-gray-200 h-full min-h-768px lg:h-screen w-screen grid grid-cols-1 lg:flex">
                 <div className={`${!sidebar ? "hidden" : ""} z-10 h-full w-full bg-black fixed opacity-50`}></div>
                     {<div className="lg:hidden min-w-full w-full  p-4  bg-white shadow-lg flex items-center justify-between ">
                         <button className="focus:outline-none font-bold text-2xl mx-2 cursor-pointer text-gray-600" onClick={() => toggleSidebar()}>
@@ -192,12 +192,9 @@ const StudentHome = () => {
                             <div className="h-1/3 flex items-center">
                                 <img src="/main_logo_1.png"></img>
                             </div>
-                            <div className="h-2/3 py-3 px-1">
-                                <div className="bg-white rounded-2xl flex flex-col items-center justify-center gap-12 py-12 px-3">
+                            <div className="h-2/3 py-3 flex flex-col items-center">
                                     <AnnouncementsNav {...{ changePage }} />
                                     <ResourcesNav {...{ changePage }} />
-
-                                </div>
                             </div>
                         </div>
 
@@ -238,7 +235,7 @@ const StudentHome = () => {
                 </div>
 
 
-            </main> : <></>}
+            </main>: <></>}
             {showAllAnnouncements ?
                 <div className="mx-5 pt-12 pb-10 min-h-screen max-w-screen min-w-screen">
                     <div className="flex items-center justify-between mb-6 mx-20">
@@ -320,9 +317,9 @@ const AnnouncementsNav = ({ changePage }) => {
     return (
         <Popup
             trigger={
-                <button onClick={() => changePage("Announcements")} className="focus:outline-none outline-none">
-                    <img src="/megaphone_icon.svg" width="40px" className="cursor-pointer" />
-                </button>
+                <div onClick={() => changePage("Announcements")} className="bg-white rounded-t-2xl hover:bg-gray-100 cursor-pointer px-4 py-8">
+                    <img src="/megaphone_icon.svg" width="40px" />
+                </div>
             }
             position="right"
             on={["hover", "focus"]}
@@ -339,9 +336,9 @@ const ResourcesNav = ({ changePage }) => {
     return (
         <Popup
             trigger={
-                <button onClick={() => changePage("Resources")} className="focus:outline-none outline-none">
-                    <img src="/folder_icon.svg" width="40px" className="cursor-pointer" />
-                </button>
+                <div onClick={() => changePage("Resources")} className="bg-white rounded-b-2xl hover:bg-gray-100 cursor-pointer px-4 py-8 shadow-lg">
+                    <img src="/folder_icon.svg" width="40px" />
+                </div>
             }
             position="right"
             on={["hover", "focus"]}

@@ -23,7 +23,7 @@ const AnnouncementsPreview = ({ announcements, changePage }) => {
                         </div>}
             </div>
            
-                <button className="text-sm font-medium text-blue-600 hover:underline focus:outline-none float-right whitespace-nowrap text-right" onClick={() => changePage("Announcements")}>
+                <button className="mt-3 text-sm font-medium text-blue-600 hover:underline focus:outline-none float-right whitespace-nowrap text-right" onClick={() => changePage("Announcements")}>
                     View All Announcements ({announcements ? announcements.length : <></>})
                 </button>
         </div>
