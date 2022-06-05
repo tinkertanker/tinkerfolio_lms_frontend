@@ -214,13 +214,13 @@ const StudentHome = () => {
                         </div>
                     </div>
                     <div className="lg:w-4/12 pl-2 pr-4">
-                        <div className="h-1/3 pb-3 pt-5">
+                        <div className="lg:h-1/3 pb-3 pt-5">
                             <div className="bg-white h-full rounded-2xl p-6 xl:p-4 shadow-lg">
                                 <AnnouncementsPreview announcements={announcements} changePage={changePage} />
 
                             </div>
                         </div>
-                        <div className="h-2/3 py-3">
+                        <div className="lg:h-2/3 py-3">
                             <div className="bg-white h-full rounded-2xl p-6 xl:p-4 shadow-lg">
                                 <ResourcesPreview resources={resources} reloadResource={reloadResource} />
                                 <div className="relative flex justify-end bottom-0 mt-3">
