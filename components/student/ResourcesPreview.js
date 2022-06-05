@@ -5,7 +5,7 @@ const ResourcesPreview = ({ resources, reloadResource }) => {
             <div className="flex items-center gap-3 pb-2">
                 <img src="/folder_icon.svg" width="25px"/>
 
-                <h1 className="text-xl font-semibold bg-white rounded-2xl">Resources</h1>
+                <h1 className="text-xl font-semibold bg-white rounded-2xl text-gray-600">Resources</h1>
             </div>
 
             <div className="overflow-y-auto h-4/5">

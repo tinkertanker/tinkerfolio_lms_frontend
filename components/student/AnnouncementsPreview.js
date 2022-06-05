@@ -2,23 +2,32 @@ import beautifyDate from "../../utils/beautifyDate";
 import CustomLinkify from "../../utils/CustomLinkify";
 import CustomPopup from "../../utils/CustomPopup";
 
-const AnnouncementsPreview = ({ announcements }) => {
+const AnnouncementsPreview = ({ announcements, changePage }) => {
 
     if (!announcements) return null
 
     return (
-        <>  <div className="flex items-center gap-3">
-            <img src="/megaphone_icon.svg" width="25px"/>
-            <h1 className="text-xl font-semibold bg-white rounded-2xl">Announcements</h1>
+        <>  
+        <div className="h-full flex flex-col justify-between flex-start">
+            <div>
+                <div className="flex items-center gap-3 m-0">
+                    <img src="/megaphone_icon.svg" width="25px" />
+                    <h1 className="text-xl font-semibold bg-white rounded-2xl text-gray-600">Announcements</h1>
+                </div>
+
+                    {(announcements.length > 0) ? announcements.slice(-2).map((announcement, i) => {
+                        return <Announcement {...{ announcement, i }} key={i} />
+                    }) :
+                        <div className="h-full flex items-center justify-center py-8">
+                            <h2 className="font-medium text-2xl text-center text-gray-400">No Announcements</h2>
+                        </div>}
+            </div>
+           
+                <button className="mt-3 text-sm font-medium text-blue-600 hover:underline focus:outline-none float-right whitespace-nowrap text-right" onClick={() => changePage("Announcements")}>
+                    View All Announcements ({announcements ? announcements.length : <></>})
+                </button>
         </div>
-
-            {(announcements.length > 0) ? announcements.slice(-2).map((announcement, i) => {
-                return <Announcement {...{ announcement, i }} key={i} />
-            }) :
-                <div className=" h-3/4 flex items-center justify-center">
-                    <h2 className="font-medium text-2xl text-center text-gray-400">No Announcements</h2>
-                </div>}
-
+        
         </>
     )
 }
@@ -30,7 +39,7 @@ const Announcement = ({ announcement, i }) => {
     return (
         <CustomPopup
             trigger={
-                <div className="mt-4 bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-lg cursor-pointer">
+                <div className="mt-2 bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-lg cursor-pointer">
                     <h3 className="font-semibold text-blue-600 truncate">{announcement.name}</h3>
                     <p className="text-sm text-gray-500">
                         {beautifyDate(announcement.updated_at.slice(0, 10))}
@@ -41,7 +50,7 @@ const Announcement = ({ announcement, i }) => {
             contentStyle={{ overflowY: 'auto' }}
         >
             {close => (
-                <div className="px-6 py-4 bg-white rounded-lg shadow-lg popup ">
+                <div className="px-6 py-4 bg-white rounded-lg shadow-lg mx-16 lg:mx-28">
                     <div className="flex items-center justify-between">
                         <h1 className="my-2 text-2xl font-bold">{announcement.name}</h1>
                         <p className="mx-2 text-gray-600">{beautifyDate(announcement.updated_at.slice(0, 10))}</p>

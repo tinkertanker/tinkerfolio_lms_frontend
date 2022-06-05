@@ -134,42 +134,46 @@ const Dashboard = ({ tasks, submissions, setSubmissions, submissionStatuses, set
 
     return (
         <>
-            <div className="flex items-center mb-2 ml-2 px-5 pt-5 justify-between">
-                <div className="flex items-center gap-3">
-                    <img src="/tasks_icon.svg" width="20px" />
-                    <h1 className="text-2xl font-semibold bg-white rounded-2xl">Tasks</h1>
+            <div className="bg-white h-full rounded-2xl shadow-lg">
+                <div className="flex items-center mb-2 ml-2 px-5 pt-5 justify-between">
+                    <div className="flex items-center gap-3">
+                        <img src="/tasks_icon.svg" width="20px" />
+                        <h1 className="text-2xl font-semibold bg-white rounded-2xl text-gray-600">Tasks</h1>
+                    </div>
+                    <p className="font-medium text-sm py-1.5 px-3 bg-gray-500 text-white rounded-lg mr-3">Incomplete: {tasks.length - submissions.length}</p>
                 </div>
-                <p className="font-medium text-sm py-1.5 px-3 bg-gray-500 text-white rounded-lg mr-3">Incomplete: {tasks.length - submissions.length}</p>
-            </div>
-            <div className="flex flex-col overflow-auto h-4/5">
-                <div>
+                <div className="flex flex-col overflow-auto h-5/6">
+                    <div>
 
-                    {(tasks.length > 0) ? sortedTasks(tasks.filter(t => t.status === 1)).map((task, i) => {
+                        {(tasks.length > 0) ? sortedTasks(tasks.filter(t => t.status === 1)).map((task, i) => {
+                            const sub = submissions.filter(s => s.task === task.id)[0]
+                            return <Task {...{ task, sub, i, addSubmission, updateSubmission, reloadSubmission, updateStatus, status: submissionStatuses.filter(status => status.task == task.id)[0] }} key={i} />
+                        })
+                            :
+                            <div className="flex items-center justify-center">
+                                <h2 className="font-medium text-4xl text-center text-gray-400">No Tasks</h2>
+                            </div>}
+                </div>
+
+
+                    {tasks.filter(t => t.status !== 1).length > 0 && (
+                        <div>
+                            <div className="flex justify-center items-center">
+                                <div className="bg-gray-200 my-4 h-1 w-full ml-6 mx-8"></div>
+                            </div>
+                            <h1 className="text-2xl font-semibold mb-4 ml-6">Archived</h1>
+                        </div>
+
+                    )}
+
+                    {sortedTasks(tasks.filter(t => t.status !== 1)).map((task, i) => {
                         const sub = submissions.filter(s => s.task === task.id)[0]
                         return <Task {...{ task, sub, i, addSubmission, updateSubmission, reloadSubmission, updateStatus, status: submissionStatuses.filter(status => status.task == task.id)[0] }} key={i} />
-                    })
-                        :
-                        <div className="flex items-center justify-center">
-                            <h2 className="font-medium text-4xl text-center text-gray-400">No Tasks</h2>
-                        </div>}
+                    })}
                 </div>
+            </div>
 
-
-                {tasks.filter(t => t.status !== 1).length > 0 && (
-                    <div>
-                        <div className="flex justify-center items-center">
-                            <div className="bg-gray-200 my-4 h-1 w-full ml-6 mx-8"></div>
-                        </div>
-                        <h1 className="text-2xl font-semibold mb-4 ml-6">Archived</h1>
-                    </div>
-
-                )}
-
-                {sortedTasks(tasks.filter(t => t.status !== 1)).map((task, i) => {
-                    const sub = submissions.filter(s => s.task === task.id)[0]
-                    return <Task {...{ task, sub, i, addSubmission, updateSubmission, reloadSubmission, updateStatus, status: submissionStatuses.filter(status => status.task == task.id)[0] }} key={i} />
-                })}
-            </div></>
+        </>
     )
 }
 
@@ -200,35 +204,35 @@ const Task = ({ task, sub, i, addSubmission, updateSubmission, reloadSubmission,
                         {(task.max_stars > 0) ? <h1 className={`text-xl ml-auto mr-4 whitespace-nowrap ${isGraded ? "text-blue-600" : "text-gray-500"}`}>{isGraded ? sub.stars : '-'}/{task.max_stars} ★</h1> : <div style={{ height: "48px" }}></div>}
                     </div>
                 </div>
-}
-contentStyle = {{ overflowY: 'auto', marginTop: 'min(60px, 100%)', marginBottom: 'min(60px, 100%)' }}
+            }
+            contentStyle={{ overflowY: 'auto', marginTop: 'min(60px, 100%)', marginBottom: 'min(60px, 100%)' }}
         >
-    { close => (
-        <div className="px-4 py-4 bg-white rounded-lg shadow-lg popup">
-            <h1 className="my-2 mx-2 text-2xl font-bold">{task.name}</h1>
-            <p className="my-2 mx-2 pb-4 border-b-2 border-gray-200 whitespace-pre-wrap">
-                <CustomLinkify>{task.description}</CustomLinkify>
-            </p>
+            {close => (
+                <div className="px-4 py-4 bg-white rounded-lg shadow-lg popup">
+                    <h1 className="my-2 mx-2 text-2xl font-bold">{task.name}</h1>
+                    <p className="my-2 mx-2 pb-4 border-b-2 border-gray-200 whitespace-pre-wrap">
+                        <CustomLinkify>{task.description}</CustomLinkify>
+                    </p>
 
-            {isSubmitted ? (
-                <>
-                    <Submission sub={sub} reloadSubmission={reloadSubmission} />
-                    {!isGraded ? (
-                        <SubmissionForm task={task} addSubmission={addSubmission} updateSubmission={updateSubmission} close={close} isUpdate={true} sub={sub} />
+                    {isSubmitted ? (
+                        <>
+                            <Submission sub={sub} reloadSubmission={reloadSubmission} />
+                            {!isGraded ? (
+                                <SubmissionForm task={task} addSubmission={addSubmission} updateSubmission={updateSubmission} close={close} isUpdate={true} sub={sub} />
+                            ) : (
+                                <></>
+                            )}
+                            <TeacherComment isGraded={isGraded} task={task} sub={sub} />
+                        </>
                     ) : (
-                        <></>
+                        <>
+                            <SubmissionStatus {...{ task, status, updateStatus }} />
+                            <SubmissionForm task={task} addSubmission={addSubmission} updateSubmission={updateSubmission} close={close} isUpdate={false} sub={sub} />
+                        </>
                     )}
-                    <TeacherComment isGraded={isGraded} task={task} sub={sub} />
-                </>
-            ) : (
-                <>
-                    <SubmissionStatus {...{ task, status, updateStatus }} />
-                    <SubmissionForm task={task} addSubmission={addSubmission} updateSubmission={updateSubmission} close={close} isUpdate={false} sub={sub} />
-                </>
-            )}
 
-        </div>
-    )}
+                </div>
+            )}
         </CustomPopup >
     )
 }
