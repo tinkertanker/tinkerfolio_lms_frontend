@@ -176,7 +176,7 @@ const StudentHome = () => {
             </Head>
 
             {showMain ? <main className="h-full max-w-screen min-w-screen relative lg:flex lg:gap-6">
-                <div className="bg-gray-200 h-full min-h-768px lg:h-screen w-screen grid grid-cols-1 lg:flex">
+                <div className="bg-gray-200 h-full min-h-768px lg:h-screen w-screen lg:flex">
                 <div className={`${!sidebar ? "hidden" : ""} z-10 h-full w-full bg-black fixed opacity-50`}></div>
                     {<div className="lg:hidden min-w-full w-full  p-4  bg-white shadow-lg flex items-center justify-between ">
                         <button className="focus:outline-none font-bold text-2xl mx-2 cursor-pointer text-gray-600" onClick={() => toggleSidebar()}>
@@ -206,7 +206,7 @@ const StudentHome = () => {
                     </div>
 
                     <div className="lg:w-7/12 px-2">
-                        <div className="h-1/6 pb-3 pt-5 ">
+                        <div className="lg:h-1/6 pb-3 pt-5 ">
                             <Leaderboard {...{ profile, leaderboard, classroom }} />
                         </div>
                         <div className="h-5/6 py-3 overflow-hidden">
