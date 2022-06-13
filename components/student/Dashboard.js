@@ -6,6 +6,12 @@ import axios from 'axios'
 
 import { AuthContext } from '../../contexts/Auth.Context'
 
+import {
+    ChevronBackOutline,
+    ChevronForwardOutline
+} from 'react-ionicons'
+
+
 const contentStyle = { overflowY: 'scroll', margin: '10px auto' }
 
 const Dashboard = ({ tasks, submissions, setSubmissions, submissionStatuses, setSubmissionStatuses, sendJsonMessage }) => {
@@ -130,7 +136,52 @@ const Dashboard = ({ tasks, submissions, setSubmissions, submissionStatuses, set
         return tasks.sort((a, b) => (getPriority(a.id) < getPriority(b.id)) ? 1 : -1)
     }
 
+    const [currentTaskPage, setCurrentTasksPage] = useState(1);
+    const [isOnEndTaskPage, setIsOnEndTaskPage] = useState(false);
+    const [isOnStartTaskPage, setIsOnStartTaskPage] = useState(true);
+    const [showArchivedTasks, setShowArchivedTasks] = useState(false)
 
+    const nextTasksPage = () => {
+        const maxTasks = sortedTasks(tasks.filter(t => t.status === 1)).length
+
+        if (currentTaskPage >= 1 && currentTaskPage < Math.ceil(maxTasks / 5)) {
+            if (currentTaskPage + 1 >= Math.ceil(maxTasks / 5)) {
+                setIsOnEndTaskPage(true);
+
+            } else {
+                setIsOnEndTaskPage(false);
+            }
+            setIsOnStartTaskPage(false);
+            setCurrentTasksPage(currentTaskPage + 1)
+        }
+
+    }
+    const previousTasksPage = () => {
+
+        if (currentTaskPage != 1) {
+            if (currentTaskPage - 1 === 1) {
+                setIsOnStartTaskPage(true);
+            } else {
+                setIsOnStartTaskPage(false);
+            }
+            setCurrentTasksPage(currentTaskPage - 1)
+            setIsOnEndTaskPage(false);
+        }
+
+    }
+
+    const switchArchiveTaskPage = () => {
+        setShowArchivedTasks(!showArchivedTasks);
+        setCurrentTasksPage(1);
+    }
+
+    const checkNumberOfTasks = () => {
+        if (showArchivedTasks) {
+            if (tasks.filter(t => t.status !== 1).length <=5) return true
+        } else {
+            if (sortedTasks(tasks.filter(t => t.status === 1)).length <= 5) return true
+        }
+    }
 
     return (
         <>
@@ -139,37 +190,85 @@ const Dashboard = ({ tasks, submissions, setSubmissions, submissionStatuses, set
                     <div className="flex items-center gap-3">
                         <img src="/tasks_icon.svg" width="20px" />
                         <h1 className="text-2xl font-semibold bg-white rounded-2xl text-gray-600">Tasks</h1>
+                        {(tasks.filter(t => t.status !== 1).length >0) ? 
+                            <button className="ml-4 lg:hidden" onClick={() => switchArchiveTaskPage()}>
+                                <p className="text-gray-500">{(!showArchivedTasks) ? "Show Archived" : "Show Active Tasks"}</p>
+                            </button> : <></>}
                     </div>
-                    <p className="font-medium text-sm py-1.5 px-3 bg-gray-500 text-white rounded-lg mr-3">Incomplete: {tasks.length - submissions.length}</p>
+                    <div className="flex items-center">
+                        <p className="font-medium text-sm py-1.5 px-3 bg-gray-500 text-white rounded-lg mr-3">Incomplete: {tasks.length - submissions.length}</p>
+                        
+                        <div className="flex items-center gap-4 lg:hidden px-3">
+                            <button onClick={() => previousTasksPage()}>
+                                <ChevronBackOutline
+                                    color={(isOnStartTaskPage || checkNumberOfTasks()) ? "#d1d5db" : "#6b7280"}
+                                    title={""}
+                                    height="25px"
+                                    width="25px"
+                                />
+                            </button>
+                            <button onClick={() => nextTasksPage()}>
+                                <ChevronForwardOutline
+                                    color={(isOnEndTaskPage || checkNumberOfTasks()) ? "#d1d5db" : "#6b7280"}
+                                    title={""}
+                                    height="25px"
+                                    width="25px"
+                                />
+                            </button>
+                        </div> 
+
+                    </div>
                 </div>
                 <div className="flex flex-col overflow-auto h-5/6">
-                    <div>
+                    <div className="hidden lg:block">
 
                         {(tasks.length > 0) ? sortedTasks(tasks.filter(t => t.status === 1)).map((task, i) => {
                             const sub = submissions.filter(s => s.task === task.id)[0]
                             return <Task {...{ task, sub, i, addSubmission, updateSubmission, reloadSubmission, updateStatus, status: submissionStatuses.filter(status => status.task == task.id)[0] }} key={i} />
                         })
                             :
-                            <div className="flex items-center justify-center">
+                            <div className="flex items-center justify-center h-full py-8">
                                 <h2 className="font-medium text-4xl text-center text-gray-400">No Tasks</h2>
                             </div>}
-                </div>
 
-
-                    {tasks.filter(t => t.status !== 1).length > 0 && (
-                        <div>
-                            <div className="flex justify-center items-center">
-                                <div className="bg-gray-200 my-4 h-1 w-full ml-6 mx-8"></div>
+                        {tasks.filter(t => t.status !== 1).length > 0 && (
+                            <div>
+                                <div className="flex justify-center items-center">
+                                    <div className="bg-gray-200 my-4 h-1 w-full ml-6 mx-8"></div>
+                                </div>
+                                <h1 className="text-2xl font-semibold mb-4 ml-6">Archived</h1>
                             </div>
-                            <h1 className="text-2xl font-semibold mb-4 ml-6">Archived</h1>
-                        </div>
 
-                    )}
+                        )}
 
-                    {sortedTasks(tasks.filter(t => t.status !== 1)).map((task, i) => {
-                        const sub = submissions.filter(s => s.task === task.id)[0]
-                        return <Task {...{ task, sub, i, addSubmission, updateSubmission, reloadSubmission, updateStatus, status: submissionStatuses.filter(status => status.task == task.id)[0] }} key={i} />
-                    })}
+                        {sortedTasks(tasks.filter(t => t.status !== 1)).map((task, i) => {
+                            const sub = submissions.filter(s => s.task === task.id)[0]
+                            return <Task {...{ task, sub, i, addSubmission, updateSubmission, reloadSubmission, updateStatus, status: submissionStatuses.filter(status => status.task == task.id)[0] }} key={i} />
+                        })}
+
+                    </div>
+
+                    <div className="lg:hidden pb-6">
+                        {(!showArchivedTasks) ? <div>
+                        {(tasks.length > 0) ? sortedTasks(tasks.filter(t => t.status === 1)).slice(currentTaskPage * 5 - 5, currentTaskPage * 5).map((task, i) => {
+                            const sub = submissions.filter(s => s.task === task.id)[0]
+                            return <Task {...{ task, sub, i, addSubmission, updateSubmission, reloadSubmission, updateStatus, status: submissionStatuses.filter(status => status.task == task.id)[0] }} key={i} />
+                        })
+                            :
+                            <div className="flex items-center justify-center h-full py-4">
+                                <h2 className="font-medium text-2xl text-center text-gray-400">No Tasks</h2>
+                            </div>}
+                         </div> : <></>}
+
+                        {(showArchivedTasks) ? sortedTasks(tasks.filter(t => t.status !== 1)).map((task, i) => {
+                            const sub = submissions.filter(s => s.task === task.id)[0]
+                            return <Task {...{ task, sub, i, addSubmission, updateSubmission, reloadSubmission, updateStatus, status: submissionStatuses.filter(status => status.task == task.id)[0] }} key={i} />
+                        }) :
+                            <></>}
+                    </div>
+
+
+
                 </div>
             </div>
 

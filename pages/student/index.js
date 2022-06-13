@@ -177,15 +177,17 @@ const StudentHome = () => {
 
             {showMain ? <main className="h-full max-w-screen min-w-screen relative lg:flex lg:gap-6">
                 <div className="bg-gray-200 h-full min-h-768px lg:h-screen w-screen lg:flex">
-                <div className={`${!sidebar ? "hidden" : ""} z-10 h-full w-full bg-black fixed opacity-50`}></div>
-                    {<div className="lg:hidden min-w-full w-full  p-4  bg-white shadow-lg flex items-center justify-between ">
+                <div className={`${!sidebar ? "hidden" : ""} z-20 h-full w-full bg-black fixed opacity-50`}></div>
+                    <Sidebar {...{ changePage, toggleSidebar, profile, classroom, sidebar }} />
+                    {<div className="lg:hidden min-w-full w-full  p-4 z-10 bg-white shadow-lg flex items-center justify-between ">
                         <button className="focus:outline-none font-bold text-2xl mx-2 cursor-pointer text-gray-600" onClick={() => toggleSidebar()}>
                             <img src="hamburger_menu_icon.svg" width="30px"  />
                         </button>
                         <img src="linear_logo.svg" width="160px"/>
-                        <div></div>
+                    
                     </div>}
-                    <Sidebar {...{ changePage, toggleSidebar, profile, classroom, sidebar }} />
+                    <div></div>
+                      
 
                     <div className="w-1/12 pr-2 pl-4 lg:flex flex-col justify-between hidden">
                         <div className="h-1/2">
@@ -355,7 +357,7 @@ const Sidebar = ({ changePage, toggleSidebar, profile, classroom, sidebar }) => 
     if ((!profile) || (!classroom)) return null
 
     return (
-        <div className={`${!sidebar ? "hidden" : ""} z-20 h-full w-2/5 bg-white fixed p-5`}>
+        <div className={`${!sidebar ? "hidden" : ""} z-30 h-full w-2/5 bg-white fixed p-5`}>
         <button onClick={() => toggleSidebar()} className="focus:outline-none font-bold text-2xl mx-2 cursor-pointer text-gray-600">✕</button>
 
             <div className="my-5 py-2">
