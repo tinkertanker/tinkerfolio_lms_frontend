@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react'
+import { useState, useContext, useEffect } from 'react'
 import Popup from 'reactjs-popup'
 import CustomPopup from '../../utils/CustomPopup'
 import CustomLinkify from '../../utils/CustomLinkify'
@@ -141,45 +141,53 @@ const Dashboard = ({ tasks, submissions, setSubmissions, submissionStatuses, set
     const [isOnStartTaskPage, setIsOnStartTaskPage] = useState(true);
     const [showArchivedTasks, setShowArchivedTasks] = useState(false)
 
+    const numberOfActiveTasks = sortedTasks(tasks.filter(t => t.status === 1)).length
+    const numberOfArchivedTasks = tasks.filter(t => t.status !== 1).length
+    
+    useEffect(() => {
+        const maxTasks = (showArchivedTasks) ? numberOfArchivedTasks: numberOfActiveTasks;
+
+        if (currentTaskPage >= Math.ceil(maxTasks / 5)) {
+            setIsOnEndTaskPage(true);
+        } else {
+            setIsOnEndTaskPage(false);
+        }
+        if (currentTaskPage === 1) {
+            setIsOnStartTaskPage(true);
+        } else {
+            setIsOnStartTaskPage(false);
+        }
+     
+    });
+
     const nextTasksPage = () => {
-        const maxTasks = sortedTasks(tasks.filter(t => t.status === 1)).length
+        const maxTasks = (showArchivedTasks) ? numberOfArchivedTasks: numberOfActiveTasks;
 
         if (currentTaskPage >= 1 && currentTaskPage < Math.ceil(maxTasks / 5)) {
-            if (currentTaskPage + 1 >= Math.ceil(maxTasks / 5)) {
-                setIsOnEndTaskPage(true);
-
-            } else {
-                setIsOnEndTaskPage(false);
-            }
-            setIsOnStartTaskPage(false);
-            setCurrentTasksPage(currentTaskPage + 1)
+            setCurrentTasksPage(currentTaskPage + 1);
         }
 
     }
     const previousTasksPage = () => {
 
         if (currentTaskPage != 1) {
-            if (currentTaskPage - 1 === 1) {
-                setIsOnStartTaskPage(true);
-            } else {
-                setIsOnStartTaskPage(false);
-            }
+           
             setCurrentTasksPage(currentTaskPage - 1)
-            setIsOnEndTaskPage(false);
-        }
+         }
 
     }
 
     const switchArchiveTaskPage = () => {
         setShowArchivedTasks(!showArchivedTasks);
         setCurrentTasksPage(1);
+
     }
 
     const checkNumberOfTasks = () => {
         if (showArchivedTasks) {
-            if (tasks.filter(t => t.status !== 1).length <=5) return true
+            if (numberOfArchivedTasks <= 5) return true
         } else {
-            if (sortedTasks(tasks.filter(t => t.status === 1)).length <= 5) return true
+            if (numberOfActiveTasks <= 5) return true
         }
     }
 
@@ -190,15 +198,20 @@ const Dashboard = ({ tasks, submissions, setSubmissions, submissionStatuses, set
                     <div className="flex items-center gap-3">
                         <img src="/tasks_icon.svg" width="20px" />
                         <h1 className="text-2xl font-semibold bg-white rounded-2xl text-gray-600">Tasks</h1>
-                        {(tasks.filter(t => t.status !== 1).length >0) ? 
+                        {(numberOfArchivedTasks >0) ? 
                             <button className="ml-4 lg:hidden" onClick={() => switchArchiveTaskPage()}>
-                                <p className="text-gray-500">{(!showArchivedTasks) ? "Show Archived" : "Show Active Tasks"}</p>
+                                <p className="text-gray-500 whitespace-nowrap">{(!showArchivedTasks) ? "Show Archived" : "Show Active Tasks"}</p>
                             </button> : <></>}
                     </div>
                     <div className="flex items-center">
-                        <p className="font-medium text-sm py-1.5 px-3 bg-gray-500 text-white rounded-lg mr-3">Incomplete: {tasks.length - submissions.length}</p>
+                        {!showArchivedTasks ? <p className="font-medium text-sm py-1.5 px-3 bg-gray-500 text-white rounded-lg mr-3 whitespace-nowrap">Incomplete: {tasks.length - submissions.length}</p> : <></>}
                         
+                        {((showArchivedTasks && numberOfArchivedTasks > 0) || (!showArchivedTasks && numberOfActiveTasks >0)) ?
                         <div className="flex items-center gap-4 lg:hidden px-3">
+                            <p className="whitespace-nowrap text-gray-500">{currentTaskPage*5-4} - {
+                                !isOnEndTaskPage ? currentTaskPage*5 :
+                                (showArchivedTasks) ? numberOfArchivedTasks : numberOfActiveTasks
+                            } of {showArchivedTasks ? numberOfArchivedTasks : numberOfActiveTasks}</p>
                             <button onClick={() => previousTasksPage()}>
                                 <ChevronBackOutline
                                     color={(isOnStartTaskPage || checkNumberOfTasks()) ? "#d1d5db" : "#6b7280"}
@@ -215,7 +228,8 @@ const Dashboard = ({ tasks, submissions, setSubmissions, submissionStatuses, set
                                     width="25px"
                                 />
                             </button>
-                        </div> 
+                            
+                        </div> :<></>}
 
                     </div>
                 </div>

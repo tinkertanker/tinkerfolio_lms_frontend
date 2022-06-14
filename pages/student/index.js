@@ -177,17 +177,23 @@ const StudentHome = () => {
 
             {showMain ? <main className="h-full max-w-screen min-w-screen relative lg:flex lg:gap-6">
                 <div className="bg-gray-200 h-full min-h-768px lg:h-screen w-screen lg:flex">
-                <div className={`${!sidebar ? "hidden" : ""} z-20 h-full w-full bg-black fixed opacity-50`}></div>
+                    <div className={`${!sidebar ? "hidden" : ""} z-20 h-full w-full bg-black fixed opacity-50`}></div>
                     <Sidebar {...{ changePage, toggleSidebar, profile, classroom, sidebar }} />
                     {<div className="lg:hidden min-w-full w-full  p-4 z-10 bg-white shadow-lg flex items-center justify-between ">
-                        <button className="focus:outline-none font-bold text-2xl mx-2 cursor-pointer text-gray-600" onClick={() => toggleSidebar()}>
-                            <img src="hamburger_menu_icon.svg" width="30px"  />
-                        </button>
-                        <img src="linear_logo.svg" width="160px"/>
-                    
+                        <div className="flex items-center gap-3">
+                            <button className="focus:outline-none font-bold text-2xl mx-2 cursor-pointer text-gray-600" onClick={() => toggleSidebar()}>
+                                <img src="hamburger_menu_icon.svg" width="30px" />
+                            </button>
+                            <div className={`flex flex-row items-center py-1 px-4  ${statusColor[connectionStatus]}`}>
+                                <p className="blinking pr-2">⬤</p>
+                                <p>{connectionStatus}</p>
+                            </div>
+                        </div>
+                        <img src="linear_logo.svg" width="160px" />
+
                     </div>}
                     <div></div>
-                      
+
 
                     <div className="w-1/12 pr-2 pl-4 lg:flex flex-col justify-between hidden">
                         <div className="h-1/2">
@@ -195,8 +201,8 @@ const StudentHome = () => {
                                 <img src="/main_logo_1.png"></img>
                             </div>
                             <div className="h-2/3 py-3 flex flex-col items-center">
-                                    <AnnouncementsNav {...{ changePage }} />
-                                    <ResourcesNav {...{ changePage }} />
+                                <AnnouncementsNav {...{ changePage }} />
+                                <ResourcesNav {...{ changePage }} />
                             </div>
                         </div>
 
@@ -237,7 +243,7 @@ const StudentHome = () => {
                 </div>
 
 
-            </main>: <></>}
+            </main> : <></>}
             {showAllAnnouncements ?
                 <div className="mx-5 pt-12 pb-10 min-h-screen max-w-screen min-w-screen">
                     <div className="flex items-center justify-between mb-6 mx-20">
@@ -259,9 +265,14 @@ const StudentHome = () => {
                         </button>
                     </div>
                     <Resources resources={resources} reloadResource={reloadResource} />
+
                 </div> : <></>}
             <footer>
             </footer>
+            <div className={`fixed bottom-4 right-4 lg:flex flex-row items-center py-1 px-4 rounded-full bg-white shadow-xl hidden ${statusColor[connectionStatus]}`}>
+                <p className="blinking pr-2">⬤</p>
+                <p>{connectionStatus}</p>
+            </div>
         </div>
 
 
@@ -354,11 +365,21 @@ const ResourcesNav = ({ changePage }) => {
 }
 
 const Sidebar = ({ changePage, toggleSidebar, profile, classroom, sidebar }) => {
+    const { auth, setAuth } = useContext(AuthContext)
+    const logout = () => {
+
+        setAuth({ ...auth, loading: true })
+        setAuth({ loading: false, isAuthenticated: false, tokens: null, userType: null })
+        localStorage.removeItem('tokens')
+        localStorage.removeItem('userType')
+    }
+
+
     if ((!profile) || (!classroom)) return null
 
     return (
         <div className={`${!sidebar ? "hidden" : ""} z-30 h-full w-2/5 bg-white fixed p-5`}>
-        <button onClick={() => toggleSidebar()} className="focus:outline-none font-bold text-2xl mx-2 cursor-pointer text-gray-600">✕</button>
+            <button onClick={() => toggleSidebar()} className="focus:outline-none font-bold text-2xl mx-2 cursor-pointer text-gray-600">✕</button>
 
             <div className="my-5 py-2">
                 <div>
@@ -390,7 +411,7 @@ const Sidebar = ({ changePage, toggleSidebar, profile, classroom, sidebar }) => 
 
                 </div>
                 <div>
-                    <button className="py-3 px-1 w-full outline-none focus:outline-none hover:bg-gray-200 cursor-pointer rounded-lg ">
+                    <button onClick={logout} className="py-3 px-1 w-full outline-none focus:outline-none hover:bg-gray-200 cursor-pointer rounded-lg ">
                         <div className="flex items-center px-2">
                             <img src="/logout_icon.svg" width="20px" />
                             <p className="font-semibold ml-3 text-red-500">Log Out</p>
