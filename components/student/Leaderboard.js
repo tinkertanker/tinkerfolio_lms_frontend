@@ -103,7 +103,7 @@ const StudentStats = ({ profile, getLeaderboard, getRankAboveScore, getStudentAb
             contentStyle={{ overflowY: 'auto', marginTop: 'min(60px, 100%)', marginBottom: 'min(60px, 100%)' }}
         >
             {close => (
-                <div className="px-5 py-5 bg-white rounded-xl shadow-lg ">
+                <div className="px-5 py-5 bg-white rounded-xl shadow-lg">
                     <div className="mx-4">
                         <div className="flex items-center justify-between py-2">
                             <div className="flex items-center gap-2">
@@ -117,7 +117,7 @@ const StudentStats = ({ profile, getLeaderboard, getRankAboveScore, getStudentAb
                             <div className={`flex items-center my-5 rounded-xl justify-between ${(profile.index === student.index) ? "bg-blue-600" : "bg-gray-100"}`}>
                                 <div className="flex items-center">
                                     <h2 className={`flex items-center justify-center font-semibold text-2xl w-12 h-12 mx-4 my-2 rounded-full ${(i === 0) ? "bg-yellow-400" : (i === 1) ? "bg-gray-400" : (i === 2) ? "bg-yellow-600" : "bg-gray-200"}`}>{i + 1}</h2>
-                                    <p className={`font-medium text-lg truncate ${(profile.index === student.index) && "text-white"}`}>{(student.name.length > 0) ? student.name : <span className="italic">(Unnamed)</span>}</p>
+                                    <p className={`font-medium text-lg truncate mr-10 w-1/2 ${(profile.index === student.index) && "text-white"}`}>{(student.name.length > 0) ? student.name : <span className="italic">(Unnamed)</span>}</p>
                                 </div>
                                 <p className={`font-medium text-2xl mx-5 ${(profile.index === student.index) ? "text-white" : "text-blue-600"}`}>{student.score} ★</p>
                             </div>
