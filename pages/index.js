@@ -21,22 +21,23 @@ const Home = () => {
             </Head>
 
             <main>
-                <section className="px-6 bg-purple-50">
-                    <div className="sm:hidden block mt-12" style={{padding:"56.25% 0 0 0", position: "relative"}}><iframe src="https://player.vimeo.com/video/661595554?h=c6aff57f55&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style={{position:"absolute",top:0,left:0,width:"100%",height:"100%"}} title="EchoClass"></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
+                <section className="px-2 sm:px-6 bg-purple-50">
+                    <div className="md:hidden block mt-12" style={{padding:"56.25% 0 0 0", position: "relative"}}><iframe src="https://player.vimeo.com/video/661595554?h=c6aff57f55&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style={{position:"absolute",top:0,left:0,width:"100%",height:"100%"}} title="EchoClass"></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
 
-                    <div className="flex sm:flex-row flex-col items-center gap-12 sm:gap-16 max-w-4xl 2xl:max-w-6xl mx-auto pt-8 sm:pt-20 pb-20 sm:pb-28">
-                        <div className="flex flex-col items-center sm:items-start">
-                            <h1 className="text-3xl sm:text-3xl 2xl:text-5xl mx-auto pb-4 mb-2 font-semibold sm:text-left text-center"><span className="inline-block">A live classroom experience</span><br /><span className="inline-block">for your online classes.</span></h1>
+                    <div className="flex md:flex-row flex-col items-center gap-6 sm:gap-8 max-w-5xl 2xl:max-w-7xl mx-auto pt-8 sm:pt-20 pb-20 sm:pb-28">
+                        <div className="flex flex-col items-center md:items-start">
+                            <h1 className="text-2xl sm:text-4xl 2xl:text-5xl font-semibold sm:text-left text-center pb-4">Easy-to-use teaching software<br className="hidden sm:block" /> for workshops & webinars.</h1>
+                            <h2 className="text-base sm:text-xl 2xl:text-3xl pb-4 mb-2 sm:text-left text-center text-gray-600">Engage your students. Track their progress.</h2>
                             <a href="https://forms.gle/k4Gx4T1Ntvw43JJ17" target="_blank" rel="noreferrer" className="py-2 px-4 text-lg font-semibold text-white bg-blue-700 hover:bg-blue-900 rounded">Sign Up for Free</a>
                         </div>
-                        <div className="flex-grow sm:block hidden">
+                        <div className="flex-grow md:block hidden">
                             <div className="" style={{padding:"56.25% 0 0 0", position: "relative"}}><iframe src="https://player.vimeo.com/video/661595554?h=c6aff57f55&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style={{position:"absolute",top:0,left:0,width:"100%",height:"100%"}} title="EchoClass"></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
                         </div>
                     </div>
                 </section>
                 <section className="bg-white">
                     <div className="max-w-4xl 2xl:max-w-6xl mx-auto py-20 sm:py-28 px-8">
-                        <h1 className="text-3xl sm:text-5xl font-bold text-center mb-8 sm:mb-16">Made for teachers who care.</h1>
+                        <h1 className="text-3xl sm:text-5xl font-bold text-center mb-8 sm:mb-16">Made for instructors who care.</h1>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                             <Testimonial
                                 quote="&quot;EchoClass helps our instructors understand how students are doing during a lesson.&quot;"
