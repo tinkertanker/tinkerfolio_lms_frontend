@@ -1,8 +1,9 @@
+import { useEffect } from "react";
 import CustomPopup from "../../utils/CustomPopup";
 
 
 const Leaderboard = ({ profile, leaderboard, classroom }) => {
-
+    
 
     const getLeaderboard = () => {
         return leaderboard.sort((a, b) => (a.score <= b.score) ? 1 : -1)
@@ -89,9 +90,9 @@ const StudentStats = ({ profile, getLeaderboard, getRankAboveScore, getStudentAb
                             <div className="mt-2 xl:mt-3">
                                 {
                                     (getLeaderboard().findIndex(student => student.index === profile.index) === 0) ? (
-                                        <h1 className="text-sm text-center whitespace-nowrap">{profile.score - getSecondScore()} stars ahead of <span className="font-medium">{getSecondStudent()}</span></h1>
+                                        <h1 className="text-sm text-center whitespace-nowrap">{profile.score - getSecondScore()} star{((profile.score - getSecondScore()) > 1) ? "s" : ""}  ahead of <span className="font-medium">{getSecondStudent()}</span></h1>
                                     ) : (
-                                        <h1 className="text-sm text-center whitespace-nowrap">{getRankAboveScore() - profile.score} stars behind <span className="font-medium">{getStudentAbove()}</span></h1>
+                                        <h1 className="text-sm text-center whitespace-nowrap">{getRankAboveScore() - profile.score} star{((profile.score - getSecondScore()) > 1) ? "s" : ""} behind <span className="font-medium">{getStudentAbove()}</span></h1>
                                     )
                                 }
                             </div>
