@@ -93,6 +93,36 @@ const StudentHome = () => {
         })
     }, [])
 
+    //Update leaderboard and profile data every 30 seconds
+    useEffect(() => {
+
+        const interval = setInterval(() => {
+
+            getAccessToken().then((accessToken) => {
+                axios.get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + 'student/leaderboard', {
+                    headers: { 'Authorization': 'Bearer ' + accessToken },
+                })
+                    .then(res => {
+                        setLeaderboard((leaderboard) => res.data);
+                    })
+
+                    axios.get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + 'student/initial/', {
+                        headers: { 'Authorization': 'Bearer ' + accessToken },
+                    })
+                        .then(res => {
+                            setProfile((profile) => res.data.profile)
+                           
+                        })
+            })
+
+        }, 30000);
+
+        return () => {
+            clearInterval(interval);
+        };
+
+    }, [])
+
     const reloadResource = (id, existingOneResource, existingResource, index) => {
 
         if (existingOneResource.file.slice(existingOneResource.file.indexOf("&Expires=") + 9) > Math.floor(Date.now() / 1000)) {
@@ -179,7 +209,7 @@ const StudentHome = () => {
                 <div className="bg-gray-200 h-full min-h-768px lg:h-screen w-screen lg:flex">
                     <div className={`${!sidebar ? "hidden" : ""} z-20 h-full w-full bg-black fixed opacity-50`}></div>
                     <Sidebar {...{ changePage, toggleSidebar, profile, classroom, sidebar }} />
-                    {<div className="lg:hidden min-w-full w-full  p-4 z-10 bg-white shadow-lg flex items-center justify-between ">
+                    {<div className="lg:hidden min-w-full w-full p-4 z-10 bg-white shadow-lg flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <button className="focus:outline-none font-bold text-2xl mx-2 cursor-pointer text-gray-600" onClick={() => toggleSidebar()}>
                                 <img src="hamburger_menu_icon.svg" width="30px" />
