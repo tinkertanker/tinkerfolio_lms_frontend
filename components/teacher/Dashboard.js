@@ -16,6 +16,8 @@ import {
     ChevronBackOutline,
     ArrowBackOutline,
     ArrowForwardOutline,
+    DocumentTextOutline,
+    Trash
 } from "react-ionicons";
 
 const contentStyle = { paddingLeft: "0.5rem", paddingRight: "0.5rem" };
@@ -26,6 +28,29 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
     const [tableNames, setTableNames] = useState();
     const [sortBy, setSortBy] = useState("indexLowToHigh");
     const [showAnnouncements, setShowAnnouncements] = useState(false)
+
+    const [newTaskModalOpen, setNewTaskModalOpen] = useState(false)
+
+    const [showNewTask, setShowNewTask] = useState(true);
+    const [showDraftsMenu, setShowDraftsMenu] = useState(false);
+    const [showDraftTask, setShowDraftTask] = useState(false);
+
+    const changeNewTaskPage = (currentPage) => {
+        if (showNewTask) setShowNewTask(false);
+        if (showDraftsMenu) setShowDraftsMenu(false);
+        if (showDraftTask) setShowDraftTask(false);
+
+        switch (currentPage) {
+            case "newTask":
+                setShowNewTask(true);
+                break;
+            case "draftsMenu":
+                setShowDraftsMenu(true);
+                break;
+        }
+    }
+
+
     const [tasksToHide, setTasksToHide] = useState(() => {
         const saved = localStorage.getItem("tasksToHide" + classroom.code)
         let initial = []
@@ -89,11 +114,36 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
         });
     };
 
+    const updateDraftTask = (task, draftTaskID) => {
+        getAccessToken().then((accessToken) => {
+            axios
+                .put(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + 'core/tasks/' + draftTaskID.toString() + '/',
+                    {
+                        name: task.name,
+                        status: 1,
+                        description: task.description,
+                        max_stars: task.max_stars,
+                        display: task.display
+                    },
+                    {
+                        headers: { Authorization: "Bearer " + accessToken },
+                    })
+                .then((res) => {
+                    setTasks(tasks.map(t => t.id !== draftTaskID ? t : res.data)) //update tasks array
+
+                })
+                .catch((res) => {
+                    console.log(res);
+                })
+        })
+    }
+
+
     const addReview = (id, stars, comment, setSubmission) => {
         // push review to server
         getAccessToken().then((accessToken) => {
             axios
-                .put( process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/submissions/" + id.toString() + "/",
+                .put(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/submissions/" + id.toString() + "/",
                     { stars, comment },
                     { headers: { Authorization: "Bearer " + accessToken } }
                 )
@@ -119,14 +169,14 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
     const sortedTasks = () => tasks.sort((a, b) => (a.id > b.id ? 1 : -1));
 
     const shownTasks = () => tasks.filter(
-        (task) => !tasksToHide.includes(task.id)
+        (task) => !tasksToHide.includes(task.id) && task.display === 1
     );
 
     const sortedStudents = () => names.sort((a, b) => (a.id > b.id ? 1 : -1));
 
     const sortTableTasks = () => {
         let tasksToShow = tasks.filter(
-            (task) => !tasksToHide.includes(task.id)
+            (task) => !tasksToHide.includes(task.id) && task.display === 1
         );
         return tasksToShow.sort((a, b) => (a.id > b.id ? 1 : -1));
     };
@@ -199,7 +249,23 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                         <div className="flex flex-row flex-wrap gap-4">
                             <Filter {...{ tasks, tasksToHide, setTasksToHide, classroom }} />
                             <Sort {...{ sortBy, setSortBy }} />
-                            <NewTask addTask={addTask} />
+                            <button
+                                onClick={() => {
+                                    changeNewTaskPage("newTask")
+                                    setNewTaskModalOpen(true)
+                                    
+                                }}
+                                className="flex flex-row py-1 px-2 bg-blue-600 text-sm text-white rounded hover:bg-blue-700 focus:outline-none" >
+                                <AddCircleOutline
+                                    color={"#00000"}
+                                    title={"Add"}
+                                    height="20px"
+                                    width="20px"
+                                />
+                                <p className="pl-1">Task</p>
+                            </button>
+                            <NewTask {...{ addTask, deleteTask, updateDraftTask, tasks, changeNewTaskPage, showNewTask, setShowNewTask, showDraftsMenu, setShowDraftsMenu, showDraftTask, setShowDraftTask, newTaskModalOpen, setNewTaskModalOpen }} />
+
                             <button
                                 className={
                                     "flex flex-row py-1 px-2 bg-blue-600 text-sm text-white rounded focus:outline-none " +
@@ -219,108 +285,123 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                                 <p className="pl-1">Student</p>
                             </button>
                         </div>
-                        <div className="flex flex-row justify-end">
-                            <button className="flex flex-row py-1 px-2 bg-blue-600 text-sm text-white rounded focus:outline-none hover:bg-blue-700" onClick={() => setShowAnnouncements(true)}>
+                        <div className="flex flex-row justify-end gap-4">
+                            <button 
+                                onClick={()=> {
+                                    changeNewTaskPage("draftsMenu");
+                                    setNewTaskModalOpen(true)
+
+                                }}
+                                className="flex flex-row py-1 px-2 bg-blue-600 text-sm text-white rounded hover:bg-blue-700 focus:outline-none">
+                                    <DocumentTextOutline
+                                        color={"#00000"}
+                                        title={"Drafts"}
+                                        height="20px"
+                                        width="20px"
+                                    />
+                                <p className="pl-1">Drafts ({tasks.filter(t => t.display === 2).length})</p>
+                            </button>                            <button className="flex flex-row py-1 px-2 bg-blue-600 text-sm text-white rounded focus:outline-none hover:bg-blue-700" onClick={() => setShowAnnouncements(true)}>
                                 <MegaphoneOutline color={"#00000"} title={"Announcements"} height="20px" width="20px" />
                                 <p className="pl-1">Announcements</p>
                             </button>
                         </div>
                     </div>
-                <table
-                    className="block overflow-y-auto px-8 py-8 w-max min-w-full"
-                    style={{ height: size.height - 173, borderSpacing: "50px", marginTop: "60px" }}
-                >
-                    <thead>
-                        <tr className="border-2">
-                            <th className="border-r-2 px-2 py-2 w-16">
-                                <p>Index</p>
-                            </th>
-                            <th className="border-r-2 px-2 py-2 w-72">
-                                <p>Student</p>
-                            </th>
-                            <th className="border-r-2 px-2 py-2 w-16">
-                                <p className="text-xl">★</p>
-                            </th>
-                            {sortTableTasks().map((task, i) => (
-                                <th
-                                    className="border-r-2 px-2 py-2"
-                                    key={i}
-                                    style={{ width: "200px" }}
-                                >
-                                    {/* this image below is a quick fix to give HTML table a min-width property. DO NOT DELETE */}
-                                    <img style={{ float: "left", minWidth: "200px", visibility: "hidden", width: "0px", }} />
-                                    <div className="flex flex-row items-center">
-                                        <p className="font-normal ml-1 mr-2 py-0.5 px-1 text-sm text-white bg-gray-700 rounded">
-                                            Task
-                                        </p>
-                                        <p
-                                            className="truncate text-left"
-                                            style={{ width: "150px" }}
-                                        >
-                                            {task.name}
-                                        </p>
-                                        <TaskSummary {...{submissions, submissionStatuses, task, sortedStudents, names}}/>
-                                        <TaskMenu {...{ task, setOneTask, deleteTask, submissions, tasksToHide, setTasksToHide, classroom }} />
-                                    </div>
-                                    <TaskSubmissionsBar {...{submissions, submissionStatuses, task, sortedStudents, names}}/>
-
+                    <table
+                        className="block overflow-y-auto px-8 py-8 w-max min-w-full"
+                        style={{ height: size.height - 173, borderSpacing: "50px", marginTop: "60px" }}
+                    >
+                        <thead>
+                            <tr className="border-2">
+                                <th className="border-r-2 px-2 py-2 w-16">
+                                    <p>Index</p>
                                 </th>
-                            ))}
-                        </tr>
-                    </thead>
-                    <tbody className="align-top">
-                        {sortStudentIndex().map((index, i) => {
-                            const sp = tableNames.filter(
-                                (tn) => tn.index === index
-                            )[0];
-                            if (typeof sp === "undefined") return;
-                            const student_id = sp.id;
-
-                            return (
-                                <tr className="border-2" key={i}>
-                                    <td className="border-r-2 px-2 py-2 w-16">
-                                        <p>{index}</p>
-                                    </td>
-                                    <td className="border-r-2 px-2 py-2 w-72">
-                                        <div className="flex flex-row">
-                                            <StudentName {...{ index, student_id, tableNames, setTableNames, updateName, bulkAddStudents, removeIndex, }} />
-                                            <StudentMenu index={index} removeIndex={ removeIndex } />
+                                <th className="border-r-2 px-2 py-2 w-72">
+                                    <p>Student</p>
+                                </th>
+                                <th className="border-r-2 px-2 py-2 w-16">
+                                    <p className="text-xl">★</p>
+                                </th>
+                                {sortTableTasks().map((task, i) => (
+                                    <th
+                                        className="border-r-2 px-2 py-2"
+                                        key={i}
+                                        style={{ width: "200px" }}
+                                    >
+                                        {/* this image below is a quick fix to give HTML table a min-width property. DO NOT DELETE */}
+                                        <img style={{ float: "left", minWidth: "200px", visibility: "hidden", width: "0px", }} />
+                                        <div className="flex flex-row items-center">
+                                            <p className="font-normal ml-1 mr-2 py-0.5 px-1 text-sm text-white bg-gray-700 rounded">
+                                                Task
+                                            </p>
+                                            <p
+                                                className="truncate text-left"
+                                                style={{ width: "150px" }}
+                                            >
+                                                {task.name}
+                                            </p>
+                                            <TaskSummary {...{ submissions, submissionStatuses, task, sortedStudents, names }} />
+                                            <TaskMenu {...{ task, setOneTask, deleteTask, submissions, tasksToHide, setTasksToHide, classroom }} />
                                         </div>
-                                        <p className="mt-4 text-sm text-gray-700">
-                                            Submissions
-                                        </p>
-                                        <SubmissionSummary {...{ student_id, tasks, sortedTasks, shownTasks, submissions, submissionStatuses, }} />
-                                    </td>
-                                    <td className="border-r-2 px-2 py-2 text-center w-16">
-                                        {sp.score}
-                                    </td>
-                                    {submissions &&
-                                        sortTableTasks().map(
-                                            (task, i) => {
-                                                let sub =
-                                                    submissions.filter(
-                                                        (s) =>
-                                                            s.task ===
+                                        <TaskSubmissionsBar {...{ submissions, submissionStatuses, task, sortedStudents, names }} />
+
+                                    </th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody className="align-top">
+                            {sortStudentIndex().map((index, i) => {
+                                const sp = tableNames.filter(
+                                    (tn) => tn.index === index
+                                )[0];
+                                if (typeof sp === "undefined") return;
+                                const student_id = sp.id;
+
+                                return (
+                                    <tr className="border-2" key={i}>
+                                        <td className="border-r-2 px-2 py-2 w-16">
+                                            <p>{index}</p>
+                                        </td>
+                                        <td className="border-r-2 px-2 py-2 w-72">
+                                            <div className="flex flex-row">
+                                                <StudentName {...{ index, student_id, tableNames, setTableNames, updateName, bulkAddStudents, removeIndex, }} />
+                                                <StudentMenu index={index} removeIndex={removeIndex} />
+                                            </div>
+                                            <p className="mt-4 text-sm text-gray-700">
+                                                Submissions
+                                            </p>
+                                            <SubmissionSummary {...{ student_id, tasks, sortedTasks, shownTasks, submissions, submissionStatuses, }} />
+                                        </td>
+                                        <td className="border-r-2 px-2 py-2 text-center w-16">
+                                            {sp.score}
+                                        </td>
+                                        {submissions &&
+                                            sortTableTasks().map(
+                                                (task, i) => {
+                                                    let sub =
+                                                        submissions.filter(
+                                                            (s) =>
+                                                                s.task ===
                                                                 task.id &&
-                                                            s.student ===
+                                                                s.student ===
                                                                 student_id
-                                                    )[0];
-                                                return sub ? (
-                                                    <Submission {...{ submissions, sub, tableNames, sp, task, addReview, sendJsonMessage }} key={i} />
-                                                ) : (
-                                                    <td
-                                                        className="px-2 py-2 border-r-2"
-                                                        key={i}
-                                                        style={{ width: "241.36px" }}
-                                                    ></td>
-                                                );
-                                            }
-                                        )
-                                    }
-                                </tr>
-                            );})}
+                                                        )[0];
+                                                    return sub ? (
+                                                        <Submission {...{ submissions, sub, tableNames, sp, task, addReview, sendJsonMessage }} key={i} />
+                                                    ) : (
+                                                        <td
+                                                            className="px-2 py-2 border-r-2"
+                                                            key={i}
+                                                            style={{ width: "241.36px" }}
+                                                        ></td>
+                                                    );
+                                                }
+                                            )
+                                        }
+                                    </tr>
+                                );
+                            })}
                         </tbody>
-                </table>
+                    </table>
                 </>
             )}
         </>
@@ -351,7 +432,7 @@ const Filter = ({ tasks, tasksToHide, setTasksToHide, classroom }) => {
                 <button className="flex flex-row py-1 px-2 bg-blue-600 text-sm text-white rounded hover:bg-blue-700 focus:outline-none">
                     <FilterIcon color={"#ffffff"} height="20px" width="20px" />
                     <p className="pl-2">
-                        Hide/Show Tasks ({tasks.length - tasksToHide.length})
+                        Hide/Show Tasks ({tasks.filter(t => t.display === 1).length - tasksToHide.length})
                     </p>
                 </button>
             }
@@ -383,7 +464,7 @@ const Filter = ({ tasks, tasksToHide, setTasksToHide, classroom }) => {
                             Unselect All
                         </p>
                     </div>
-                    {tasks.map((task, i) => (
+                    {tasks.filter(t => t.display === 1).map((task, i) => (
                         <div
                             className="flex flex-row items-center mb-2"
                             key={i}
@@ -950,12 +1031,12 @@ const HideTask = ({ task, tasksToHide, setTasksToHide, classroom }) => {
     const trackSettings = (newSettings) => {
         localStorage.setItem("tasksToHide" + classroom.code, JSON.stringify(newSettings))
     }
-    
+
     const handleChange = () => {
         setTasksToHide([...tasksToHide, task.id])
         trackSettings([...tasksToHide, task.id])
     }
-   
+
     return (
         <p className="border-b-2 border-gray-500 py-1 hover:text-white cursor-pointer" onClick={() => handleChange()} >
             Hide
@@ -1072,35 +1153,91 @@ const TaskDetails = ({ task, setOneTask, setIsCloseOnDocClick, subs }) => {
     );
 };
 
-const NewTask = ({ addTask }) => {
+const NewTask = ({
+    addTask,
+    deleteTask,
+    updateDraftTask,
+    tasks,
+    changeNewTaskPage,
+    showNewTask,
+    setShowNewTask,
+    showDraftsMenu,
+    setShowDraftsMenu,
+    showDraftTask,
+    setShowDraftTask,
+    newTaskModalOpen,
+    setNewTaskModalOpen }) => {
+
+    const [isEditingDraft, setIsEditingDraft] = useState(false);
+    const [draftTaskID, setDraftTaskID] = useState(0);
+
     const [task, setTask] = useState({
         name: "",
         description: "",
         max_stars: 5,
+        display: 0
     });
 
-    return (
-        <CustomPopup
-            trigger={
-                <button className="flex flex-row py-1 px-2 bg-blue-600 text-sm text-white rounded hover:bg-blue-700 focus:outline-none">
-                    <AddCircleOutline
-                        color={"#00000"}
-                        title={"Add"}
-                        height="20px"
-                        width="20px"
-                    />
-                    <p className="pl-1">Task</p>
-                </button>
+    const saveDraft = () => {
+        setTask({
+            ...task,
+            display: 2
+        });
+
+    }
+
+    useEffect(() => { //add task if task.display changes to 1 or 2
+        if (task.display != 0) {
+            if (isEditingDraft) {
+                updateDraftTask(task, draftTaskID);
+                setIsEditingDraft(false);
+                if (task.display === 2) {
+                    changeNewTaskPage("draftsMenu") // go back to drafts menu if user clicks "Save to Drafts" when editing a draft
+                } else if (task.display === 1) {
+                    setNewTaskModalOpen(false); //close modal when user publishes draft
+                }
+            } else {
+                addTask(task);
+                setNewTaskModalOpen(false);
             }
+            setTask({ name: "", description: "", max_stars: 5, display: 0 }); // reset form fields
+            setDraftTaskID(0);
+
+        }
+    }, [task.display])
+
+
+
+    const prefillDraftTask = (draftTask) => {
+        setIsEditingDraft(true);
+        setDraftTaskID(draftTask.id);
+        setTask({
+            name: draftTask.name,
+            description: draftTask.description,
+            max_stars: draftTask.max_stars,
+            display: 0
+        })
+
+    }
+
+    return (
+
+        <Popup
+            modal
+            overlayStyle={{ background: 'rgba(0,0,0,0.4)' }}
+            closeOnDocumentClick
+            open={newTaskModalOpen}
+            onClose={() => setNewTaskModalOpen(false)}
         >
-            {(close) => (
+            {(showNewTask) ?
                 <form
                     className="flex flex-col px-4 py-4 bg-white rounded-lg shadow-md popup"
                     onSubmit={(e) => {
                         e.preventDefault();
-                        addTask(task);
-                        setTask({ name: "", description: "", max_stars: 5 }); // reset form fields
-                        close();
+                        setTask(task => ({
+                            ...task,
+                            display: 1
+                        }));
                     }}
                 >
                     <input
@@ -1159,16 +1296,85 @@ const NewTask = ({ addTask }) => {
                     <small className="ml-2 text-gray-500">
                         Capped at 5 stars.
                     </small>
-                    <button
-                        type="submit"
-                        className="mt-4 ml-2 px-2 py-1 w-min bg-blue-500 text-white rounded hover:bg-blue-600"
-                    >
-                        Create
-                    </button>
-                </form>
-            )}
-        </CustomPopup>
+                    <div className="flex">
+                        <button
+                            type="submit"
+                            className="mt-4 ml-2 px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 cursor-pointer focus:outline-none"
+                        >
+                            Publish Task
+                        </button>
+                        <button
+                            type="button"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                saveDraft();
+
+                            }}
+                            className="mt-4 ml-4 px-2 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 cursor-pointer focus:outline-none">
+                            {(isEditingDraft) ? "Save to Drafts" : "Add to Drafts"}
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => {
+                                changeNewTaskPage("draftsMenu")
+                            }}
+                            className="mt-4 mr-2 px-2 py-1 text-gray-500 rounded text-sm ml-auto hover:text-gray-600 cursor-pointer hover:underline focus:outline-none">
+                            {(isEditingDraft) ? "Back to Drafts" : "Go to Drafts"}
+                        </button>
+                    </div>
+
+                </form> : <></>}
+
+            {(showDraftsMenu) ?
+                <div className="px-6 py-4 bg-white rounded-lg shadow-lg popup" style={{ overflowY: 'auto', marginTop: 'min(100px, 100%)', marginBottom: 'min(100px, 100%)', height: '80vh' }}>
+                    <div className="mx-2">
+                        <div className="flex justify-between items-center">
+                            <h1 className="my-2 text-2xl font-bold">Drafts</h1>
+                            <button onClick={() => changeNewTaskPage("newTask")} className="focus:outline-none cursor-pointer">
+                                <p className="text-gray-500 hover:underline">Back</p>
+                            </button>
+                        </div>
+                        <div className="w-full h-0.5 bg-gray-200"></div>
+                    </div>
+                    <div className="mt-2" >
+                        {(tasks.filter((t) => t.display === 2).length > 0) ? tasks.filter((t) => t.display === 2).map((draftTask, i) => {
+                            return (
+                                <div className="flex justify-between">
+                                    <div
+                                        onClick={() => {
+                                            prefillDraftTask(draftTask);
+                                            changeNewTaskPage("newTask");
+                                        }}
+                                        className="pt-3 pb-2 px-2 cursor-pointer hover:bg-gray-200 bg-white rounded-lg w-5/6 max-w-full" key={i}>
+                                        <div className="flex items-center w-full">
+                                            <div className="bg-gray-300 w-1.5 h-14 rounded-2xl flex-none"></div>
+                                            <div className="ml-4 flex flex-col justify-center w-5/6">
+                                                {(draftTask.name) ? <h2 className="text-lg font-semibold truncate">{draftTask.name}</h2> : <h2 className="text-lg italic text-gray-500 font-medium">Untitled</h2>}
+                                                {(draftTask.description) ? <p className="font-medium text-gray-500 text-sm truncate">{draftTask.description}</p> : <p className="my-1 font-regular italic text-gray-400 text-sm">No Description</p>}
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={() => deleteTask(draftTask.id)}
+                                        className="mx-5 cursor-pointer focus:outline-none">
+                                            <img src="/delete_icon.svg" width="15px"/>
+
+                                    </button>
+                                </div>)
+
+                        }) :
+                            <p className="mx-2 my-4">No Saved Drafts</p>}
+                    </div>
+                </div> : <></>}
+
+        </Popup>
+
+
+
     );
+
+
 };
 
 const DeleteTask = ({ id, deleteTask, setIsCloseOnDocClick, popupClose }) => {
@@ -1357,8 +1563,8 @@ const TaskSummary = ({
     return (
         <Popup
             trigger={
-                <img src="/barchart.svg"  className="w-7 px-1.5 py-1.5 rounded hover:bg-gray-300"/>
-           }
+                <img src="/barchart.svg" className="w-7 px-1.5 py-1.5 rounded hover:bg-gray-300" />
+            }
             position="bottom right"
             on={["hover", "focus"]}
         >
@@ -1448,10 +1654,12 @@ const TaskSubmissionsBar = ({
 
     })
 
-    let percentCompleted = (completedSubmissions/names.length * 100).toFixed(1);
+    let percentCompleted = (completedSubmissions / names.length * 100).toFixed(1);
     return (
         <div className="w-full h-1 bg-red-500 my-2">
-            <div className="bg-green-500 h-full" style={{width: `${percentCompleted}%`}}></div>
+            <div className="bg-green-500 h-full" style={{ width: `${percentCompleted}%` }}></div>
         </div>
     )
 }
+
+

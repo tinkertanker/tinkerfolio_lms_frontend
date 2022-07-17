@@ -303,7 +303,7 @@ const Task = ({ task, sub, i, addSubmission, updateSubmission, reloadSubmission,
             trigger={
                 <div className="pt-3 pb-2 px-2 my-2 ml-5 mr-8 cursor-pointer hover:bg-gray-200 bg-gray-100 rounded-xl max-w-full">
 
-                    <div className="flex items-center w-fullpy-2">
+                    <div className="flex items-center w-full py-2">
 
                         <div className={`${isSubmitted ? 'bg-green-600' : 'bg-red-500'} w-2 h-16 ml-2 rounded-2xl flex-none`}></div>
                         <div className=" w-9/12 ml-4">
