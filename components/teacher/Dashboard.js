@@ -33,12 +33,10 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
 
     const [showNewTask, setShowNewTask] = useState(true);
     const [showDraftsMenu, setShowDraftsMenu] = useState(false);
-    const [showDraftTask, setShowDraftTask] = useState(false);
 
     const changeNewTaskPage = (currentPage) => {
         if (showNewTask) setShowNewTask(false);
         if (showDraftsMenu) setShowDraftsMenu(false);
-        if (showDraftTask) setShowDraftTask(false);
 
         switch (currentPage) {
             case "newTask":
@@ -264,7 +262,7 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                                 />
                                 <p className="pl-1">Task</p>
                             </button>
-                            <NewTask {...{ addTask, deleteTask, updateDraftTask, tasks, changeNewTaskPage, showNewTask, setShowNewTask, showDraftsMenu, setShowDraftsMenu, showDraftTask, setShowDraftTask, newTaskModalOpen, setNewTaskModalOpen }} />
+                            <NewTask {...{ addTask, deleteTask, updateDraftTask, tasks, changeNewTaskPage, showNewTask, setShowNewTask, showDraftsMenu, setShowDraftsMenu, newTaskModalOpen, setNewTaskModalOpen }} />
 
                             <button
                                 className={
@@ -1163,8 +1161,6 @@ const NewTask = ({
     setShowNewTask,
     showDraftsMenu,
     setShowDraftsMenu,
-    showDraftTask,
-    setShowDraftTask,
     newTaskModalOpen,
     setNewTaskModalOpen }) => {
 
@@ -1326,7 +1322,7 @@ const NewTask = ({
                 </form> : <></>}
 
             {(showDraftsMenu) ?
-                <div className="px-6 py-4 bg-white rounded-lg shadow-lg popup" style={{ overflowY: 'auto', marginTop: 'min(100px, 100%)', marginBottom: 'min(100px, 100%)', height: '80vh' }}>
+                <div className="px-6 py-4 bg-white rounded-lg shadow-lg popup " style={{ overflowY: 'auto', marginTop: 'min(60px, 100%)', marginBottom: 'min(60px, 100%)', maxHeight: '70vh'}}>
                     <div className="mx-2">
                         <div className="flex justify-between items-center">
                             <h1 className="my-2 text-2xl font-bold">Drafts</h1>
