@@ -439,7 +439,7 @@ const Filter = ({ tasks, tasksToHide, setTasksToHide, classroom }) => {
             contentStyle={{ paddingTop: "0.5rem" }}
         >
             {(close) => (
-                <div className="px-4 py-4 bg-white shadow-md rounded">
+                <div className="px-4 py-4 bg-white shadow-md rounded w-2/5">
                     <p className="text-xl font-bold mb-0.5">Tasks</p>
                     <div className="flex flex-row items-center mb-4 text-sm">
                         <p
@@ -474,7 +474,7 @@ const Filter = ({ tasks, tasksToHide, setTasksToHide, classroom }) => {
                                 onChange={(e) => handleCheck(e.target.value)}
                                 checked={!tasksToHide.includes(task.id)}
                             />
-                            <label className="ml-2" htmlFor={task.id}>
+                            <label className="ml-2 truncate" htmlFor={task.id}>
                                 {task.name}
                             </label>
                         </div>
@@ -1327,7 +1327,7 @@ const NewTask = ({
                         <div className="flex justify-between items-center">
                             <h1 className="my-2 text-2xl font-bold">Drafts</h1>
                             <button onClick={() => changeNewTaskPage("newTask")} className="focus:outline-none cursor-pointer">
-                                <p className="text-gray-500 hover:underline">Back</p>
+                                <p className="text-gray-500 hover:underline">Create New Task</p>
                             </button>
                         </div>
                         <div className="w-full h-0.5 bg-gray-200"></div>
