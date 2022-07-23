@@ -27,6 +27,7 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
     const { getAccessToken } = useContext(AuthContext);
     const [tableNames, setTableNames] = useState();
     const [sortBy, setSortBy] = useState("indexLowToHigh");
+    const [sortTasksBy, setSortTasksBy] = useState("publishOldToNew")
     const [showAnnouncements, setShowAnnouncements] = useState(false)
 
     const [newTaskModalOpen, setNewTaskModalOpen] = useState(false)
@@ -176,7 +177,21 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
         let tasksToShow = tasks.filter(
             (task) => !tasksToHide.includes(task.id) && task.display === 1
         );
-        return tasksToShow.sort((a, b) => (a.id > b.id ? 1 : -1));
+
+        switch (sortTasksBy) {
+            case "publishOldToNew":
+                tasksToShow.sort((a, b) =>
+                    a.published_at > b.published_at ? 1 : -1
+                );
+                break;
+            case "publishNewToOld":
+                tasksToShow.sort((a, b) => 
+                    a.published_at < b.published_at ? 1 : -1
+                );
+                break;
+        }
+
+        return tasksToShow;
     };
 
     const sortStudentIndex = () => {
@@ -246,7 +261,7 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                     <div className="py-4 px-8 bg-gray-100 shadow-md w-full fixed grid grid-cols-2">
                         <div className="flex flex-row flex-wrap gap-4">
                             <Filter {...{ tasks, tasksToHide, setTasksToHide, classroom }} />
-                            <Sort {...{ sortBy, setSortBy }} />
+                            <Sort {...{ sortBy, setSortBy, sortTasksBy, setSortTasksBy }} />
                             <button
                                 onClick={() => {
                                     changeNewTaskPage("newTask")
@@ -485,7 +500,7 @@ const Filter = ({ tasks, tasksToHide, setTasksToHide, classroom }) => {
     );
 };
 
-const Sort = ({ sortBy, setSortBy }) => {
+const Sort = ({ sortBy, setSortBy, sortTasksBy, setSortTasksBy }) => {
     return (
         <Popup
             trigger={
@@ -500,9 +515,9 @@ const Sort = ({ sortBy, setSortBy }) => {
         >
             {(close) => (
                 <div className="px-4 py-4 bg-white shadow-md rounded">
-                    <p className="text-xl font-bold mb-3">Sort By</p>
-
+                    <p className="text-xl font-bold my-1">Sort</p>
                     <form className="w-56">
+                        <p className="text-base font-bold my-1">Students</p>
                         <input
                             type="radio"
                             id="indexLowToHigh"
@@ -511,7 +526,7 @@ const Sort = ({ sortBy, setSortBy }) => {
                             checked={sortBy === "indexLowToHigh"}
                             onClick={() => setSortBy("indexLowToHigh")}
                         />
-                        <label for="indexLowToHigh">Index: Low to High</label>
+                        <label for="indexLowToHigh" class="text-sm">Ascending Index</label>
                         <br />
                         <input
                             type="radio"
@@ -521,7 +536,7 @@ const Sort = ({ sortBy, setSortBy }) => {
                             checked={sortBy === "indexHightoLow"}
                             onClick={() => setSortBy("indexHightoLow")}
                         />
-                        <label for="indexHightoLow">Index: High to Low</label>
+                        <label for="indexHightoLow" class="text-sm">Descending Index</label>
                         <br />
                         <input
                             type="radio"
@@ -531,7 +546,7 @@ const Sort = ({ sortBy, setSortBy }) => {
                             checked={sortBy === "starsHighToLow"}
                             onClick={() => setSortBy("starsHighToLow")}
                         />
-                        <label for="starsHighToLow">Stars: High to Low</label>
+                        <label for="starsHighToLow" class="text-sm">Ascending Number of Stars</label>
                         <br />
                         <input
                             type="radio"
@@ -541,8 +556,31 @@ const Sort = ({ sortBy, setSortBy }) => {
                             checked={sortBy === "starsLowToHigh"}
                             onClick={() => setSortBy("starsLowToHigh")}
                         />
-                        <label for="starsLowToHigh">Stars: Low to High</label>
+                        <label for="starsLowToHigh" class="text-sm">Descending Number of Stars</label>
+                        <br />           
+                    </form>
+                    <hr class="my-2" />
+                    <form>
+                        <p className="text-base font-bold my-1">Tasks</p>
+                        <input 
+                            type="radio"
+                            id="publishOldToNew"
+                            name="sort"
+                            className="mr-2 mb-2"
+                            checked={sortTasksBy === "publishOldToNew"}
+                            onClick={() => setSortTasksBy("publishOldToNew")}
+                        />
+                        <label for="publishOldToNew" class="text-sm">Oldest First</label>
                         <br />
+                        <input
+                            type="radio"
+                            id="publishNewToOld"
+                            name="sort"
+                            className="mr-2 mb-2"
+                            checked={sortTasksBy === "publishNewToOld"}
+                            onClick={() => setSortTasksBy("publishNewToOld")}
+                        />
+                        <label for="Newest First" class="text-sm">Newest First</label>
                     </form>
                 </div>
             )}
