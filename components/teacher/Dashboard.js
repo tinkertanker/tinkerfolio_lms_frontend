@@ -439,7 +439,7 @@ const Filter = ({ tasks, tasksToHide, setTasksToHide, classroom }) => {
             contentStyle={{ paddingTop: "0.5rem" }}
         >
             {(close) => (
-                <div className="px-4 py-4 bg-white shadow-md rounded w-2/5 min-w-1/2">
+                <div className="px-4 py-4 bg-white shadow-md rounded w-2/5 min-w-300px">
                     <p className="text-xl font-bold mb-0.5">Tasks</p>
                     <div className="flex flex-row items-center mb-4 text-sm">
                         <p
