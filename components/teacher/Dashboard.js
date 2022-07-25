@@ -167,9 +167,24 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
 
     const sortedTasks = () => tasks.sort((a, b) => (a.id > b.id ? 1 : -1));
 
-    const shownTasks = () => tasks.filter(
-        (task) => !tasksToHide.includes(task.id) && task.display === 1
-    );
+    const shownTasks = () => {
+        let tasksProgress = tasks.filter((task) => !tasksToHide.includes(task.id) && task.display === 1);
+
+        switch(sortTasksBy) {
+            case "publishOldToNew":
+                tasksProgress.sort((a, b) => 
+                    a.published_at > b.published_at ? 1 : -1
+                );
+                break;
+            case "publishNewToOld":
+                tasksProgress.sort((a, b) =>
+                    a.published_at < b.published_at ? 1 : -1
+                );
+                break;
+        }
+
+        return tasksProgress;
+    };
 
     const sortedStudents = () => names.sort((a, b) => (a.id > b.id ? 1 : -1));
 
@@ -526,7 +541,7 @@ const Sort = ({ sortBy, setSortBy, sortTasksBy, setSortTasksBy }) => {
                             checked={sortBy === "indexLowToHigh"}
                             onClick={() => setSortBy("indexLowToHigh")}
                         />
-                        <label for="indexLowToHigh" class="text-sm">Ascending Index</label>
+                        <label for="indexLowToHigh">Index: Low to High</label>
                         <br />
                         <input
                             type="radio"
@@ -536,7 +551,7 @@ const Sort = ({ sortBy, setSortBy, sortTasksBy, setSortTasksBy }) => {
                             checked={sortBy === "indexHightoLow"}
                             onClick={() => setSortBy("indexHightoLow")}
                         />
-                        <label for="indexHightoLow" class="text-sm">Descending Index</label>
+                        <label for="indexHightoLow">Index: High to Low</label>
                         <br />
                         <input
                             type="radio"
@@ -546,7 +561,7 @@ const Sort = ({ sortBy, setSortBy, sortTasksBy, setSortTasksBy }) => {
                             checked={sortBy === "starsHighToLow"}
                             onClick={() => setSortBy("starsHighToLow")}
                         />
-                        <label for="starsHighToLow" class="text-sm">Ascending Number of Stars</label>
+                        <label for="starsHighToLow">Stars: High to Low</label>
                         <br />
                         <input
                             type="radio"
@@ -556,7 +571,7 @@ const Sort = ({ sortBy, setSortBy, sortTasksBy, setSortTasksBy }) => {
                             checked={sortBy === "starsLowToHigh"}
                             onClick={() => setSortBy("starsLowToHigh")}
                         />
-                        <label for="starsLowToHigh" class="text-sm">Descending Number of Stars</label>
+                        <label for="starsLowToHigh">Stars: Low to High</label>
                         <br />           
                     </form>
                     <hr class="my-2" />
@@ -570,7 +585,7 @@ const Sort = ({ sortBy, setSortBy, sortTasksBy, setSortTasksBy }) => {
                             checked={sortTasksBy === "publishOldToNew"}
                             onClick={() => setSortTasksBy("publishOldToNew")}
                         />
-                        <label for="publishOldToNew" class="text-sm">Oldest First</label>
+                        <label for="publishOldToNew">Oldest to Newest</label>
                         <br />
                         <input
                             type="radio"
@@ -580,7 +595,7 @@ const Sort = ({ sortBy, setSortBy, sortTasksBy, setSortTasksBy }) => {
                             checked={sortTasksBy === "publishNewToOld"}
                             onClick={() => setSortTasksBy("publishNewToOld")}
                         />
-                        <label for="Newest First" class="text-sm">Newest First</label>
+                        <label for="publishNewToOld">Newest to Oldest</label>
                     </form>
                 </div>
             )}
