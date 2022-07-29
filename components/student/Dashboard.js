@@ -8,7 +8,8 @@ import { AuthContext } from '../../contexts/Auth.Context'
 
 import {
     ChevronBackOutline,
-    ChevronForwardOutline
+    ChevronForwardOutline,
+    Funnel,
 } from 'react-ionicons'
 
 
@@ -132,14 +133,38 @@ const Dashboard = ({ tasks, submissions, setSubmissions, submissionStatuses, set
             if (isSubmitted && isGraded) return 1
             return 0
         }
+        const getIncomplete = (task) => {
+            return !submissions.filter(s => s.task === task.id)[0]
+        }
+        const getComplete = (task) => {
+            return submissions.filter(s => s.task === task.id)[0]
+        }
+        const getNotGraded = (task) => {
+            return getComplete(task) && ![0, 1, 2, 3, 4, 5].includes(getComplete(task).stars)
+        }
+        const getGraded = (task) => {
+            return getComplete(task) && [0, 1, 2, 3, 4, 5].includes(getComplete(task).stars)
+        }
+        switch (filterTasks) {
+            case "allTasks":
+                return tasks.sort((a, b) => (getPriority(a.id) < getPriority(b.id)) ? 1 : -1)
 
-        return tasks.sort((a, b) => (getPriority(a.id) < getPriority(b.id)) ? 1 : -1)
+            case "Incomplete":
+                return tasks.filter((task) => getIncomplete(task))
+
+            case "Completed & Ungraded":
+                return tasks.filter((task) => getComplete(task) && getNotGraded(task))
+                
+            case "Completed & Graded":
+                return tasks.filter((task) => getComplete(task) && getGraded(task))
+        }
     }
 
     const [currentTaskPage, setCurrentTasksPage] = useState(1);
     const [isOnEndTaskPage, setIsOnEndTaskPage] = useState(false);
     const [isOnStartTaskPage, setIsOnStartTaskPage] = useState(true);
-    const [showArchivedTasks, setShowArchivedTasks] = useState(false)
+    const [showArchivedTasks, setShowArchivedTasks] = useState(false);
+    const [filterTasks, setFilterTasks] = useState("allTasks");
 
     const numberOfActiveTasks = sortedTasks(tasks.filter(t => t.status === 1)).length
     const numberOfArchivedTasks = tasks.filter(t => t.status !== 1).length
@@ -202,10 +227,54 @@ const Dashboard = ({ tasks, submissions, setSubmissions, submissionStatuses, set
                             <button className="ml-4 lg:hidden" onClick={() => switchArchiveTaskPage()}>
                                 <p className="text-gray-500 whitespace-nowrap">{(!showArchivedTasks) ? "Show Archived" : "Show Active Tasks"}</p>
                             </button> : <></>}
+                        {!showArchivedTasks ? <p className="font-medium text-sm py-1.5 px-3 bg-gray-500 text-white float-none rounded-lg whitespace-nowrap">Incomplete: {tasks.length - submissions.length}</p> : <></>}
                     </div>
                     <div className="flex items-center">
-                        {!showArchivedTasks ? <p className="font-medium text-sm py-1.5 px-3 bg-gray-500 text-white rounded-lg mr-3 whitespace-nowrap">Incomplete: {tasks.length - submissions.length}</p> : <></>}
-                        
+                        {!showArchivedTasks ? 
+                            <Popup 
+                                trigger={
+                                    <button className="flex flex-row items-center py-1 px-2 text-sm mr-3 rounded focus:outline-none">
+                                        <Funnel color={"#2563eb"} height="17px" width="17px" />
+                                        <p className="font-medium text-base pl-1 text-blue-600">Filter</p>
+                                    </button>
+                                }>
+                                {(close) => (
+                                    <div className="px-4 py-4 bg-white shadow-md rounded">
+                                        <p className="text-lg font-bold my-1">Filter Tasks</p>
+                                        <form className="w-56">
+                                            <input
+                                                type="radio"
+                                                id="incomplete"
+                                                name="sort"
+                                                className="mr-2 mb-2"
+                                                checked={filterTasks === "Incomplete"}
+                                                onClick={() => setFilterTasks("Incomplete")}
+                                            />
+                                            <label for="incomplete" className="text-sm">Incomplete</label>
+                                            <br />
+                                            <input
+                                                type="radio"
+                                                id="completedAndUngraded"
+                                                name="sort"
+                                                className="mr-2 mb-2"
+                                                checked={filterTasks === "Completed & Ungraded"}
+                                                onClick={() => setFilterTasks("Completed & Ungraded")}
+                                            />
+                                            <label for="completedAndUngraded" className="text-sm">Completed & Ungraded</label>
+                                            <br />
+                                            <input
+                                                type="radio"
+                                                id="completedAndGraded"
+                                                name="sort"
+                                                className="mr-2 mb-2"
+                                                checked={filterTasks === "Completed & Graded"}
+                                                onClick={() => setFilterTasks("Completed & Graded")}
+                                            />
+                                            <label for="completedAndGraded" className="text-sm">Completed & Graded</label>
+                                        </form>
+                                    </div>)}
+                            </Popup>
+                            : <></>}
                         {((showArchivedTasks && numberOfArchivedTasks > 0) || (!showArchivedTasks && numberOfActiveTasks >0)) ?
                         <div className="flex items-center gap-4 lg:hidden px-3">
                             <p className="whitespace-nowrap text-gray-500">{currentTaskPage*5-4} - {
