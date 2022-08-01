@@ -323,7 +323,7 @@ const Classroom = () => {
                     </div>
                     <div className="bg-white">
                         <Dashboard {...{
-                            classroom, removeIndex,
+                            classrooms, classroom, removeIndex,
                             addStudent, bulkAddStudents, loadingAddStudent, setLoadingAddStudent,
                             names, updateName,
                             tasks, setTasks,

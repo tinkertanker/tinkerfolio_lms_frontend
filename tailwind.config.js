@@ -31,13 +31,14 @@ module.exports = {
                 'xxs': '.50rem'
             },
             maxHeight: {
-                '500px': '500px'
+                '500px': '500px',
+                '50vh': '50vh'
             },
             minHeight: {
                 '768px': '768px'
             },
             minWidth: {
-                '1/2': '50%'
+                '300px': '300px'
             }
         },
     },
