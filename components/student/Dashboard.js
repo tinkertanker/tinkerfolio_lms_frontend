@@ -252,10 +252,10 @@ const Dashboard = ({ tasks, submissions, setSubmissions, submissionStatuses, set
                                         <label for="incomplete" className="text-sm">Incomplete</label>
                                         <br />
                                         <input type="checkbox" id="completed & ungraded" value="completed & ungraded" name="sort" className="mr-2 mb-2" checked={filterStudentTasks.includes("completed & ungraded")} onChange={handleChangeCheckbox} />
-                                        <label for="completedAndUngraded" className="text-sm">Completed & Ungraded</label>
+                                        <label for="completed & ungraded" className="text-sm">Completed & Ungraded</label>
                                         <br />
                                         <input type="checkbox" id="completed & graded" value="completed & graded" name="sort" className="mr-2 mb-2" checked={filterStudentTasks.includes("completed & graded")} onChange={handleChangeCheckbox} />
-                                        <label for="completedAndGraded" className="text-sm">Completed & Graded</label>
+                                        <label for="completed & graded" className="text-sm">Completed & Graded</label>
                                     </form>
                             </div>)}
                         </Popup>  
