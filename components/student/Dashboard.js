@@ -125,21 +125,10 @@ const Dashboard = ({ tasks, submissions, setSubmissions, submissionStatuses, set
 
     const sortedTasks = (tasks) => {
 
-        const getIncomplete = (task) => {
-            return !submissions.filter(s => s.task === task.id)[0]
-        }
-    
-        const getComplete = (task) => {
-            return submissions.filter(s => s.task === task.id)[0]
-        }
-    
-        const getNotGraded = (task) => {
-            return getComplete(task) && ![0, 1, 2, 3, 4, 5].includes(getComplete(task).stars)
-        }
-    
-        const getGraded = (task) => {
-            return getComplete(task) && [0, 1, 2, 3, 4, 5].includes(getComplete(task).stars)
-        }
+        const getIncomplete = (task) => !submissions.filter(s => s.task === task.id)[0]
+        const getComplete = (task) => submissions.filter(s => s.task === task.id)[0]
+        const getNotGraded = (task) => getComplete(task) && ![0, 1, 2, 3, 4, 5].includes(getComplete(task).stars)
+        const getGraded = (task) => getComplete(task) && [0, 1, 2, 3, 4, 5].includes(getComplete(task).stars)
     
         var taskToList = [];
         
@@ -247,55 +236,31 @@ const Dashboard = ({ tasks, submissions, setSubmissions, submissionStatuses, set
                         {!showArchivedTasks ? <p className="font-medium text-sm py-1.5 px-3 bg-gray-500 text-white float-none rounded-lg whitespace-nowrap">Incomplete: {tasks.length - submissions.length}</p> : <></>}
                     </div>
                     <div className="flex items-center">
+                        <Popup 
+                            trigger={
+                                <button className="flex flex-row items-center py-1 px-2 text-sm sm:mr-2 rounded focus:outline-none">
+                                    <Funnel color={"#2563eb"} height="17px" width="17px" />
+                                    <p className="font-medium text-base pl-1 text-blue-600 hidden sm:block">Filter</p>
+                                </button>
+                            }
+                            position="bottom right">
+                            {(close) => (
+                                <div className="px-4 py-4 bg-white shadow-md rounded">
+                                    <p className="text-lg font-bold my-1">Filter Tasks</p>
+                                    <form className="w-56">
+                                        <input type="checkbox" id="incomplete" value="incomplete" name="sort" className="mr-2 mb-2" checked={filterStudentTasks.includes("incomplete")} onChange={handleChangeCheckbox} />
+                                        <label for="incomplete" className="text-sm">Incomplete</label>
+                                        <br />
+                                        <input type="checkbox" id="completed & ungraded" value="completed & ungraded" name="sort" className="mr-2 mb-2" checked={filterStudentTasks.includes("completed & ungraded")} onChange={handleChangeCheckbox} />
+                                        <label for="completedAndUngraded" className="text-sm">Completed & Ungraded</label>
+                                        <br />
+                                        <input type="checkbox" id="completed & graded" value="completed & graded" name="sort" className="mr-2 mb-2" checked={filterStudentTasks.includes("completed & graded")} onChange={handleChangeCheckbox} />
+                                        <label for="completedAndGraded" className="text-sm">Completed & Graded</label>
+                                    </form>
+                            </div>)}
+                        </Popup>  
                         {((showArchivedTasks && numberOfArchivedTasks > 0) || (!showArchivedTasks && numberOfActiveTasks >0)) ?
-                        <div className="flex items-center">
-                            <Popup 
-                                trigger={
-                                    <button className="flex flex-row items-center py-1 px-2 text-sm sm:mr-2 rounded focus:outline-none">
-                                        <Funnel color={"#2563eb"} height="17px" width="17px" />
-                                        <p className="font-medium text-base pl-1 text-blue-600 hidden sm:block">Filter</p>
-                                    </button>
-                                }
-                                position="bottom right">
-                                {(close) => (
-                                    <div className="px-4 py-4 bg-white shadow-md rounded">
-                                        <p className="text-lg font-bold my-1">Filter Tasks</p>
-                                        <form className="w-56">
-                                            <input
-                                                type="checkbox"
-                                                id="incomplete"
-                                                value="incomplete"
-                                                name="sort"
-                                                className="mr-2 mb-2"
-                                                checked={filterStudentTasks.includes("incomplete")}
-                                                onChange={handleChangeCheckbox}
-                                            />
-                                            <label for="incomplete" className="text-sm">Incomplete</label>
-                                            <br />
-                                            <input
-                                                type="checkbox"
-                                                id="completed & ungraded"
-                                                value="completed & ungraded"
-                                                name="sort"
-                                                className="mr-2 mb-2"
-                                                checked={filterStudentTasks.includes("completed & ungraded")}
-                                                onChange={handleChangeCheckbox}
-                                            />
-                                            <label for="completedAndUngraded" className="text-sm">Completed & Ungraded</label>
-                                            <br />
-                                            <input
-                                                type="checkbox"
-                                                id="completed & graded"
-                                                value="completed & graded"
-                                                name="sort"
-                                                className="mr-2 mb-2"
-                                                checked={filterStudentTasks.includes("completed & graded")}
-                                                onChange={handleChangeCheckbox}
-                                            />
-                                            <label for="completedAndGraded" className="text-sm">Completed & Graded</label>
-                                        </form>
-                                    </div>)}
-                            </Popup>        
+                        <div className="flex items-center">      
                             <p className="whitespace-nowrap text-gray-500 lg:hidden">{currentTaskPage*5-4} - {
                                 !isOnEndTaskPage ? currentTaskPage*5 :
                                 (showArchivedTasks) ? numberOfArchivedTasks : numberOfActiveTasks

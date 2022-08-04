@@ -533,68 +533,26 @@ const Sort = ({ sortBy, setSortBy, sortTasksBy, setSortTasksBy }) => {
                     <p className="text-xl font-bold my-1">Sort</p>
                     <form className="w-56">
                         <p className="text-base font-bold my-1">Students</p>
-                        <input
-                            type="radio"
-                            id="indexLowToHigh"
-                            name="sort"
-                            className="mr-2 mb-2"
-                            checked={sortBy === "indexLowToHigh"}
-                            onClick={() => setSortBy("indexLowToHigh")}
-                        />
+                        <input type="radio" id="indexLowToHigh" name="sort" className="mr-2 mb-2" checked={sortBy === "indexLowToHigh"} onClick={() => setSortBy("indexLowToHigh")} />
                         <label for="indexLowToHigh">Index: Low to High</label>
                         <br />
-                        <input
-                            type="radio"
-                            id="indexHightoLow"
-                            name="sort"
-                            className="mr-2 mb-2"
-                            checked={sortBy === "indexHightoLow"}
-                            onClick={() => setSortBy("indexHightoLow")}
-                        />
+                        <input type="radio" id="indexHightoLow" name="sort" className="mr-2 mb-2" checked={sortBy === "indexHightoLow"} onClick={() => setSortBy("indexHightoLow")} />
                         <label for="indexHightoLow">Index: High to Low</label>
                         <br />
-                        <input
-                            type="radio"
-                            id="starsHighToLow"
-                            name="sort"
-                            className="mr-2 mb-2"
-                            checked={sortBy === "starsHighToLow"}
-                            onClick={() => setSortBy("starsHighToLow")}
-                        />
+                        <input type="radio" id="starsHighToLow" name="sort" className="mr-2 mb-2" checked={sortBy === "starsHighToLow"} onClick={() => setSortBy("starsHighToLow")} />
                         <label for="starsHighToLow">Stars: High to Low</label>
                         <br />
-                        <input
-                            type="radio"
-                            id="starsLowToHigh"
-                            name="sort"
-                            className="mr-2 mb-2"
-                            checked={sortBy === "starsLowToHigh"}
-                            onClick={() => setSortBy("starsLowToHigh")}
-                        />
+                        <input type="radio" id="starsLowToHigh" name="sort" className="mr-2 mb-2" checked={sortBy === "starsLowToHigh"} onClick={() => setSortBy("starsLowToHigh")} />
                         <label for="starsLowToHigh">Stars: Low to High</label>
                         <br />           
                     </form>
                     <hr class="my-2" />
                     <form>
                         <p className="text-base font-bold my-1">Tasks</p>
-                        <input 
-                            type="radio"
-                            id="publishOldToNew"
-                            name="sort"
-                            className="mr-2 mb-2"
-                            checked={sortTasksBy === "publishOldToNew"}
-                            onClick={() => setSortTasksBy("publishOldToNew")}
-                        />
+                        <input type="radio" id="publishOldToNew" name="sort" className="mr-2 mb-2" checked={sortTasksBy === "publishOldToNew"} onClick={() => setSortTasksBy("publishOldToNew")} />
                         <label for="publishOldToNew">Oldest to Newest</label>
                         <br />
-                        <input
-                            type="radio"
-                            id="publishNewToOld"
-                            name="sort"
-                            className="mr-2 mb-2"
-                            checked={sortTasksBy === "publishNewToOld"}
-                            onClick={() => setSortTasksBy("publishNewToOld")}
-                        />
+                        <input type="radio" id="publishNewToOld" name="sort" className="mr-2 mb-2" checked={sortTasksBy === "publishNewToOld"} onClick={() => setSortTasksBy("publishNewToOld")} />
                         <label for="publishNewToOld">Newest to Oldest</label>
                     </form>
                 </div>
