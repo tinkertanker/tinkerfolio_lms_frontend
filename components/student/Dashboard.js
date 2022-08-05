@@ -8,7 +8,8 @@ import { AuthContext } from '../../contexts/Auth.Context'
 
 import {
     ChevronBackOutline,
-    ChevronForwardOutline
+    ChevronForwardOutline,
+    Funnel,
 } from 'react-ionicons'
 
 
@@ -123,6 +124,26 @@ const Dashboard = ({ tasks, submissions, setSubmissions, submissionStatuses, set
     if ((!tasks) || (!submissions) || (!submissionStatuses)) return <h1></h1>
 
     const sortedTasks = (tasks) => {
+
+        const getIncomplete = (task) => !submissions.filter(s => s.task === task.id)[0]
+        const getComplete = (task) => submissions.filter(s => s.task === task.id)[0]
+        const getNotGraded = (task) => getComplete(task) && ![0, 1, 2, 3, 4, 5].includes(getComplete(task).stars)
+        const getGraded = (task) => getComplete(task) && [0, 1, 2, 3, 4, 5].includes(getComplete(task).stars)
+    
+        var taskToList = [];
+        
+        if (filterStudentTasks.includes("incomplete")) {
+            const taskList = tasks.filter((task) => getIncomplete(task));
+            taskToList = taskToList.concat(taskList);
+        }
+        if (filterStudentTasks.includes("completed & ungraded")) {
+            const taskList = tasks.filter((task) => getComplete(task) && getNotGraded(task));
+            taskToList = taskToList.concat(taskList);
+        }
+        if (filterStudentTasks.includes("completed & graded")) {
+            const taskList = tasks.filter((task) => getComplete(task) && getGraded(task));
+            taskToList = taskToList.concat(taskList);
+        }
         const getPriority = (id) => {
             const sub = submissions.filter(s => s.task === id)[0]
             const isSubmitted = sub ? true : false
@@ -132,14 +153,14 @@ const Dashboard = ({ tasks, submissions, setSubmissions, submissionStatuses, set
             if (isSubmitted && isGraded) return 1
             return 0
         }
-
-        return tasks.sort((a, b) => (getPriority(a.id) < getPriority(b.id)) ? 1 : -1)
+        return taskToList.sort((a, b) => (getPriority(a.id) < getPriority(b.id)) ? 1 : -1)
     }
 
     const [currentTaskPage, setCurrentTasksPage] = useState(1);
     const [isOnEndTaskPage, setIsOnEndTaskPage] = useState(false);
     const [isOnStartTaskPage, setIsOnStartTaskPage] = useState(true);
-    const [showArchivedTasks, setShowArchivedTasks] = useState(false)
+    const [showArchivedTasks, setShowArchivedTasks] = useState(false);
+    const [filterStudentTasks, setFilterStudentTasks] = useState(["incomplete", "completed & ungraded", "completed & graded"]);
 
     const numberOfActiveTasks = sortedTasks(tasks.filter(t => t.status === 1)).length
     const numberOfArchivedTasks = tasks.filter(t => t.status !== 1).length
@@ -191,6 +212,16 @@ const Dashboard = ({ tasks, submissions, setSubmissions, submissionStatuses, set
         }
     }
 
+    const handleChangeCheckbox = (e) => {
+        if (e.target.checked) {
+            setFilterStudentTasks([...filterStudentTasks, e.target.value])
+        }
+        else {
+            setFilterStudentTasks(filterStudentTasks.filter(id => id !== e.target.value))
+        }
+        sortedTasks(tasks)
+    }
+
     return (
         <>
             <div className="bg-white h-full rounded-2xl shadow-lg">
@@ -199,20 +230,42 @@ const Dashboard = ({ tasks, submissions, setSubmissions, submissionStatuses, set
                         <img src="/tasks_icon.svg" width="20px" />
                         <h1 className="text-2xl font-semibold bg-white rounded-2xl text-gray-600">Tasks</h1>
                         {(numberOfArchivedTasks >0) ? 
-                            <button className="ml-4 lg:hidden" onClick={() => switchArchiveTaskPage()}>
+                            <button className="ml-4 hidden sm:block lg:hidden" onClick={() => switchArchiveTaskPage()}>
                                 <p className="text-gray-500 whitespace-nowrap">{(!showArchivedTasks) ? "Show Archived" : "Show Active Tasks"}</p>
                             </button> : <></>}
+                        {!showArchivedTasks ? <p className="font-medium text-sm py-1.5 px-3 bg-gray-500 text-white float-none rounded-lg whitespace-nowrap">Incomplete: {tasks.length - submissions.length}</p> : <></>}
                     </div>
                     <div className="flex items-center">
-                        {!showArchivedTasks ? <p className="font-medium text-sm py-1.5 px-3 bg-gray-500 text-white rounded-lg mr-3 whitespace-nowrap">Incomplete: {tasks.length - submissions.length}</p> : <></>}
-                        
+                        <Popup 
+                            trigger={
+                                <button className="flex flex-row items-center py-1 px-2 text-sm sm:mr-2 rounded focus:outline-none">
+                                    <Funnel color={"#2563eb"} height="17px" width="17px" />
+                                    <p className="font-medium text-base pl-1 text-blue-600 hidden sm:block">Filter</p>
+                                </button>
+                            }
+                            position="bottom right">
+                            {(close) => (
+                                <div className="px-4 py-4 bg-white shadow-md rounded">
+                                    <p className="text-lg font-bold my-1">Filter Tasks</p>
+                                    <form className="w-56">
+                                        <input type="checkbox" id="incomplete" value="incomplete" name="sort" className="mr-2 mb-2" checked={filterStudentTasks.includes("incomplete")} onChange={handleChangeCheckbox} />
+                                        <label for="incomplete" className="text-sm">Incomplete</label>
+                                        <br />
+                                        <input type="checkbox" id="completed & ungraded" value="completed & ungraded" name="sort" className="mr-2 mb-2" checked={filterStudentTasks.includes("completed & ungraded")} onChange={handleChangeCheckbox} />
+                                        <label for="completed & ungraded" className="text-sm">Completed & Ungraded</label>
+                                        <br />
+                                        <input type="checkbox" id="completed & graded" value="completed & graded" name="sort" className="mr-2 mb-2" checked={filterStudentTasks.includes("completed & graded")} onChange={handleChangeCheckbox} />
+                                        <label for="completed & graded" className="text-sm">Completed & Graded</label>
+                                    </form>
+                            </div>)}
+                        </Popup>  
                         {((showArchivedTasks && numberOfArchivedTasks > 0) || (!showArchivedTasks && numberOfActiveTasks >0)) ?
-                        <div className="flex items-center gap-4 lg:hidden px-3">
-                            <p className="whitespace-nowrap text-gray-500">{currentTaskPage*5-4} - {
+                        <div className="flex items-center">      
+                            <p className="whitespace-nowrap text-gray-500 lg:hidden">{currentTaskPage*5-4} - {
                                 !isOnEndTaskPage ? currentTaskPage*5 :
                                 (showArchivedTasks) ? numberOfArchivedTasks : numberOfActiveTasks
                             } of {showArchivedTasks ? numberOfArchivedTasks : numberOfActiveTasks}</p>
-                            <button onClick={() => previousTasksPage()}>
+                            <button className="lg:hidden" onClick={() => previousTasksPage()}>
                                 <ChevronBackOutline
                                     color={(isOnStartTaskPage || checkNumberOfTasks()) ? "#d1d5db" : "#6b7280"}
                                     title={""}
@@ -220,17 +273,15 @@ const Dashboard = ({ tasks, submissions, setSubmissions, submissionStatuses, set
                                     width="25px"
                                 />
                             </button>
-                            <button onClick={() => nextTasksPage()}>
+                            <button className="lg:hidden" onClick={() => nextTasksPage()}>
                                 <ChevronForwardOutline
                                     color={(isOnEndTaskPage || checkNumberOfTasks()) ? "#d1d5db" : "#6b7280"}
                                     title={""}
                                     height="25px"
                                     width="25px"
                                 />
-                            </button>
-                            
-                        </div> :<></>}
-
+                            </button>    
+                        </div> : <></>}
                     </div>
                 </div>
                 <div className="flex flex-col overflow-auto h-5/6">
@@ -245,7 +296,7 @@ const Dashboard = ({ tasks, submissions, setSubmissions, submissionStatuses, set
                                 <h2 className="font-medium text-4xl text-center text-gray-400">No Tasks</h2>
                             </div>}
 
-                        {tasks.filter(t => t.status !== 1).length > 0 && (
+                        {sortedTasks(tasks.filter(t => t.status !== 1)).length > 0 && (
                             <div>
                                 <div className="flex justify-center items-center">
                                     <div className="bg-gray-200 my-4 h-1 w-full ml-6 mx-8"></div>
