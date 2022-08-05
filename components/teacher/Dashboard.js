@@ -110,34 +110,55 @@ const Dashboard = ({ classrooms, classroom, names, removeIndex, addStudent, bulk
         });
     };
 
-    const addImportedTask = (tasksArray, displayNum) => {
+   /* const addImportedTask = (tasksArray, displayNum, index) => {
+        
+         getAccessToken().then((accessToken) => {
+            let requests = []
+            let finishedImportingTasks = []
+            
+                requests.push(axios.post(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/tasks/",
+                {
+                    code: classroom.code,
+                    name: tasksArray[index].name,
+                    description: tasksArray[index].description,
+                    max_stars: tasksArray[index].max_stars,
+                    display: displayNum
+                },
+                { headers: { Authorization: "Bearer " + accessToken} }))
 
 
-
-        getAccessToken().then((accessToken) => {
- 
-
-            Promise.allSettled(tasksArray.map( async (t) => {
-                await axios
-                .post(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/tasks/",
-                    { 
-                        code: classroom.code,
-                        name: t.name,
-                        description: t.description,
-                        max_stars: t.max_stars,
-                        display: displayNum
-                    },
-                    { headers: { Authorization: "Bearer " + accessToken } }
-                )
-            }))
-            .then(
-               (data) => {
-                console.log(data)
-               }
+             Promise.all(requests).then( (res) => {
+                 finishedImportingTasks.push(res.map(response => response.data))
+                if (index < tasksArray.length - 1 ) {
+                     addImportedTask(tasksArray, displayNum, index+1)
+                } else {
+                    console.log(finishedImportingTasks)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                }
+                
+        }
             )
-          
-        });        
+           
+        })    
+    }*/
 
+    const addImportedTask = async (tasksArray, displayNum) => {
+        for(const t of tasksArray) {
+            await getAccessToken().then((accessToken) => {
+                axios
+                    .post(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/tasks/",
+                        { code: classroom.code,
+                            name: t.name,
+                            description: t.description,
+                            max_stars: t.max_stars,
+                            display: displayNum },
+                        { headers: { Authorization: "Bearer " + accessToken } }
+                    )
+                    .then(async function (res) {
+                        await setTasks([...tasks, res.data]);
+                    });
+            });
+        }
+       
     }
 
 
