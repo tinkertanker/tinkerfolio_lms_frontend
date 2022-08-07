@@ -1,8 +1,8 @@
 const ResourcesPreview = ({ resources, reloadResource }) => {
     if (!resources) return null
     return (
-        <>  
-            <div className="flex items-center gap-3 pb-2">
+        <>
+            <div className="flex items-center gap-3 ml-1 sm:ml-0">
                 <img src="/folder_icon.svg" width="25px"/>
 
                 <h1 className="text-xl font-semibold bg-white rounded-2xl text-gray-600">Resources</h1>
@@ -29,7 +29,7 @@ const ResourcesPreview = ({ resources, reloadResource }) => {
                             </div>
                         )}
                     </>
-                )) : 
+                )) :
                 <div className=" h-full flex items-center justify-center">
                     <h2 className="font-medium text-2xl text-center text-gray-400">No Resources</h2>
                 </div>}

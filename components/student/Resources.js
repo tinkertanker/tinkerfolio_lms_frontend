@@ -4,7 +4,7 @@ const Resources = ({ resources, reloadResource }) => {
 
     return (
         <>
-            <div className="mx-20">
+            <div className="sm:mx-20">
                 {(resources.length > 0) ? resources.map((resource, i) => (
                     <>
                         {resource.section && (
@@ -13,7 +13,7 @@ const Resources = ({ resources, reloadResource }) => {
                                 key={i}
                             >
                                 <h3 className="font-bold text-xl text-black">{resource.section.name}</h3>
-                                <div className="mt-3 grid grid-cols-1 lg:grid-cols-3 gap-8">
+                                <div className="mt-3 grid grid-cols-1 lg:grid-cols-3 gap-3">
                                     {resource.resources.map((file, _) =>
                                         <div className="bg-gray-100 hover:bg-gray-200 py-4 px-5 rounded-lg cursor-pointer" onClick={() => reloadResource(file.id, file, resource, i)}>
                                             <div className="flex items-center gap-2">
@@ -28,7 +28,7 @@ const Resources = ({ resources, reloadResource }) => {
                             </div>
                         )}
                     </>
-                )) :  
+                )) :
                 <div className=" flex items-center justify-center py-40">
                     <h2 className="font-medium text-3xl text-center text-gray-400">No Resources</h2>
                 </div>}
@@ -67,5 +67,5 @@ const FileIcon = ({
         icon = <img src="/document_icon.svg" width="20px"/>
     }
 
-    return icon 
+    return icon
 }

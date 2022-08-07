@@ -111,7 +111,7 @@ const StudentHome = () => {
                     })
                         .then(res => {
                             setProfile((profile) => res.data.profile)
-                           
+
                         })
             })
 
@@ -209,19 +209,19 @@ const StudentHome = () => {
                 <div className="bg-gray-200 h-full min-h-768px lg:h-screen w-screen lg:flex">
                     <div className={`${!sidebar ? "hidden" : ""} z-20 h-full w-full bg-black fixed opacity-50`}></div>
                     <Sidebar {...{ changePage, toggleSidebar, profile, classroom, sidebar }} />
-                    {<div className="lg:hidden min-w-full w-full p-4 z-10 bg-white shadow-lg flex items-center justify-between">
+                    <div className="lg:hidden min-w-full w-full p-4 z-10 bg-white shadow-lg flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <button className="focus:outline-none font-bold text-2xl mx-2 cursor-pointer text-gray-600" onClick={() => toggleSidebar()}>
                                 <img src="hamburger_menu_icon.svg" width="30px" />
                             </button>
-                            <div className={`flex flex-row items-center py-1 px-4  ${statusColor[connectionStatus]}`}>
+                            <div className={`hidden flex flex-row items-center py-1 px-4  ${statusColor[connectionStatus]}`}>
                                 <p className="blinking pr-2">⬤</p>
                                 <p>{connectionStatus}</p>
                             </div>
                         </div>
-                        <img src="linear_logo.svg" width="160px" />
+                        <img src="linear_logo.svg" className="w-32 sm:w-40" />
 
-                    </div>}
+                    </div>
                     <div></div>
 
 
@@ -253,13 +253,13 @@ const StudentHome = () => {
                     </div>
                     <div className="lg:w-4/12 pl-2 pr-4">
                         <div className="lg:h-1/3 pb-3 pt-5">
-                            <div className="bg-white h-full rounded-2xl p-6 xl:p-4 shadow-lg">
+                            <div className="bg-white h-full rounded-2xl px-3 sm:px-5 py-6 xl:p-4 shadow-lg">
                                 <AnnouncementsPreview announcements={announcements} changePage={changePage} />
 
                             </div>
                         </div>
                         <div className="lg:h-2/3 py-3">
-                            <div className="bg-white h-full rounded-2xl p-6 xl:p-4 shadow-lg">
+                            <div className="bg-white h-full rounded-2xl px-3 sm:px-5 py-6 xl:p-4 shadow-lg">
                                 <ResourcesPreview resources={resources} reloadResource={reloadResource} />
                                 <div className="relative flex justify-end bottom-0 mt-3">
                                     <button className="text-sm font-medium text-blue-600 hover:underline focus:outline-none" onClick={() => changePage("Resources")}>
@@ -276,20 +276,20 @@ const StudentHome = () => {
             </main> : <></>}
             {showAllAnnouncements ?
                 <div className="mx-5 pt-12 pb-10 min-h-screen max-w-screen min-w-screen">
-                    <div className="flex items-center justify-between mb-6 mx-20">
-                        <h1 className="text-4xl font-semibold">Announcements</h1>
-                        <button className="focus:outline-none mt-4 ml-2 px-3 py-1 w-min bg-blue-500 text-white rounded hover:bg-blue-600 font-bold flex items-center justify-center" onClick={() => changePage("Main")}>
+                    <div className="flex items-center justify-between mb-6 sm:mx-20">
+                        <h1 className="text-2xl sm:text-4xl font-semibold">Announcements</h1>
+                        <button className="focus:outline-none ml-2 px-1 sm:px-3 py-1 w-min bg-blue-500 text-white rounded hover:bg-blue-600 font-bold flex items-center justify-center" onClick={() => changePage("Main")}>
                             <ChevronBackOutline color={"#00000"} title={"Back"} height="28px" width="28px" />
-                            <p className="text-base mx-2">Back</p>
+                            <p className="text-sm sm:text-base mx-2">Back</p>
                         </button>
                     </div>
                     <Announcements announcements={announcements} />
                 </div> : <></>}
             {showAllResources ?
                 <div className="mx-5 pt-12 pb-10 min-h-screen max-w-screen min-w-screen">
-                    <div className="flex items-center justify-between mb-6 mx-20">
-                        <h1 className="text-4xl font-semibold">Resources</h1>
-                        <button className="focus:outline-none mt-4 px-3 py-1 w-min bg-blue-500 text-white rounded hover:bg-blue-600 font-bold flex items-center justify-center" onClick={() => changePage("Main")}>
+                    <div className="flex items-center justify-between mb-6 sm:mx-20">
+                        <h1 className="text-2xl sm:text-4xl font-semibold">Resources</h1>
+                        <button className="focus:outline-none px-1 sm:px-3 py-1 w-min bg-blue-500 text-white rounded hover:bg-blue-600 font-bold flex items-center justify-center" onClick={() => changePage("Main")}>
                             <ChevronBackOutline color={"#00000"} title={"Back"} height="28px" width="28px" />
                             <p className="text-base mx-2">Back</p>
                         </button>
@@ -360,7 +360,7 @@ const AnnouncementsNav = ({ changePage }) => {
     return (
         <Popup
             trigger={
-                <div onClick={() => changePage("Announcements")} className="bg-white rounded-t-2xl hover:bg-gray-100 cursor-pointer px-4 py-8">
+                <div onClick={() => changePage("Announcements")} className="bg-white rounded-t-2xl hover:bg-gray-100 cursor-pointer px-4 py-6">
                     <img src="/megaphone_icon.svg" width="40px" />
                 </div>
             }
@@ -368,7 +368,7 @@ const AnnouncementsNav = ({ changePage }) => {
             on={["hover", "focus"]}
             arrow={false}>
 
-            <div className="bg-gray-600 ml-10 p-3 rounded-lg shadow-xl">
+            <div className="bg-gray-600 ml-4 px-3 py-2 rounded-lg shadow-xl">
                 <p className="font-semibold text-white">Announcements</p>
             </div>
         </Popup>
@@ -379,7 +379,7 @@ const ResourcesNav = ({ changePage }) => {
     return (
         <Popup
             trigger={
-                <div onClick={() => changePage("Resources")} className="bg-white rounded-b-2xl hover:bg-gray-100 cursor-pointer px-4 py-8 shadow-lg">
+                <div onClick={() => changePage("Resources")} className="bg-white rounded-b-2xl hover:bg-gray-100 cursor-pointer px-4 py-6 shadow-lg">
                     <img src="/folder_icon.svg" width="40px" />
                 </div>
             }
@@ -387,7 +387,7 @@ const ResourcesNav = ({ changePage }) => {
             on={["hover", "focus"]}
             arrow={false}>
 
-            <div className="bg-gray-600 ml-10 p-3 rounded-lg shadow-xl">
+            <div className="bg-gray-600 ml-4 px-3 py-2 rounded-lg shadow-xl">
                 <p className="font-semibold text-white">Resources</p>
             </div>
         </Popup>
@@ -408,7 +408,7 @@ const Sidebar = ({ changePage, toggleSidebar, profile, classroom, sidebar }) => 
     if ((!profile) || (!classroom)) return null
 
     return (
-        <div className={`${!sidebar ? "hidden" : ""} z-30 h-full w-2/5 bg-white fixed p-5`}>
+        <div className={`${!sidebar ? "hidden" : ""} z-30 h-full w-3/5 md:w-2/5 bg-white fixed p-5`}>
             <button onClick={() => toggleSidebar()} className="focus:outline-none font-bold text-2xl mx-2 cursor-pointer text-gray-600">✕</button>
 
             <div className="my-5 py-2">
@@ -452,6 +452,3 @@ const Sidebar = ({ changePage, toggleSidebar, profile, classroom, sidebar }) => 
         </div>
     )
 }
-
-
-
