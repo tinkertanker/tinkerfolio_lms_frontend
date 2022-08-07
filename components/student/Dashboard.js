@@ -159,7 +159,7 @@ const Dashboard = ({ tasks, submissions, setSubmissions, submissionStatuses, set
     const [currentTaskPage, setCurrentTasksPage] = useState(1);
     const [isOnEndTaskPage, setIsOnEndTaskPage] = useState(false);
     const [isOnStartTaskPage, setIsOnStartTaskPage] = useState(true);
-    const [showArchivedTasks, setShowArchivedTasks] = useState(true);
+    const [showArchivedTasks, setShowArchivedTasks] = useState(false);
     const [filterStudentTasks, setFilterStudentTasks] = useState(["incomplete", "completed & ungraded", "completed & graded"]);
 
     const numberOfActiveTasks = sortedTasks(tasks.filter(t => t.status === 1)).length
