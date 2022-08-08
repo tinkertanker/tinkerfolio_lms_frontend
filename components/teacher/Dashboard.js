@@ -106,60 +106,28 @@ const Dashboard = ({ classrooms, classroom, names, removeIndex, addStudent, bulk
                     { code: classroom.code, ...task },
                     { headers: { Authorization: "Bearer " + accessToken } }
                 )
-                .then((res) => { 
-                    setTasks([...tasks, res.data]) });
+                .then((res) => {
+                    setTasks([...tasks, res.data])
+                });
         });
     };
 
-   /* const addImportedTask = (tasksArray, displayNum, index) => {
-        
-         getAccessToken().then((accessToken) => {
-            let requests = []
-            let finishedImportingTasks = []
-            
-                requests.push(axios.post(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/tasks/",
-                {
-                    code: classroom.code,
-                    name: tasksArray[index].name,
-                    description: tasksArray[index].description,
-                    max_stars: tasksArray[index].max_stars,
-                    display: displayNum
-                },
-                { headers: { Authorization: "Bearer " + accessToken} }))
 
 
-             Promise.all(requests).then( (res) => {
-                 finishedImportingTasks.push(res.map(response => response.data))
-                if (index < tasksArray.length - 1 ) {
-                     addImportedTask(tasksArray, displayNum, index+1)
-                } else {
-                    console.log(finishedImportingTasks)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-                }
-                
-        }
-            )
-           
-        })    
-    }*/
+    const addImportedTask = (tasksArray) => {
+        getAccessToken().then((accessToken) => {
+            axios
+                .post(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/tasks/?bulk=true",
+                    tasksArray,
+                    { headers: { Authorization: "Bearer " + accessToken } }
+                )
+                .then((res) => {
+                    setTasks([...tasks, ...res.data])
+                });
+            setImportMenuTaskList([])
+            setTasksIDToImport([])
+        });
 
-    const addImportedTask = async (tasksArray, displayNum) => {
-        for(const t of tasksArray) {
-            await getAccessToken().then((accessToken) => {
-                axios
-                    .post(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/tasks/",
-                        { code: classroom.code,
-                            name: t.name,
-                            description: t.description,
-                            max_stars: t.max_stars,
-                            display: displayNum },
-                        { headers: { Authorization: "Bearer " + accessToken } }
-                    )
-                    .then(async function (res) {
-                        await setTasks([...tasks, res.data]);
-                    });
-            });
-        }
-       
     }
 
 
@@ -215,7 +183,7 @@ const Dashboard = ({ classrooms, classroom, names, removeIndex, addStudent, bulk
 
     }
 
-   
+
 
 
     const addReview = (id, stars, comment, setSubmission) => {
@@ -250,9 +218,9 @@ const Dashboard = ({ classrooms, classroom, names, removeIndex, addStudent, bulk
     const shownTasks = () => {
         let tasksProgress = tasks.filter((task) => !tasksToHide.includes(task.id) && task.display === 1);
 
-        switch(sortTasksBy) {
+        switch (sortTasksBy) {
             case "publishOldToNew":
-                tasksProgress.sort((a, b) => 
+                tasksProgress.sort((a, b) =>
                     a.published_at > b.published_at ? 1 : -1
                 );
                 break;
@@ -280,7 +248,7 @@ const Dashboard = ({ classrooms, classroom, names, removeIndex, addStudent, bulk
                 );
                 break;
             case "publishNewToOld":
-                tasksToShow.sort((a, b) => 
+                tasksToShow.sort((a, b) =>
                     a.published_at < b.published_at ? 1 : -1
                 );
                 break;
@@ -624,7 +592,7 @@ const Sort = ({ sortBy, setSortBy, sortTasksBy, setSortTasksBy }) => {
                         <br />
                         <input type="radio" id="starsLowToHigh" name="sort" className="mr-2 mb-2" checked={sortBy === "starsLowToHigh"} onClick={() => setSortBy("starsLowToHigh")} />
                         <label for="starsLowToHigh">Stars: Low to High</label>
-                        <br />           
+                        <br />
                     </form>
                     <hr class="my-2" />
                     <form>
@@ -1268,6 +1236,9 @@ const NewTask = ({
     const [isEditingDraft, setIsEditingDraft] = useState(false);
     const [draftTaskID, setDraftTaskID] = useState(0);
 
+    const [showRequiredSelection, setShowRequiredSelection ] = useState(false) //if user did not select at least one task before importing, show error message
+
+
     const [task, setTask] = useState({
         name: "",
         description: "",
@@ -1275,7 +1246,7 @@ const NewTask = ({
         display: 0
     });
 
-   
+
 
     const saveDraft = () => {
         setTask({
@@ -1284,6 +1255,7 @@ const NewTask = ({
         });
 
     }
+    
 
     useEffect(() => { //add task if task.display changes to 1 or 2
         if (task.display != 0) {
@@ -1319,6 +1291,8 @@ const NewTask = ({
 
     }
 
+
+
     const handleImportCheck = (raw_id) => {
         const id = parseInt(raw_id)
         if (tasksIDToImport.includes(id)) {
@@ -1329,30 +1303,37 @@ const NewTask = ({
     }
 
 
-    const handlePublishImportedTask = () => {
-        let sortedTasksIDToImport = tasksIDToImport.sort((a, b) => (a > b ? 1 : -1)); // sort tasks in ascending id
-        
-        //create an array of imported tasks with their corresponding details from the array of imported tasks IDs
-        const importedTasks = importMenuTaskList.filter((t) => {
-            return sortedTasksIDToImport.some((id) => {
-                return id === t.id
+    const handlePostingImportedTask = (displayNum) => {
+        if (tasksIDToImport.length > 0) {
+            setShowRequiredSelection(false)
+            let sortedTasksIDToImport = tasksIDToImport.sort((a, b) => (a > b ? 1 : -1)); // sort tasks in ascending id
+
+            //create an array of imported tasks with their corresponding details from the array of imported tasks IDs
+            const tasksToDuplicate = importMenuTaskList.filter((t) => {
+                return sortedTasksIDToImport.some((id) => {
+                    return id === t.id
+                })
             })
-        })
 
-        addImportedTask(importedTasks, 1)
-        
-        //for each of the imported tasks in the array, run a POST request to add it to the backend
-        /*importedTasks.map((t) => {
-             addImportedTask(t.name, t.description, t.max_stars, 1)
-             
-        })*/
+            const importedTasks = tasksToDuplicate.map((t) => (
+                {
+                    code: classroom.code,
+                    name: t.name,
+                    description: t.description,
+                    max_stars: t.max_stars,
+                    display: displayNum
+                }
+            ))
 
+            addImportedTask(importedTasks)
+            setNewTaskModalOpen(false);
+            changeNewTaskPage("newTask");
+        } else {
+            setShowRequiredSelection(true)
+        }
 
-
-        
-        
     }
-    
+
 
 
     return (
@@ -1366,12 +1347,12 @@ const NewTask = ({
         >
             {(showNewTask) ?
                 <div>
-                    <div className="flex flex-row border-b-2 border-gray-500">
-                        <button onClick={() => { changeNewTaskPage("newTask") }} className="bg-gray-500 px-4 py- w-full rounded-tl-lg focus:outline-none cursor-pointer">
-                            <p className="text-white">New Tasks</p>
+                    <div className="flex flex-row">
+                        <button onClick={() => changeNewTaskPage("newTask")} className="bg-white px-4 py-4 w-full rounded-tl-lg focus:outline-none cursor-pointer border-b-2 border-blue-600">
+                            <p className="text-blue-600 font-medium">New Tasks</p>
                         </button>
-                        <button onClick={() => { changeNewTaskPage("importTask") }} className="bg-white px-4 py-3 w-full rounded-tr-lg focus:outline-none cursor-pointer">
-                            <p className="text-gray-500">Import Task</p>
+                        <button onClick={() => { changeNewTaskPage("importTask") }} className="bg-white px-4 py-4 w-full rounded-tr-lg focus:outline-none cursor-pointer">
+                            <p className="text-gray-500 font-medium hover:text-blue-600">Import Task</p>
                         </button>
 
                     </div>
@@ -1517,16 +1498,18 @@ const NewTask = ({
                 </div> : <></>}
 
             {(showImportTask) ? <div style={{ marginTop: 'min(60px, 100%)', marginBottom: 'min(60px, 100%)' }}>
-                <div className="flex flex-row border-b-2 border-gray-500">
+                <div className="flex flex-row">
                     <button onClick={() => {
                         changeNewTaskPage("newTask")
+                        setShowRequiredSelection(false)
                         setImportMenuTaskList([])
+                        setTasksIDToImport([])
                     }}
-                        className="bg-white px-4 py- w-full rounded-tl-lg focus:outline-none cursor-pointer">
-                        <p className="text-gray-500">New Tasks</p>
+                        className="bg-white px-4 py-4 w-full rounded-tl-lg focus:outline-none cursor-pointer">
+                        <p className="text-gray-500 font-medium hover:text-blue-600">New Tasks</p>
                     </button>
-                    <button onClick={() => { changeNewTaskPage("importTask") }} className="bg-gray-500 px-4 py-3 w-full rounded-tr-lg focus:outline-none cursor-pointer">
-                        <p className="text-white">Import Task</p>
+                    <button onClick={() => { changeNewTaskPage("importTask") }} className="bg-white px-4 py-4 w-full rounded-tr-lg focus:outline-none cursor-pointer border-b-2 border-blue-600">
+                        <p className="text-blue-600 font-medium">Import Task</p>
                     </button>
 
                 </div>
@@ -1540,7 +1523,7 @@ const NewTask = ({
                             fetchTasksFromClassroom(e.target.value)
 
                         }
-                            
+
                         }
                         onKeyDown={(e) => {
                             e.preventDefault();
@@ -1558,31 +1541,31 @@ const NewTask = ({
                     <form>
                         <div className="flex flex-row items-center justify-between mb-2">
                             <h3 className="font-semibold">Tasks ({importMenuTaskList.length})</h3>
-                            <div className="flex flex-row items-center ml-auto">
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        /*setTasksIDToImport(...tasksIDToImport, importMenuTaskList.filter((t) => 
-                                        !tasksIDToImport.includes(t.id)
-                                    ))*/
-                                    console.log(tasks)
-                                    }}
-                                    className="focus:outline-none cursor-pointer text-sm text-blue-500 font-medium hover:underline">
-                                    Select All
-                                </button>
-                                <p className="mx-1">|</p>
-                                <button
-                                    type="button"
-                                    
-                                    className="focus:outline-none cursor-pointer text-sm text-blue-500 font-medium hover:underline">
-                                    Unselect All
-                                </button>
-                            </div>
+                            {(importMenuTaskList.length > 0) ?
+                                <div className="flex flex-row items-center ml-auto">
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setTasksIDToImport(importMenuTaskList.map((t) => t.id))
+                                        }}
+                                        className="focus:outline-none cursor-pointer text-sm text-blue-500 font-medium hover:underline">
+                                        Select All
+                                    </button>
+                                    <p className="mx-1 text-sm">|</p>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setTasksIDToImport([])
+                                        }}
+                                        className="focus:outline-none cursor-pointer text-sm text-blue-500 font-medium hover:underline">
+                                        Unselect All
+                                    </button>
+                                </div> : <></>}
 
                         </div>
                         <div className="max-h-50vh overflow-y-auto">
                             {importMenuTaskList.filter(t => t.display === 1).map((task, i) => (
-                                <div className="flex items-center justify-between"  key={i}>
+                                <div className="flex items-center justify-between" key={i}>
                                     <label id={task.id} className="flex items-center w-4/5">
                                         <div className="bg-gray-300 w-1.5 h-12 rounded-2xl flex-none my-2 mr-2"></div>
                                         <div className="w-full">
@@ -1604,14 +1587,21 @@ const NewTask = ({
 
                         <div className="bg-gray-300 h-0.5 my-4 w-full"></div>
                         <div className="flex font-medium items-center">
+                            <div>
                             <p>Tasks Selected: {tasksIDToImport.length}</p>
+                            {(showRequiredSelection) ?
+                             <p className="text-sm italic font-normal text-red-500">Please select at least one task.</p>
+                            : <></>}
+                            </div>
                             <div className="flex ml-auto gap-4">
-                                <button onClick={() => console.log(tasksIDToImport.sort((a, b) => (a > b ? 1 : -1)))} type="button" className="bg-gray-500 rounded px-3 py-1 hover:bg-gray-600 focus:outline-none">
+                                <button onClick={() => handlePostingImportedTask(2)} type="button" className="bg-gray-500 rounded px-3 py-1 hover:bg-gray-600 focus:outline-none">
                                     <p className="text-white text-sm">Save to Drafts</p>
                                 </button>
-                                <button onClick={() => handlePublishImportedTask()} type="button" className="bg-blue-500 rounded px-3 py-1 hover:bg-blue-600  focus:outline-none">
+
+                                <button onClick={() => handlePostingImportedTask(1)} type="button" className="bg-blue-500 rounded px-3 py-1 hover:bg-blue-600 focus:outline-none">
                                     <p className="text-white text-sm">Publish Tasks</p>
                                 </button>
+
                             </div>
 
                         </div>
