@@ -7,10 +7,10 @@ const AnnouncementsPreview = ({ announcements, changePage }) => {
     if (!announcements) return null
 
     return (
-        <>  
+        <>
         <div className="h-full flex flex-col justify-between flex-start">
             <div>
-                <div className="flex items-center gap-3 m-0">
+                <div className="flex items-center gap-3 ml-1 sm:ml-0">
                     <img src="/megaphone_icon.svg" width="25px" />
                     <h1 className="text-xl font-semibold bg-white rounded-2xl text-gray-600">Announcements</h1>
                 </div>
@@ -22,12 +22,12 @@ const AnnouncementsPreview = ({ announcements, changePage }) => {
                             <h2 className="font-medium text-2xl text-center text-gray-400">No Announcements</h2>
                         </div>}
             </div>
-           
+
                 <button className="mt-3 text-sm font-medium text-blue-600 hover:underline focus:outline-none float-right whitespace-nowrap text-right" onClick={() => changePage("Announcements")}>
                     View All Announcements ({announcements ? announcements.length : <></>})
                 </button>
         </div>
-        
+
         </>
     )
 }

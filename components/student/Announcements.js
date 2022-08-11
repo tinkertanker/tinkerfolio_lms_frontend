@@ -5,8 +5,8 @@ const Announcements = ({announcements}) => {
     if (!announcements) return null
     return (
         <>
-            
-            <div className="mb-4 flex flex-col-reverse mx-20">
+
+            <div className="mb-4 flex flex-col-reverse sm:mx-20">
                 {(announcements.length > 0) ? announcements.map((announcement, i) => (
                     <>
                         {announcement.name && (
@@ -15,7 +15,7 @@ const Announcements = ({announcements}) => {
                                 key={i}
                             >
                                 <div className="flex items-center justify-between">
-                                    <h3 className="font-bold text-2xl text-blue-600">{announcement.name}</h3>
+                                    <h3 className="font-bold text-md sm:text-2xl text-blue-600">{announcement.name}</h3>
                                     <p className="my-2 text-sm text-gray-500 font-medium">
                                         {beautifyDate(announcement.updated_at.slice(0, 10))}
                                     </p>
@@ -24,11 +24,11 @@ const Announcements = ({announcements}) => {
                                 <p className="mt-2 whitespace-pre-wrap">
                                         <CustomLinkify>{announcement.description}</CustomLinkify>
                                     </p>
-                                
+
                             </div>
                         )}
                     </>
-                )) : 
+                )) :
                 <div className=" flex items-center justify-center py-40">
                     <h2 className="font-medium text-3xl text-center text-gray-400">No Announcements</h2>
                 </div>}
