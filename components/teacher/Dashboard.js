@@ -1344,15 +1344,16 @@ const NewTask = ({
             closeOnDocumentClick
             open={newTaskModalOpen}
             onClose={() => setNewTaskModalOpen(false)}
+            contentStyle={{ overflowY: 'auto', marginTop: 'min(60px, 100%)', marginBottom: 'min(60px, 100%)' }}
         >
             {(showNewTask) ?
                 <div>
                     <div className="flex flex-row">
                         <button onClick={() => changeNewTaskPage("newTask")} className="bg-white px-4 py-4 w-full rounded-tl-lg focus:outline-none cursor-pointer border-b-2 border-blue-600">
-                            <p className="text-blue-600 font-medium">New Tasks</p>
+                            <p className="text-blue-600 font-medium">New Task</p>
                         </button>
                         <button onClick={() => { changeNewTaskPage("importTask") }} className="bg-white px-4 py-4 w-full rounded-tr-lg focus:outline-none cursor-pointer border-b border-gray-300">
-                            <p className="text-gray-500 font-medium hover:text-blue-600">Import Task</p>
+                            <p className="text-gray-500 font-medium hover:text-blue-600">Import Tasks</p>
                         </button>
 
                     </div>
@@ -1455,7 +1456,7 @@ const NewTask = ({
                 : <></>}
 
             {(showDraftsMenu) ?
-                <div className="px-6 py-4 bg-white rounded-lg shadow-lg popup " style={{ overflowY: 'auto', marginTop: 'min(100px, 100%)', marginBottom: 'min(100px, 100%)', maxHeight: '90vh' }}>
+                <div className="px-6 py-4 bg-white rounded-lg shadow-lg popup ">
                     <div className="mx-2">
                         <div className="flex justify-between items-center">
                             <h1 className="my-2 text-2xl font-bold">Drafts</h1>
@@ -1497,7 +1498,7 @@ const NewTask = ({
                     </div>
                 </div> : <></>}
 
-            {(showImportTask) ? <div style={{ marginTop: 'min(60px, 100%)', marginBottom: 'min(60px, 100%)' }}>
+            {(showImportTask) ? <div>
                 <div className="flex flex-row">
                     <button onClick={() => {
                         changeNewTaskPage("newTask")
@@ -1506,10 +1507,10 @@ const NewTask = ({
                         setTasksIDToImport([])
                     }}
                         className="bg-white px-4 py-4 w-full rounded-tl-lg focus:outline-none cursor-pointer border-b border-gray-300">
-                        <p className="text-gray-500 font-medium hover:text-blue-600">New Tasks</p>
+                        <p className="text-gray-500 font-medium hover:text-blue-600">New Task</p>
                     </button>
                     <button onClick={() => { changeNewTaskPage("importTask") }} className="bg-white px-4 py-4 w-full rounded-tr-lg focus:outline-none cursor-pointer border-b-2 border-blue-600">
-                        <p className="text-blue-600 font-medium">Import Task</p>
+                        <p className="text-blue-600 font-medium">Import Tasks</p>
                     </button>
 
                 </div>
