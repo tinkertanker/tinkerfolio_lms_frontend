@@ -23,7 +23,7 @@ import {
 const contentStyle = { paddingLeft: "0.5rem", paddingRight: "0.5rem" };
 const arrowStyle = { color: "#374151", paddingBottom: "0.25rem" }; // style for an svg element
 
-const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents, loadingAddStudent, setLoadingAddStudent, updateName, tasks, setTasks, submissionStatuses, submissions, setSubmissions, sendJsonMessage, size, announcements, setAnnouncements, resources, setResources }) => {
+const Dashboard = ({ classrooms, classroom, names, removeIndex, addStudent, bulkAddStudents, loadingAddStudent, setLoadingAddStudent, updateName, tasks, setTasks, submissionStatuses, submissions, setSubmissions, sendJsonMessage, size, announcements, setAnnouncements, resources, setResources }) => {
     const { getAccessToken } = useContext(AuthContext);
     const [tableNames, setTableNames] = useState();
     const [sortBy, setSortBy] = useState("indexLowToHigh");
@@ -34,10 +34,15 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
 
     const [showNewTask, setShowNewTask] = useState(true);
     const [showDraftsMenu, setShowDraftsMenu] = useState(false);
+    const [showImportTask, setShowImportTask] = useState(false);
+
+    const [importMenuTaskList, setImportMenuTaskList] = useState([])
+    const [tasksIDToImport, setTasksIDToImport] = useState([])
 
     const changeNewTaskPage = (currentPage) => {
         if (showNewTask) setShowNewTask(false);
         if (showDraftsMenu) setShowDraftsMenu(false);
+        if (showImportTask) setShowImportTask(false);
 
         switch (currentPage) {
             case "newTask":
@@ -46,6 +51,8 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
             case "draftsMenu":
                 setShowDraftsMenu(true);
                 break;
+            case 'importTask':
+                setShowImportTask(true);
         }
     }
 
@@ -99,9 +106,30 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                     { code: classroom.code, ...task },
                     { headers: { Authorization: "Bearer " + accessToken } }
                 )
-                .then((res) => { setTasks([...tasks, res.data]) });
+                .then((res) => {
+                    setTasks([...tasks, res.data])
+                });
         });
     };
+
+
+
+    const addImportedTask = (tasksArray) => {
+        getAccessToken().then((accessToken) => {
+            axios
+                .post(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/tasks/?bulk=true",
+                    tasksArray,
+                    { headers: { Authorization: "Bearer " + accessToken } }
+                )
+                .then((res) => {
+                    setTasks([...tasks, ...res.data])
+                });
+            setImportMenuTaskList([])
+            setTasksIDToImport([])
+        });
+
+    }
+
 
     const deleteTask = (id) => {
         getAccessToken().then((accessToken) => {
@@ -138,6 +166,26 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
     }
 
 
+    const fetchTasksFromClassroom = (code) => {
+
+        getAccessToken().then((accessToken) => {
+            axios.get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + 'core/tasks/?code=' + code.toString(), {
+                headers: { 'Authorization': 'Bearer ' + accessToken },
+            })
+                .then(res => {
+                    setImportMenuTaskList(res.data)
+
+                })
+                .catch(res => {
+                    console.log(res)
+                })
+        })
+
+    }
+
+
+
+
     const addReview = (id, stars, comment, setSubmission) => {
         // push review to server
         getAccessToken().then((accessToken) => {
@@ -170,9 +218,9 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
     const shownTasks = () => {
         let tasksProgress = tasks.filter((task) => !tasksToHide.includes(task.id) && task.display === 1);
 
-        switch(sortTasksBy) {
+        switch (sortTasksBy) {
             case "publishOldToNew":
-                tasksProgress.sort((a, b) => 
+                tasksProgress.sort((a, b) =>
                     a.published_at > b.published_at ? 1 : -1
                 );
                 break;
@@ -200,7 +248,7 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                 );
                 break;
             case "publishNewToOld":
-                tasksToShow.sort((a, b) => 
+                tasksToShow.sort((a, b) =>
                     a.published_at < b.published_at ? 1 : -1
                 );
                 break;
@@ -281,7 +329,7 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                                 onClick={() => {
                                     changeNewTaskPage("newTask")
                                     setNewTaskModalOpen(true)
-                                    
+
                                 }}
                                 className="flex flex-row py-1 px-2 bg-blue-600 text-sm text-white rounded hover:bg-blue-700 focus:outline-none" >
                                 <AddCircleOutline
@@ -292,7 +340,7 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                                 />
                                 <p className="pl-1">Task</p>
                             </button>
-                            <NewTask {...{ addTask, deleteTask, updateDraftTask, tasks, changeNewTaskPage, showNewTask, setShowNewTask, showDraftsMenu, setShowDraftsMenu, newTaskModalOpen, setNewTaskModalOpen }} />
+                            <NewTask {...{ classroom, classrooms, addTask, deleteTask, updateDraftTask, tasks, changeNewTaskPage, showNewTask, setShowNewTask, showDraftsMenu, setShowDraftsMenu, showImportTask, setShowImportTask, newTaskModalOpen, setNewTaskModalOpen, fetchTasksFromClassroom, importMenuTaskList, setImportMenuTaskList, tasksIDToImport, setTasksIDToImport, addImportedTask }} />
 
                             <button
                                 className={
@@ -314,19 +362,19 @@ const Dashboard = ({ classroom, names, removeIndex, addStudent, bulkAddStudents,
                             </button>
                         </div>
                         <div className="flex flex-row justify-end gap-4">
-                            <button 
-                                onClick={()=> {
+                            <button
+                                onClick={() => {
                                     changeNewTaskPage("draftsMenu");
                                     setNewTaskModalOpen(true)
 
                                 }}
                                 className="flex flex-row py-1 px-2 bg-blue-600 text-sm text-white rounded hover:bg-blue-700 focus:outline-none">
-                                    <DocumentTextOutline
-                                        color={"#00000"}
-                                        title={"Drafts"}
-                                        height="20px"
-                                        width="20px"
-                                    />
+                                <DocumentTextOutline
+                                    color={"#00000"}
+                                    title={"Drafts"}
+                                    height="20px"
+                                    width="20px"
+                                />
                                 <p className="pl-1">Drafts ({tasks.filter(t => t.display === 2).length})</p>
                             </button>                            <button className="flex flex-row py-1 px-2 bg-blue-600 text-sm text-white rounded focus:outline-none hover:bg-blue-700" onClick={() => setShowAnnouncements(true)}>
                                 <MegaphoneOutline color={"#00000"} title={"Announcements"} height="20px" width="20px" />
@@ -544,7 +592,7 @@ const Sort = ({ sortBy, setSortBy, sortTasksBy, setSortTasksBy }) => {
                         <br />
                         <input type="radio" id="starsLowToHigh" name="sort" className="mr-2 mb-2" checked={sortBy === "starsLowToHigh"} onClick={() => setSortBy("starsLowToHigh")} />
                         <label for="starsLowToHigh">Stars: Low to High</label>
-                        <br />           
+                        <br />
                     </form>
                     <hr class="my-2" />
                     <form>
@@ -1163,6 +1211,8 @@ const TaskDetails = ({ task, setOneTask, setIsCloseOnDocClick, subs }) => {
 };
 
 const NewTask = ({
+    classroom,
+    classrooms,
     addTask,
     deleteTask,
     updateDraftTask,
@@ -1172,11 +1222,22 @@ const NewTask = ({
     setShowNewTask,
     showDraftsMenu,
     setShowDraftsMenu,
+    showImportTask,
+    setShowImportTask,
     newTaskModalOpen,
-    setNewTaskModalOpen }) => {
+    setNewTaskModalOpen,
+    fetchTasksFromClassroom,
+    importMenuTaskList,
+    setImportMenuTaskList,
+    tasksIDToImport,
+    setTasksIDToImport,
+    addImportedTask }) => {
 
     const [isEditingDraft, setIsEditingDraft] = useState(false);
     const [draftTaskID, setDraftTaskID] = useState(0);
+
+    const [showRequiredSelection, setShowRequiredSelection ] = useState(false) //if user did not select at least one task before importing, show error message
+
 
     const [task, setTask] = useState({
         name: "",
@@ -1185,6 +1246,8 @@ const NewTask = ({
         display: 0
     });
 
+
+
     const saveDraft = () => {
         setTask({
             ...task,
@@ -1192,6 +1255,7 @@ const NewTask = ({
         });
 
     }
+    
 
     useEffect(() => { //add task if task.display changes to 1 or 2
         if (task.display != 0) {
@@ -1227,6 +1291,51 @@ const NewTask = ({
 
     }
 
+
+
+    const handleImportCheck = (raw_id) => {
+        const id = parseInt(raw_id)
+        if (tasksIDToImport.includes(id)) {
+            setTasksIDToImport(tasksIDToImport.filter((t) => t != id))
+        } else {
+            setTasksIDToImport([...tasksIDToImport, id])
+        }
+    }
+
+
+    const handlePostingImportedTask = (displayNum) => {
+        if (tasksIDToImport.length > 0) {
+            setShowRequiredSelection(false)
+            let sortedTasksIDToImport = tasksIDToImport.sort((a, b) => (a > b ? 1 : -1)); // sort tasks in ascending id
+
+            //create an array of imported tasks with their corresponding details from the array of imported tasks IDs
+            const tasksToDuplicate = importMenuTaskList.filter((t) => {
+                return sortedTasksIDToImport.some((id) => {
+                    return id === t.id
+                })
+            })
+
+            const importedTasks = tasksToDuplicate.map((t) => (
+                {
+                    code: classroom.code,
+                    name: t.name,
+                    description: t.description,
+                    max_stars: t.max_stars,
+                    display: displayNum
+                }
+            ))
+
+            addImportedTask(importedTasks)
+            setNewTaskModalOpen(false);
+            changeNewTaskPage("newTask");
+        } else {
+            setShowRequiredSelection(true)
+        }
+
+    }
+
+
+
     return (
 
         <Popup
@@ -1235,105 +1344,119 @@ const NewTask = ({
             closeOnDocumentClick
             open={newTaskModalOpen}
             onClose={() => setNewTaskModalOpen(false)}
+            contentStyle={{ overflowY: 'auto', marginTop: 'min(60px, 100%)', marginBottom: 'min(60px, 100%)' }}
         >
             {(showNewTask) ?
-                <form
-                    className="flex flex-col px-4 py-4 bg-white rounded-lg shadow-md popup"
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                        setTask(task => ({
-                            ...task,
-                            display: 1
-                        }));
-                    }}
-                >
-                    <input
-                        onChange={(e) =>
-                            setTask({
-                                ...task,
-                                [e.target.name]: e.target.value,
-                            })
-                        }
-                        className="outline-none text-2xl border-b-2 border-gray-300 focus:border-gray-500 my-2 mx-2"
-                        value={task.name}
-                        name="name"
-                        placeholder="Enter task name here..."
-                        autoComplete="off"
-                    />
-                    <textarea
-                        onChange={(e) =>
-                            setTask({
-                                ...task,
-                                [e.target.name]: e.target.value,
-                            })
-                        }
-                        className="outline-none resize-none text-sm border-2 border-gray-300 focus:border-gray-500 py-2 px-2 my-2 mx-2 rounded-lg"
-                        rows="4"
-                        value={task.description}
-                        name="description"
-                        placeholder="Enter task description here..."
-                    />
-                    <label htmlFor="max_stars" className="px-2 pt-2">
-                        Max. Stars
-                    </label>
-                    <select
-                        onChange={(e) =>
-                            setTask({
-                                ...task,
-                                [e.target.name]: parseInt(e.target.value),
-                            })
-                        }
-                        onKeyDown={(e) => {
-                            e.preventDefault();
-                            return false;
-                        }}
-                        className="outline-none py-1.5 px-2 bg-gray-100 rounded-lg my-1 mx-2 w-min"
-                        name="max_stars"
-                        id="max_stars"
-                    >
-                        <option value={0}>0</option>
-                        <option value={1}>1</option>
-                        <option value={2}>2</option>
-                        <option value={3}>3</option>
-                        <option value={4}>4</option>
-                        <option selected value={5}>
-                            5
-                        </option>
-                    </select>
-                    <small className="ml-2 text-gray-500">
-                        Capped at 5 stars.
-                    </small>
-                    <div className="flex">
-                        <button
-                            type="submit"
-                            className="mt-4 ml-2 px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 cursor-pointer focus:outline-none"
-                        >
-                            Publish Task
+                <div>
+                    <div className="flex flex-row">
+                        <button onClick={() => changeNewTaskPage("newTask")} className="bg-white px-4 py-4 w-full rounded-tl-lg focus:outline-none cursor-pointer border-b-2 border-blue-600">
+                            <p className="text-blue-600 font-medium">New Task</p>
                         </button>
-                        <button
-                            type="button"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                saveDraft();
+                        <button onClick={() => { changeNewTaskPage("importTask") }} className="bg-white px-4 py-4 w-full rounded-tr-lg focus:outline-none cursor-pointer border-b border-gray-300">
+                            <p className="text-gray-500 font-medium hover:text-blue-600">Import Tasks</p>
+                        </button>
 
-                            }}
-                            className="mt-4 ml-4 px-2 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 cursor-pointer focus:outline-none">
-                            {(isEditingDraft) ? "Save to Drafts" : "Add to Drafts"}
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => {
-                                changeNewTaskPage("draftsMenu")
-                            }}
-                            className="mt-4 mr-2 px-2 py-1 text-gray-500 rounded text-sm ml-auto hover:text-gray-600 cursor-pointer hover:underline focus:outline-none">
-                            {(isEditingDraft) ? "Back to Drafts" : "Go to Drafts"}
-                        </button>
                     </div>
+                    <form
+                        className="flex flex-col px-4 py-4 bg-white rounded-b-lg rounded-t-none shadow-md popup"
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            setTask(task => ({
+                                ...task,
+                                display: 1
+                            }));
+                        }}
+                    >
 
-                </form> : <></>}
+                        <input
+                            onChange={(e) =>
+                                setTask({
+                                    ...task,
+                                    [e.target.name]: e.target.value,
+                                })
+                            }
+                            className="outline-none text-2xl border-b-2 border-gray-300 focus:border-gray-500 my-2 mx-2"
+                            value={task.name}
+                            name="name"
+                            placeholder="Enter task name here..."
+                            autoComplete="off"
+                        />
+                        <textarea
+                            onChange={(e) =>
+                                setTask({
+                                    ...task,
+                                    [e.target.name]: e.target.value,
+                                })
+                            }
+                            className="outline-none resize-none text-sm border-2 border-gray-300 focus:border-gray-500 py-2 px-2 my-2 mx-2 rounded-lg"
+                            rows="4"
+                            value={task.description}
+                            name="description"
+                            placeholder="Enter task description here..."
+                        />
+                        <label htmlFor="max_stars" className="px-2 pt-2">
+                            Max. Stars
+                        </label>
+                        <select
+                            onChange={(e) =>
+                                setTask({
+                                    ...task,
+                                    [e.target.name]: parseInt(e.target.value),
+                                })
+                            }
+                            onKeyDown={(e) => {
+                                e.preventDefault();
+                                return false;
+                            }}
+                            className="outline-none py-1.5 px-2 bg-gray-100 rounded-lg my-1 mx-2 w-min"
+                            name="max_stars"
+                            id="max_stars"
+                        >
+                            <option value={0}>0</option>
+                            <option value={1}>1</option>
+                            <option value={2}>2</option>
+                            <option value={3}>3</option>
+                            <option value={4}>4</option>
+                            <option selected value={5}>
+                                5
+                            </option>
+                        </select>
+                        <small className="ml-2 text-gray-500">
+                            Capped at 5 stars.
+                        </small>
+                        <div className="flex">
+                            <button
+                                type="submit"
+                                className="mt-4 ml-2 px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 cursor-pointer focus:outline-none"
+                            >
+                                Publish Task
+                            </button>
+                            <button
+                                type="button"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    saveDraft();
+
+                                }}
+                                className="mt-4 ml-4 px-2 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 cursor-pointer focus:outline-none">
+                                {(isEditingDraft) ? "Save to Drafts" : "Add to Drafts"}
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    changeNewTaskPage("draftsMenu")
+                                }}
+                                className="mt-4 mr-2 px-2 py-1 text-gray-500 rounded text-sm ml-auto hover:text-gray-600 cursor-pointer hover:underline focus:outline-none">
+                                {(isEditingDraft) ? "Back to Drafts" : "Go to Drafts"}
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+                : <></>}
 
             {(showDraftsMenu) ?
-                <div className="px-6 py-4 bg-white rounded-lg shadow-lg popup " style={{ overflowY: 'auto', marginTop: 'min(60px, 100%)', marginBottom: 'min(60px, 100%)', maxHeight: '70vh'}}>
+                <div className="px-6 py-4 bg-white rounded-lg shadow-lg popup ">
                     <div className="mx-2">
                         <div className="flex justify-between items-center">
                             <h1 className="my-2 text-2xl font-bold">Drafts</h1>
@@ -1365,7 +1488,7 @@ const NewTask = ({
                                     <button
                                         onClick={() => deleteTask(draftTask.id)}
                                         className="mx-5 cursor-pointer focus:outline-none">
-                                            <img src="/delete_icon.svg" width="15px"/>
+                                        <img src="/delete_icon.svg" width="15px" />
 
                                     </button>
                                 </div>)
@@ -1375,7 +1498,120 @@ const NewTask = ({
                     </div>
                 </div> : <></>}
 
+            {(showImportTask) ? <div>
+                <div className="flex flex-row">
+                    <button onClick={() => {
+                        changeNewTaskPage("newTask")
+                        setShowRequiredSelection(false)
+                        setImportMenuTaskList([])
+                        setTasksIDToImport([])
+                    }}
+                        className="bg-white px-4 py-4 w-full rounded-tl-lg focus:outline-none cursor-pointer border-b border-gray-300">
+                        <p className="text-gray-500 font-medium hover:text-blue-600">New Task</p>
+                    </button>
+                    <button onClick={() => { changeNewTaskPage("importTask") }} className="bg-white px-4 py-4 w-full rounded-tr-lg focus:outline-none cursor-pointer border-b-2 border-blue-600">
+                        <p className="text-blue-600 font-medium">Import Tasks</p>
+                    </button>
+
+                </div>
+                <div className="px-6 py-4 bg-white rounded-b-lg rounded-t-none shadow-md popup">
+                    <h3 className="font-semibold">Select Classroom</h3>
+                    <p className="italic text-sm text-gray-600">You can only import from one classroom at a time</p>
+                    <select
+                        className="outline-none py-1.5 px-2 bg-gray-200 rounded-md w-full mt-2 mb-4 cursor-pointer"
+                        onChange={(e) => {
+                            setTasksIDToImport([])
+                            fetchTasksFromClassroom(e.target.value)
+
+                        }
+
+                        }
+                        onKeyDown={(e) => {
+                            e.preventDefault();
+                            return false;
+                        }}
+                    >
+                        <option value="" selected disabled></option>
+                        {classrooms.filter((c) => c.name != classroom.name).map((c, i) => {
+                            return (
+                                <option value={c.code} key={i}>{c.name}</option>
+                            )
+                        })}
+
+                    </select>
+                    <form>
+                        <div className="flex flex-row items-center justify-between mb-2">
+                            <h3 className="font-semibold">Tasks ({importMenuTaskList.length})</h3>
+                            {(importMenuTaskList.length > 0) ?
+                                <div className="flex flex-row items-center ml-auto">
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setTasksIDToImport(importMenuTaskList.map((t) => t.id))
+                                        }}
+                                        className="focus:outline-none cursor-pointer text-sm text-blue-500 font-medium hover:underline">
+                                        Select All
+                                    </button>
+                                    <p className="mx-1 text-sm">|</p>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setTasksIDToImport([])
+                                        }}
+                                        className="focus:outline-none cursor-pointer text-sm text-blue-500 font-medium hover:underline">
+                                        Unselect All
+                                    </button>
+                                </div> : <></>}
+
+                        </div>
+                        <div className="max-h-50vh overflow-y-auto">
+                            {importMenuTaskList.filter(t => t.display === 1).map((task, i) => (
+                                <div className="flex items-center justify-between" key={i}>
+                                    <label id={task.id} className="flex items-center w-4/5">
+                                        <div className="bg-gray-300 w-1.5 h-12 rounded-2xl flex-none my-2 mr-2"></div>
+                                        <div className="w-full">
+                                            <p className="font-semibold truncate">{task.name}</p>
+                                            {(task.description) ? <p className="font-medium text-gray-500 text-sm truncate">{task.description}</p> : <p className="font-regular italic text-gray-400 text-sm">No Description</p>}
+                                        </div>
+                                    </label>
+                                    <input
+                                        type="checkbox"
+                                        id={task.id}
+                                        onChange={(e) => handleImportCheck(e.target.value)}
+                                        checked={tasksIDToImport.includes(task.id)}
+                                        value={task.id}
+                                        className="cursor-pointer w-4 h-4 mr-4">
+                                    </input>
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="bg-gray-300 h-0.5 my-4 w-full"></div>
+                        <div className="flex font-medium items-center">
+                            <div>
+                            <p>Tasks Selected: {tasksIDToImport.length}</p>
+                            {(showRequiredSelection) ?
+                             <p className="text-sm italic font-normal text-red-500">Please select at least one task.</p>
+                            : <></>}
+                            </div>
+                            <div className="flex ml-auto gap-4">
+                                <button onClick={() => handlePostingImportedTask(2)} type="button" className="bg-gray-500 rounded px-3 py-1 hover:bg-gray-600 focus:outline-none">
+                                    <p className="text-white text-sm">Save to Drafts</p>
+                                </button>
+
+                                <button onClick={() => handlePostingImportedTask(1)} type="button" className="bg-blue-500 rounded px-3 py-1 hover:bg-blue-600 focus:outline-none">
+                                    <p className="text-white text-sm">Publish Tasks</p>
+                                </button>
+
+                            </div>
+
+                        </div>
+                    </form>
+
+                </div>
+            </div> : <></>}
         </Popup>
+
 
 
 
