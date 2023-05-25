@@ -7,7 +7,7 @@ import SyncLoader from "react-spinners/SyncLoader";
 
 import { AuthContext } from "../contexts/Auth.Context";
 
-const TeacherLogin = () => {
+const Login = () => {
   const router = useRouter();
 
   const { auth, setAuth } = useContext(AuthContext);
@@ -60,11 +60,19 @@ const TeacherLogin = () => {
   //         setLoginFailed(true)
   //     })
   // }
+//   useEffect(() => {
+//     if (auth.isAuthenticated) router.push("/teacher/");
+//   }, [auth]);
 
-  useEffect(() => {
-    if (auth.isAuthenticated) router.push("/teacher/");
-  }, [auth]);
-
+      useEffect(() => {
+        if (auth.isAuthenticated) {
+          if (auth.userType === "teacher") {
+            router.push("/teacher/");
+          } else if (auth.userType === "student") {
+            router.push("/student/test");
+          }
+        }
+      }, [auth]);
   return (
     <div>
       <Head>
@@ -132,4 +140,4 @@ const TeacherLogin = () => {
   );
 };
 
-export default TeacherLogin;
+export default Login;
