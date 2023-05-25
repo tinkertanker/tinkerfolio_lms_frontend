@@ -1,6 +1,5 @@
 import { createContext, useState, useEffect } from "react"
 import axios from "axios"
-
 export const AuthContext = createContext();
 
 const AuthContextProvider = (props) => {
@@ -38,22 +37,23 @@ const AuthContextProvider = (props) => {
     }, [auth.userType])
 
     const getNewAccessToken = async () => {
-        let accessToken = null
+        // let accessToken = null
 
-        await axios.post(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE+'auth/token/refresh/', {
-            refresh: auth.tokens.refresh
-        }, { headers: { "Content-Type": "application/json" } })
-        .then(res => {
-            console.log('new access token extracted')
-            setAuth({...auth, tokens: {
-                refresh: auth.tokens.refresh,
-                access: res.data.access
-            }})
+        // await axios.post(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE+'auth/token/refresh/', {
+        //     refresh: auth.tokens.refresh
+        // }, { headers: { "Content-Type": "application/json" } })
+        // .then(res => {
+        //     console.log('new access token extracted')
+        //     setAuth({...auth, tokens: {
+        //         refresh: auth.tokens.refresh,
+        //         access: res.data.access
+        //     }})
 
-            accessToken = res.data.access
-        })
+        //     accessToken = res.data.access
+        // })
 
-        return accessToken
+        // return accessToken
+        return "new_access_token";
     }
 
     const validateRefreshToken = async (tokens) => {
@@ -75,25 +75,39 @@ const AuthContextProvider = (props) => {
     }
 
     const getAccessToken = async () => {
-        let accessToken = null
+        // let accessToken = null
         
-        await axios.post(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE+'auth/token/verify/',{
-            token: auth.tokens.access
-        }, { headers: { "Content-Type": "application/json" } })
-        .then(res => {
-            console.log('access token is valid')
-            accessToken = auth.tokens.access
-        })
-        .catch(() => {
-            console.log('extracting new access token...')
-            return getNewAccessToken() // This is a promise. Its result is in the next .then
-        })
-        .then((newAccessToken) => {
-            // Only update accessToken if getNewAccessToken() output a new access token
-            if (newAccessToken) accessToken = newAccessToken
-        })
+        // await axios.post(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE+'auth/token/verify/',{
+        //     token: auth.tokens.access
+        // }, { headers: { "Content-Type": "application/json" } })
+        // .then(res => {
+        //     console.log('access token is valid')
+        //     accessToken = auth.tokens.access
+        // })
+        // .catch(() => {
+        //     console.log('extracting new access token...')
+        //     return getNewAccessToken() // This is a promise. Its result is in the next .then
+        // })
+        // .then((newAccessToken) => {
+        //     // Only update accessToken if getNewAccessToken() output a new access token
+        //     if (newAccessToken) accessToken = newAccessToken
+        // })
 
-        return accessToken
+        // return accessToken
+         let accessToken = null;
+
+         await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate asynchronous behavior
+
+         // Check if access token is valid
+         if (auth.tokens && auth.tokens.access) {
+           console.log("access token is valid");
+           accessToken = auth.tokens.access;
+         } else {
+           console.log("extracting new access token...");
+           return getNewAccessToken(); // This is a promise. Its result is in the next .then
+         }
+
+         return accessToken;
     }
 
     return (

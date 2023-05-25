@@ -22,7 +22,7 @@ const Home = () => {
 
             <main>
                 <section className="px-2 sm:px-6 bg-purple-50">
-                    <div className="md:hidden block mt-12" style={{padding:"56.25% 0 0 0", position: "relative"}}><iframe src="https://player.vimeo.com/video/661595554?h=c6aff57f55&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowFullScreen style={{position:"absolute",top:0,left:0,width:"100%",height:"100%"}} title="EchoClass"></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
+                    <div className="md:hidden block mt-12" style={{padding:"56.25% 0 0 0", position: "relative"}}><iframe src="https://player.vimeo.com/video/661595554?h=c6aff57f55&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameBorder="0" allow="autoplay; fullscreen; picture-in-picture" allowFullScreen style={{position:"absolute",top:0,left:0,width:"100%",height:"100%"}} title="EchoClass"></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
 
                     <div className="flex md:flex-row flex-col items-center gap-6 sm:gap-8 max-w-5xl 2xl:max-w-7xl mx-auto pt-8 sm:pt-20 pb-20 sm:pb-28">
                         <div className="flex flex-col items-center md:items-start">
@@ -31,7 +31,7 @@ const Home = () => {
                             <a href="https://forms.gle/k4Gx4T1Ntvw43JJ17" target="_blank" rel="noreferrer" className="py-2 px-4 text-lg font-semibold text-white bg-blue-700 hover:bg-blue-900 rounded">Sign Up for Free</a>
                         </div>
                         <div className="flex-grow md:block hidden">
-                            <div className="" style={{padding:"56.25% 0 0 0", position: "relative"}}><iframe src="https://player.vimeo.com/video/661595554?h=c6aff57f55&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style={{position:"absolute",top:0,left:0,width:"100%",height:"100%"}} title="EchoClass"></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
+                            <div className="" style={{padding:"56.25% 0 0 0", position: "relative"}}><iframe src="https://player.vimeo.com/video/661595554?h=c6aff57f55&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameBorder="0" allow="autoplay; fullscreen; picture-in-picture" allowFullScreen style={{position:"absolute",top:0,left:0,width:"100%",height:"100%"}} title="EchoClass"></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
                         </div>
                     </div>
                 </section>
