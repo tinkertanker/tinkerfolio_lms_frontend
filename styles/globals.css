@@ -2,53 +2,53 @@
 @tailwind components;
 
 .popup {
-    width: 36rem
+  width: 36rem;
 }
 
 @media screen and (max-width: 800px) {
-    .popup {
-        @apply w-72
-    }
+  .popup {
+    @apply w-72;
+  }
 }
 
 .teacher-table {
-    width: 450px
+  width: 450px;
 }
 
 @media screen and (max-width: 640px) {
-    .teacher-table {
-        width: 350px
-    }
+  .teacher-table {
+    width: 350px;
+  }
 }
 @media screen and (min-width: 768px) {
-    .teacher-table {
-        width: 550px
-    }
+  .teacher-table {
+    width: 550px;
+  }
 }
 @media screen and (min-width: 1024px) {
-    .teacher-table {
-        width: 750px
-    }
+  .teacher-table {
+    width: 750px;
+  }
 }
 @media screen and (min-width: 1280px) {
-    .teacher-table {
-        width: 1000px
-    }
+  .teacher-table {
+    width: 1000px;
+  }
 }
 @media screen and (min-width: 1536px) {
-    .teacher-table {
-        width: 1200px
-    }
+  .teacher-table {
+    width: 1200px;
+  }
 }
 @media screen and (min-width: 1750px) {
-    .teacher-table {
-        width: 1500px
-    }
+  .teacher-table {
+    width: 1500px;
+  }
 }
 @media screen and (min-width: 1900px) {
-    .teacher-table {
-        width: 1650px
-    }
+  .teacher-table {
+    width: 1650px;
+  }
 }
 
 @tailwind utilities;

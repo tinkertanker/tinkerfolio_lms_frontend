@@ -1,4 +1,5 @@
 # LMS Frontend
+
 Co-developed with TinkerTanker
 
 ## Overview
@@ -10,5 +11,4 @@ Co-developed with TinkerTanker
 
 ## Auth
 
-We store JWT tokens in localStorage. Before each API call, we first verify if the access token is still valid. The auth handling code can be found in *contexts/Auth.Context.js*.
-
+We store JWT tokens in localStorage. Before each API call, we first verify if the access token is still valid. The auth handling code can be found in _contexts/Auth.Context.js_.
