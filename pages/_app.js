@@ -51,7 +51,6 @@ const Layout = ({ children }) => {
       "max-w-5xl 2xl:max-w-7xl mx-auto py-6 px-6 md:px-0 bg-purple-50 flex flex-row items-center";
   if (router.pathname === "/login")
     navStyle = "bg-white border-b-2 px-6 py-2 flex flex-row items-center";
-  if (router.pathname === "/register") navStyle = "hidden";
   if (router.pathname === "/student") navStyle = "hidden";
   if (router.pathname.includes("/teacher/"))
     navStyle = "fixed w-full bg-white px-8 py-2 flex flex-row items-center";

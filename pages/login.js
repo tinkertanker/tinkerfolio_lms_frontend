@@ -50,7 +50,7 @@ const Login = () => {
       if (auth.userType === "teacher") {
         router.push("/teacher/");
       } else if (auth.userType === "student") {
-        router.push("/student/test");
+        router.push("/student/");
       }
     }
   }, [auth]);
