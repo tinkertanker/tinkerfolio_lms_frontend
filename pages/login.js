@@ -17,35 +17,46 @@ const Login = () => {
   const [invalidInput, setInvalidInput] = useState(false);
 
   const loginUser = (e) => {
-      e.preventDefault()
-      setAuth({...auth, loading: true})
+    e.preventDefault();
+    setAuth({ ...auth, loading: true });
 
-      console.log('ran')
-      axios.post(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE+'auth/token/', {
-          username, password
-      }, { headers: {'Content-Type': 'application/json'}})
-      .then(res => {
-          setAuth({ loading: false, isAuthenticated: true, tokens: res.data, userType: "teacher" })
+    console.log("ran");
+    axios
+      .post(
+        process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "auth/token/",
+        {
+          username,
+          password,
+        },
+        { headers: { "Content-Type": "application/json" } }
+      )
+      .then((res) => {
+        setAuth({
+          loading: false,
+          isAuthenticated: true,
+          tokens: res.data,
+          userType: "teacher",
+        });
       })
-      .catch(res => {
-          console.log('login failed')
-          setAuth({...auth, loading: false})
-          setLoginFailed(true)
-      })
-  }
+      .catch((res) => {
+        console.log("login failed");
+        setAuth({ ...auth, loading: false });
+        setLoginFailed(true);
+      });
+  };
   useEffect(() => {
     if (auth.isAuthenticated) router.push("/teacher/");
   }, [auth]);
 
-      useEffect(() => {
-        if (auth.isAuthenticated) {
-          if (auth.userType === "teacher") {
-            router.push("/teacher/");
-          } else if (auth.userType === "student") {
-            router.push("/student/test");
-          }
-        }
-      }, [auth]);
+  useEffect(() => {
+    if (auth.isAuthenticated) {
+      if (auth.userType === "teacher") {
+        router.push("/teacher/");
+      } else if (auth.userType === "student") {
+        router.push("/student/test");
+      }
+    }
+  }, [auth]);
   return (
     <div>
       <Head>

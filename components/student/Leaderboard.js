@@ -129,7 +129,9 @@ const StudentStats = ({
                 ) : (
                   <h1 className="text-sm text-center whitespace-nowrap">
                     {getRankAboveScore() - profile.score} star
-                    {profile.score - getSecondScore() > 1 ? "s" : ""} behind{" "}
+                    {profile.score - getSecondScore() > 1
+                      ? "s"
+                      : ""} behind{" "}
                     <span className="font-medium">{getStudentAbove()}</span>
                   </h1>
                 )}
