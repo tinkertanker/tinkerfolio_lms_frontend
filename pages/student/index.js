@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import useWebSocket, { ReadyState } from "react-use-websocket";
-
+import Welcome from "../../components/student/Welcome";
 import { AuthContext } from "../../contexts/Auth.Context";
 
 import Dashboard from "../../components/student/Dashboard";
@@ -290,10 +290,11 @@ const StudentHome = () => {
             </div>
 
             <div className="lg:w-7/12 px-2">
-              <div className="lg:h-1/6 pb-3 pt-5 ">
-                <Leaderboard {...{ profile, leaderboard, classroom }} />
+              <div className=" pt-5 ">
+                <Welcome username={profile.name} />
               </div>
               <div className="h-5/6 py-3 overflow-hidden">
+                {/* TASKS PANEL */}
                 <Dashboard
                   {...{
                     tasks,

@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { useRouter } from "next/router";
 import { AuthContext } from "../contexts/Auth.Context";
 
-const OPENROUTES = ["/join", "/login", "/", "/register"];
+const OPENROUTES = ["/join", "/login", "/", "/register", "/student/test"];
 
 const PrivateRoute = ({ children }) => {
   if (typeof window === "undefined") return children;
@@ -18,7 +18,7 @@ const PrivateRoute = ({ children }) => {
     if (auth.userType === "teacher") {
       router.push("/teacher");
     } else {
-      router.push("/student");
+      router.push("/student/");
     }
   }
 
