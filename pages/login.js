@@ -1,7 +1,6 @@
 import Head from "next/head";
 import { useEffect, useState, useContext } from "react";
 import { useRouter } from "next/router";
-import { sampleUsers } from "../utils/sampleData";
 import axios from "axios";
 import SyncLoader from "react-spinners/SyncLoader";
 
@@ -21,58 +20,43 @@ const Login = () => {
     e.preventDefault();
     setAuth({ ...auth, loading: true });
 
-    const user = sampleUsers.find(
-      (user) => user.username === username && user.password === password
-    );
-
-    if (user) {
-      // Simulate a successful login
-      const tokens = { access: "access_token", refresh: "refresh_token" };
-      setAuth({
-        loading: false,
-        isAuthenticated: true,
-        tokens: tokens,
-        userType: user.userType,
+    console.log("ran");
+    axios
+      .post(
+        process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "auth/token/",
+        {
+          username,
+          password,
+        },
+        { headers: { "Content-Type": "application/json" } }
+      )
+      .then((res) => {
+        setAuth({
+          loading: false,
+          isAuthenticated: true,
+          tokens: res.data,
+          userType: "teacher",
+        });
+      })
+      .catch((res) => {
+        console.log("login failed");
+        setAuth({ ...auth, loading: false });
+        setLoginFailed(true);
       });
-    } else {
-      // Simulate a failed login
-      setAuth({ ...auth, loading: false });
-      setLoginFailed(true);
-      console.log("login failed");
-    }
   };
+  useEffect(() => {
+    if (auth.isAuthenticated) router.push("/teacher/");
+  }, [auth]);
 
-  // TODO: FETCH REMOTELY
-  // const loginUser = (e) => {
-  //     e.preventDefault()
-  //     setAuth({...auth, loading: true})
-
-  //     console.log('ran')
-  //     axios.post(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE+'auth/token/', {
-  //         username, password
-  //     }, { headers: {'Content-Type': 'application/json'}})
-  //     .then(res => {
-  //         setAuth({ loading: false, isAuthenticated: true, tokens: res.data, userType: "teacher" })
-  //     })
-  //     .catch(res => {
-  //         console.log('login failed')
-  //         setAuth({...auth, loading: false})
-  //         setLoginFailed(true)
-  //     })
-  // }
-//   useEffect(() => {
-//     if (auth.isAuthenticated) router.push("/teacher/");
-//   }, [auth]);
-
-      useEffect(() => {
-        if (auth.isAuthenticated) {
-          if (auth.userType === "teacher") {
-            router.push("/teacher/");
-          } else if (auth.userType === "student") {
-            router.push("/student/test");
-          }
-        }
-      }, [auth]);
+  useEffect(() => {
+    if (auth.isAuthenticated) {
+      if (auth.userType === "teacher") {
+        router.push("/teacher/");
+      } else if (auth.userType === "student") {
+        router.push("/student/test");
+      }
+    }
+  }, [auth]);
   return (
     <div>
       <Head>
