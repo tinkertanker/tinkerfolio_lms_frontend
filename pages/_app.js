@@ -51,7 +51,6 @@ const Layout = ({ children }) => {
       "max-w-5xl 2xl:max-w-7xl mx-auto py-6 px-6 md:px-0 bg-purple-50 flex flex-row items-center";
   if (router.pathname === "/login")
     navStyle = "bg-white border-b-2 px-6 py-2 flex flex-row items-center";
-  if (router.pathname == "/join") navStyle = "hidden";
   if (router.pathname === "/student") navStyle = "hidden";
   if (router.pathname.includes("/teacher/"))
     navStyle = "fixed w-full bg-white px-8 py-2 flex flex-row items-center";
@@ -87,7 +86,7 @@ const Layout = ({ children }) => {
       </Head>
       <div className={router.pathname === "/" ? "bg-purple-50" : "bg-gray-100"}>
         <nav className={navStyle}>
-          {["/", "/login", "join"].includes(router.pathname) ? (
+          {["/", "/login", "/register"].includes(router.pathname) ? (
             <Link href="/">
               <img
                 className="cursor-pointer"
@@ -110,10 +109,8 @@ const Layout = ({ children }) => {
               >
                 Login
               </Link>
-
-              <Link className="text-gray-500 hover:text-gray-700" href="/join">
-                Join Code
-              </Link>
+              <Link className="text-gray-500 hover:text-gray-700" href="/register">
+Register              </Link>
             </div>
           )}
           {auth.userType === "teacher" && (
