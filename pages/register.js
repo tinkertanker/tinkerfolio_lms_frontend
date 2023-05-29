@@ -4,49 +4,98 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import SyncLoader from "react-spinners/SyncLoader";
 import { AuthContext } from "../contexts/Auth.Context";
+import {useEffect} from "react";
 
 const Register = () => {
   const router = useRouter();
 
   const { auth, setAuth } = useContext(AuthContext);
+  const [loginDetails, setLoginDetails] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [registrationFailed, setRegistrationFailed] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
-    const [userType, setUserType] = useState("");
+  const [firstName, setFirstName] = useState("")
+  const [lastName, setLastName] = useState("")
+  const [email, setEmail] = useState("")
+  const [isLoading, setIsLoading] = useState(false);
+  const [formError, setFormError] = useState(false);
+  const [successfulLogin, setSuccessfulLogin] = useState(false);
+  const [userType, setUserType] = useState("");
 
   const registerUser = (e) => {
-    e.preventDefault();
-    setIsLoading(true);
+  
+     e.preventDefault();
 
-    //   TODO: Create endpoint /auth/register/ in backend
-    axios
-      .post(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "auth/register/", {
-        username,
-        password,
-        userType,
-      })
-      .then((res) => {
-        setIsLoading(false);
-        setAuth({
-          loading: false,
-          isAuthenticated: true,
-          tokens: res.data,
-          userType, 
+    if (userType === "student") {
+      axios
+        .post(
+          process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "auth/token/student_signup/",
+          {
+            username,
+            email,
+            first_name: firstName,
+            last_name: lastName,
+            password,
+          }
+          ,
+          { headers: { "Content-Type": "application/json" } }
+        )
+        .then((res) => {
+          setLoginDetails(res.data);
+          setSuccessfulLogin(true);
+          setIsLoading(false);
+          setAuth({
+            loading: false,
+            isAuthenticated: false,
+            tokens: res.data,
+            userType: "student",
+          });
+          setUserType("student");
+        })
+        .catch((error) => {
+          console.log("failed")
+          setIsLoading(false);
         });
+    } else if (userType === "teacher") {
+      console.log("teacher");
+      axios
+        .post(
+          process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
+            "auth/token/teacher_register/",
+          {
+            username,
+            email,
+            first_name: firstName,
+            last_name: lastName,
+            password,
+          },
+          { headers: { "Content-Type": "application/json" } }
+        )
+        .then((res) => {
+          console.log(res.data);
+          setLoginDetails(res.data);
+          setIsLoading(false);
+          setSuccessfulLogin(true);
+          setAuth({
+            loading: false,
+            isAuthenticated: false,
+            tokens: res.data,
+            userType: "teacher",
+          });
+          setUserType("teacher");
+        })
+        .catch((error) => {
+          setIsLoading(false);
+        });
+    } else {
+      setIsLoading(false);
+      setFormError(true);
+    }
+  }
 
-        if (auth.userType === "teacher") {
-          router.push("/teacher/");
-        } else if (auth.userType === "student") {
-          router.push("/student/");
-        }
-      })
-      .catch((error) => {
-        setIsLoading(false);
-        setRegistrationFailed(true);
-        console.log("registration failed", error);
-      });
-  };
+  useEffect(() => {
+    if (successfulLogin)
+      router.push("/login");
+  }, [successfulLogin]);
 
   return (
     <div>
@@ -57,7 +106,13 @@ const Register = () => {
       <main className="flex flex-col items-center pt-8 px-8 bg-white">
         <h1 className="text-5xl my-6 font-bold">Registration</h1>
 
-        <form onSubmit={registerUser}>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            registerUser(e);
+          }}
+          className=""
+        >
           <label>
             <h2 className="font-semibold text-lg pb-2">Username</h2>
             <input
@@ -84,6 +139,48 @@ const Register = () => {
           </label>
           <br />
           <label>
+            <h2 className="font-semibold text-lg pb-2 mt-4">First name</h2>
+            <input
+              className="outline-none border-b-2 text-xl"
+              type="text"
+              placeholder="Enter first name"
+              name="first_name"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              autoComplete="off"
+            />
+          </label>
+          <br />
+
+          <label>
+            <h2 className="font-semibold text-lg pb-2 mt-4">Last name</h2>
+            <input
+              className="outline-none border-b-2 text-xl"
+              type="text"
+              placeholder="Enter last name"
+              name="last_name"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              autoComplete="off"
+            />
+          </label>
+          <br />
+
+          <label>
+            <h2 className="font-semibold text-lg pb-2 mt-4">Email</h2>
+            <input
+              className="outline-none border-b-2 text-xl"
+              type="email"
+              placeholder="Enter email"
+              name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              autoComplete="off"
+            />
+          </label>
+          <br />
+
+          <label>
             <h2 className="font-semibold text-lg pb-2 mt-4">User Type</h2>
             <select
               className="outline-none border-b-2 text-xl"
@@ -96,7 +193,7 @@ const Register = () => {
             </select>
           </label>
           <br />
-          {registrationFailed && (
+          {!loginDetails && formError && (
             <small className="text-red-500 mt-2">
               Registration failed. Please try again.
             </small>
