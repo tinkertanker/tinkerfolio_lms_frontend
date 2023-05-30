@@ -13,6 +13,7 @@ const Login = () => {
   const [username, setUsername] = useState();
   const [password, setPassword] = useState();
   const [loginFailed, setLoginFailed] = useState();
+  const [userType, setUserType] = useState(""); 
 
   const [invalidInput, setInvalidInput] = useState(false);
 
@@ -27,6 +28,7 @@ const Login = () => {
         {
           username,
           password,
+          userType,
         },
         { headers: { "Content-Type": "application/json" } }
       )
@@ -35,14 +37,19 @@ const Login = () => {
           loading: false,
           isAuthenticated: true,
           tokens: res.data,
-          userType: "teacher",
+          userType: userType,
         });
       })
       .catch((res) => {
         console.log("login failed");
+        console.log(res);
         setAuth({ ...auth, loading: false });
         setLoginFailed(true);
       });
+  };
+
+  const handleUserTypeSelect = (selectedUserType) => {
+    setUserType(selectedUserType);
   };
 
   useEffect(() => {
@@ -50,7 +57,9 @@ const Login = () => {
       if (auth.userType === "teacher") {
         router.push("/teacher/");
       } else if (auth.userType === "student") {
-        router.push("/student/");
+        router.push("/student/test");
+      } else {
+        router.push("/login");
       }
     }
   }, [auth]);
@@ -93,6 +102,26 @@ const Login = () => {
             />
           </label>
           <br />
+          <div className="mb-4 mt-4">
+            <label className="mr-4">
+              <input
+                type="radio"
+                value="teacher"
+                checked={userType === "teacher"}
+                onChange={() => handleUserTypeSelect("teacher")}
+              />{" "}
+              Teacher
+            </label>
+            <label>
+              <input
+                type="radio"
+                value="student"
+                checked={userType === "student"}
+                onChange={() => handleUserTypeSelect("student")}
+              />{" "}
+              Student
+            </label>
+          </div>
           {loginFailed && (
             <small className="text-red-500 mt-2">
               Invalid username or password.
