@@ -13,7 +13,7 @@ const Login = () => {
   const [username, setUsername] = useState();
   const [password, setPassword] = useState();
   const [loginFailed, setLoginFailed] = useState();
-  const [userType, setUserType] = useState(""); 
+  const [userType, setUserType] = useState("");
 
   const [invalidInput, setInvalidInput] = useState(false);
 

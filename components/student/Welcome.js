@@ -25,4 +25,3 @@ const Welcome = ({ username }) => {
 };
 
 export default Welcome;
-

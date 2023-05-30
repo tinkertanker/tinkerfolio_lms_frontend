@@ -366,9 +366,9 @@ const Classroom = () => {
     });
   };
 
-   const handleGoBack = () => {
-     router.push("/teacher");
-   };
+  const handleGoBack = () => {
+    router.push("/teacher");
+  };
 
   const statusColor = {
     Connecting: "text-yellow-600",
