@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import useWebSocket, { ReadyState } from "react-use-websocket";
-import Welcome from "../../components/student/Welcome";
+
 import { AuthContext } from "../../contexts/Auth.Context";
 
 import Dashboard from "../../components/student/Dashboard";
@@ -48,7 +48,6 @@ const StudentHome = () => {
     [ReadyState.CLOSED]: "Disconnected",
     [ReadyState.UNINSTANTIATED]: "Uninstantiated",
   }[readyState];
-  
 
   useEffect(() => {
     if (auth.tokens) {
@@ -83,7 +82,6 @@ const StudentHome = () => {
           setSubmissionStatuses(res.data.submission_statuses);
           setAnnouncements(res.data.announcements);
           setResources(res.data.resources);
-          console.log(res.data.profile); // Log the profile value
         });
 
       axios
@@ -282,7 +280,6 @@ const StudentHome = () => {
                 </div>
                 <div className="h-2/3 py-3 flex flex-col items-center">
                   <AnnouncementsNav {...{ changePage }} />
-                  {/* TODO: CHANGE TO PORTFOLIO BUTTON */}
                   <ResourcesNav {...{ changePage }} />
                 </div>
               </div>
@@ -293,16 +290,10 @@ const StudentHome = () => {
             </div>
 
             <div className="lg:w-7/12 px-2">
-              <div className=" pt-5 ">
-                {profile  && profile.name ? (
-                  <Welcome username={profile.name} />
-                ) : (
-                  <Welcome username="Unnamed" />
-                )}
+              <div className="lg:h-1/6 pb-3 pt-5 ">
+                <Leaderboard {...{ profile, leaderboard, classroom }} />
               </div>
-              {/* TODO: CHANGE TO CLASSES PANEL */}
-              {/* TASKS PANEL */}
-              {/* <div className="h-5/6 py-3 overflow-hidden">
+              <div className="h-5/6 py-3 overflow-hidden">
                 <Dashboard
                   {...{
                     tasks,
@@ -313,7 +304,7 @@ const StudentHome = () => {
                     sendJsonMessage,
                   }}
                 />
-              </div> */}
+              </div>
             </div>
             <div className="lg:w-4/12 pl-2 pr-4">
               <div className="lg:h-1/3 pb-3 pt-5">
@@ -324,9 +315,7 @@ const StudentHome = () => {
                   />
                 </div>
               </div>
-
-              {/* TODO: CHANGE TO PORTFOLIO PREVIEW PANEL */}
-              {/* <div className="lg:h-2/3 py-3">
+              <div className="lg:h-2/3 py-3">
                 <div className="bg-white h-full rounded-2xl px-3 sm:px-5 py-6 xl:p-4 shadow-lg">
                   <ResourcesPreview
                     resources={resources}
@@ -341,7 +330,7 @@ const StudentHome = () => {
                     </button>
                   </div>
                 </div>
-              </div> */}
+              </div>
             </div>
           </div>
         </main>
@@ -549,11 +538,11 @@ const Sidebar = ({
       <div className="my-5 py-2">
         <div>
           <p className="font-bold text-2xl truncate mb-3">
-             {profile.name ? (
-            profile.name
-          ) : (
-            <span className="italic">(Unnamed)</span>
-          )}
+            {profile.name ? (
+              profile.name
+            ) : (
+              <span className="italic">(Unnamed)</span>
+            )}
           </p>
           <div className="flex justify-between items-center mb-1">
             <p className="font-medium text-white bg-gray-500 px-3 py-1 rounded-lg text-sm">
