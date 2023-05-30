@@ -366,6 +366,10 @@ const Classroom = () => {
     });
   };
 
+   const handleGoBack = () => {
+     router.push("/teacher");
+   };
+
   const statusColor = {
     Connecting: "text-yellow-600",
     Connected: "text-green-600",
@@ -401,9 +405,14 @@ const Classroom = () => {
       {classroom && (
         <div className="flex flex-col">
           <div
-            className="fixed w-full flex flex-row gap-4 items-center bg-gray-600 py-2 px-4 sm:px-8"
+            className="fixed w-full flex flex-row gap-4 items-center bg-gray-600 py-1 px-4 sm:px-4"
             style={{ marginTop: "48px" }}
           >
+            <div className="flex flex-row items-center py-1 px-2 rounded bg-gray-500 hover:bg-gray-400 cursor-pointer">
+              <button className="text-white px-2 py-1" onClick={handleGoBack}>
+                Back
+              </button>
+            </div>
             <EditableClassName
               text={classroom.name}
               classroomID={classroom.id}
