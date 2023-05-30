@@ -180,18 +180,28 @@ const Register = () => {
           </label>
           <br />
 
-          <label>
-            <h2 className="font-semibold text-lg pb-2 mt-4">User Type</h2>
-            <select
-              className="outline-none border-b-2 text-xl"
-              name="userType"
-              value={userType}
-              onChange={(e) => setUserType(e.target.value)}
-            >
-              <option value="teacher">Teacher</option>
-              <option value="student">Student</option>
-            </select>
-          </label>
+          <div className="mt-4">
+            <h2 className="font-semibold text-lg pb-2 mt-4">Register as</h2>
+            <label className="mr-4">
+              <input
+                type="radio"
+                value="teacher"
+                checked={userType === "teacher"}
+                onChange={() => setUserType("teacher")}
+              />{" "}
+              Teacher
+            </label>
+            <label>
+              <input
+                type="radio"
+                value="student"
+                checked={userType === "student"}
+                onChange={() => setUserType("student")}
+              />{" "}
+              Student
+            </label>
+          </div>
+
           <br />
           {!loginDetails && formError && (
             <small className="text-red-500 mt-2">
