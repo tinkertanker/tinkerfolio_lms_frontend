@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import SyncLoader from "react-spinners/SyncLoader";
 import { AuthContext } from "../contexts/Auth.Context";
-import {useEffect} from "react";
+import { useEffect } from "react";
 
 const Register = () => {
   const router = useRouter();
@@ -13,30 +13,29 @@ const Register = () => {
   const [loginDetails, setLoginDetails] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [firstName, setFirstName] = useState("")
-  const [lastName, setLastName] = useState("")
-  const [email, setEmail] = useState("")
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [formError, setFormError] = useState(false);
   const [successfulLogin, setSuccessfulLogin] = useState(false);
   const [userType, setUserType] = useState("");
 
   const registerUser = (e) => {
-  
-     e.preventDefault();
+    e.preventDefault();
 
     if (userType === "student") {
       axios
         .post(
-          process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "auth/token/student_signup/",
+          process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
+            "auth/token/student_signup/",
           {
             username,
             email,
             first_name: firstName,
             last_name: lastName,
             password,
-          }
-          ,
+          },
           { headers: { "Content-Type": "application/json" } }
         )
         .then((res) => {
@@ -52,7 +51,7 @@ const Register = () => {
           setUserType("student");
         })
         .catch((error) => {
-          console.log("failed")
+          console.log("failed");
           setIsLoading(false);
         });
     } else if (userType === "teacher") {
@@ -90,11 +89,10 @@ const Register = () => {
       setIsLoading(false);
       setFormError(true);
     }
-  }
+  };
 
   useEffect(() => {
-    if (successfulLogin)
-      router.push("/login");
+    if (successfulLogin) router.push("/login");
   }, [successfulLogin]);
 
   return (
