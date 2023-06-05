@@ -60,7 +60,7 @@ const Register = () => {
       axios
         .post(
           process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-            "auth/token/teacher_register/",
+            "auth/token/teacher_signup/",
           {
             username,
             email,
