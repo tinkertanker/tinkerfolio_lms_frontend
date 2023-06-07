@@ -19,9 +19,8 @@ const StudentTest = () => {
     // Get classrooms
     if (auth.tokens) {
       getAccessToken().then((accessToken) => {
-        //   TO EDIT THE ENDPOINT
         axios
-          .get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/classrooms/", {
+          .get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "student/enroll/", {
             headers: { Authorization: "Bearer " + accessToken },
           })
           .then((res) => {
@@ -41,7 +40,29 @@ const StudentTest = () => {
   };
 
   // TO DO: joinClass
-  // add class to Enrolls and refresh
+  const joinClass = ({ formCode }) => {
+    getAccessToken().then((accessToken) => {
+      console.log("formCode: " + formCode);
+      axios
+        .post(
+          process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "student/enroll/",
+          {
+            code: formCode,
+          },
+          {
+            headers: { Authorization: "Bearer " + accessToken },
+          }
+        )
+        .then((res) => {
+          let classroom = res.data;
+          setClassrooms([...classrooms, classroom]);
+        })
+        .catch((res) => {
+          console.log("Error: " + res);
+        });
+    });
+
+  };
 
   return (
     <div>
@@ -54,7 +75,7 @@ const StudentTest = () => {
       <main className="pt-8 px-8 bg-white">
         <div className="flex flex-row items-center mb-4">
           <h2 className="text-4xl font-bold">Courses</h2>
-          <JoinClassForm />
+          <JoinClassForm {...{ joinClass }} />
         </div>
 
         {classrooms && classrooms.length === 0 && (
@@ -92,9 +113,16 @@ const Classroom = ({ classroom }) => {
   );
 };
 
-const JoinClassForm = ({ createClass }) => {
-  const [formName, setFormName] = useState();
+const JoinClassForm = ({ joinClass }) => {
+  const [formCode, setFormCode] = useState('');
   const [formError, setFormError] = useState(false);
+  const handleJoinClick = () => {
+    if (!formCode) {
+      setFormError(true);
+    } else {
+      joinClass({ formCode });
+    }
+  };
 
   return (
     <Popup
@@ -107,7 +135,7 @@ const JoinClassForm = ({ createClass }) => {
     >
       {(close) => (
         <div className="px-4 py-4 bg-gray-100 max-w-min shadow-lg">
-          <h2 className="text-lg mb-4 text-center">Login to Classroom</h2>
+          <h2 className="text-lg mb-4 text-center">Join Classroom</h2>
           <label>
             <p className="font-semibold">Classroom Code</p>
             <input
@@ -115,10 +143,12 @@ const JoinClassForm = ({ createClass }) => {
               type="text"
               name="class_name"
               autoComplete="off"
-              onChange={(e) => setFormName(e.target.value)}
+              value={formCode}
+              onChange={(e) => setFormCode(e.target.value)}
             />
           </label>
           <br />
+          
           {formError && (
             <p className="text-sm text-red-500">
               Classroom code cannot be empty.
@@ -127,7 +157,7 @@ const JoinClassForm = ({ createClass }) => {
           <button
             className="mt-4 py-1 px-2 bg-blue-500 hover:bg-blue-600 text-white rounded"
             onClick={() => {
-              //   JOIN CLASS
+             handleJoinClick();
             }}
           >
             Join

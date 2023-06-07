@@ -55,7 +55,6 @@ const TeacherHome = () => {
         .then((res) => {
           let classroom = res.data;
           setClassrooms([...classrooms, classroom]);
-          router.push("/teacher/class/" + classroom.code);
         })
         .catch((res) => {
           console.log(res);
