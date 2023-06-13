@@ -97,29 +97,27 @@ const AuthContextProvider = (props) => {
   };
 
   const getAccessToken = async () => {
-    // TODO: FETCH REMOTELY
     let accessToken = null;
-
-    await axios
-      .post(
+    try {
+      await axios.post(
         process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "auth/token/verify/",
         {
           token: auth.tokens.access,
         },
         { headers: { "Content-Type": "application/json" } }
-      )
-      .then((res) => {
-        console.log("access token is valid");
-        accessToken = auth.tokens.access;
-      })
-      .catch(() => {
-        console.log("extracting new access token...");
-        return getNewAccessToken(); // This is a promise. Its result is in the next .then
-      })
-      .then((newAccessToken) => {
-        // Only update accessToken if getNewAccessToken() output a new access token
-        if (newAccessToken) accessToken = newAccessToken;
-      });
+      );
+
+      console.log("access token is valid");
+      accessToken = auth.tokens.access;
+    } catch (error) {
+      console.log("extracting new access token...");
+      const newAccessToken = await getNewAccessToken(); // Await the promise
+
+      // Only update accessToken if getNewAccessToken() output a new access token
+      if (newAccessToken) {
+        accessToken = newAccessToken;
+      }
+    }
 
     return accessToken;
   };
