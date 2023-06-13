@@ -100,7 +100,7 @@ const Classroom = ({ classroom }) => {
       <div className="py-2 px-2 border-b-2 border-gray-200 hover:bg-gray-100 cursor-pointer">
         <div className="flex flex-row items-center">
           <p className="text-lg font-semibold mr-4">
-            {classroom.classroom.name}
+            {classroom?.classroom?.name}
           </p>
           {classroom.status === 2 && (
             <p className="py-0.5 px-1 text-sm text-white bg-red-500 rounded">
@@ -108,7 +108,7 @@ const Classroom = ({ classroom }) => {
             </p>
           )}
         </div>
-        <p className="text-gray-500">Code: {classroom.classroom.code}</p>
+        <p className="text-gray-500">Code: {classroom?.classroom?.code}</p>
       </div>
     </Link>
   );
