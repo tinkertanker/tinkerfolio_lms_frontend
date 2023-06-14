@@ -99,13 +99,13 @@ const Home = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
               <Testimonial
                 quote='"EchoClass helps our instructors understand how students are doing during a lesson."'
-                imgPath="yj_testimonials.jfif"
+                imgPath="/yj_testimonials.jfif"
                 name="YJ Soon"
                 position="CEO @ Tinkertanker"
               />
               <Testimonial
                 quote='"EchoClass tells me what my students are struggling with so I can tailor my teaching for them."'
-                imgPath="zj_testimonials.jfif"
+                imgPath="/zj_testimonials.jfif"
                 name="Jane Zhang"
                 position="Lecturer @ Republic Polytechnic"
               />
@@ -120,7 +120,7 @@ const Home = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-16 justify-items-center">
               <Feature
-                imgPath="timer_lp.png"
+                imgPath="/timer_lp.png"
                 title={
                   <h3 className="text-xl sm:text-2xl font-semibold">
                     Setup a class in{" "}
@@ -130,7 +130,7 @@ const Home = () => {
                 description="Spend your time investing in students, instead of setting up a piece of tech."
               />
               <Feature
-                imgPath="emojis_lp.png"
+                imgPath="/emojis_lp.png"
                 title={
                   <h3 className="text-xl sm:text-2xl font-semibold">
                     Student Status
@@ -139,7 +139,7 @@ const Home = () => {
                 description="Are my students following the lesson? Students can indicate their status with emojis."
               />
               <Feature
-                imgPath="tasks_lp.png"
+                imgPath="/tasks_lp.png"
                 title={
                   <h3 className="text-xl sm:text-2xl font-semibold">
                     Receive Task Submissions
@@ -148,7 +148,7 @@ const Home = () => {
                 description="Students can submit their work, while you can give grades and feedback — all in real-time"
               />
               <Feature
-                imgPath="ranking_lp.png"
+                imgPath="/ranking_lp.png"
                 title={
                   <h3 className="text-xl sm:text-2xl font-semibold">
                     Rankings

@@ -90,7 +90,7 @@ const Layout = ({ children }) => {
             <Link href="/">
               <img
                 className="cursor-pointer"
-                src="main_logo_1.png"
+                src="/main_logo_1.png"
                 height="100px"
                 width="100px"
               />
