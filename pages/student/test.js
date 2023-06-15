@@ -39,9 +39,8 @@ const StudentTest = () => {
     );
   };
 
-  const joinClass = ({ formCode }) => {
+  const joinClass = ({ formCode, setFormError }) => {
     getAccessToken().then((accessToken) => {
-      console.log("formCode: " + formCode);
       axios
         .post(
           process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "student/enroll/",
@@ -57,7 +56,8 @@ const StudentTest = () => {
           setClassrooms([...classrooms, classroom]);
         })
         .catch((res) => {
-          console.log("Error: " + res);
+          console.log(res);
+          setFormError(true);
         });
     });
   };
@@ -121,7 +121,7 @@ const JoinClassForm = ({ joinClass }) => {
     if (!formCode) {
       setFormError(true);
     } else {
-      joinClass({ formCode });
+      joinClass({ formCode, setFormError });
     }
   };
 
@@ -152,7 +152,7 @@ const JoinClassForm = ({ joinClass }) => {
 
           {formError && (
             <p className="text-sm text-red-500">
-              Classroom code cannot be empty.
+              Error joining classroom. Please try again.
             </p>
           )}
           <button
