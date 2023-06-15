@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import CustomPopup from "../../utils/CustomPopup";
 
+// leaderboard is the list of students in the classroom
 const Leaderboard = ({ profile, leaderboard, classroom }) => {
   const getLeaderboard = () => {
     return leaderboard.sort((a, b) => (a.score <= b.score ? 1 : -1));
