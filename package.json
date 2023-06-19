@@ -1,5 +1,5 @@
 {
-  "name": "lms_frontend",
+  "name": "lms",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -26,5 +26,9 @@
     "postcss": "^8.3.0",
     "prettier": "2.8.8",
     "tailwindcss": "^2.1.2"
-  }
+  },
+  "main": "index.js",
+  "repository": "https://github.com/tinkertanker/LMS_Frontend.git",
+  "author": "sltsheryl <sltsheryl@gmail.com>",
+  "license": "MIT"
 }
