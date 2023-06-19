@@ -49,59 +49,55 @@ const Course = () => {
   }[readyState];
 
     useEffect(() => {
-        const { code } = router.query;
-        if (!code) return;
-        
-        if (auth.tokens) {
+      const { code } = router.query;
+      if (!code) return;
+
+      if (auth.tokens) {
         setWSURL(
-            process.env.NEXT_PUBLIC_BACKEND_WS_BASE +
+          process.env.NEXT_PUBLIC_BACKEND_WS_BASE +
             "ws/student/?token=" +
-            auth.tokens.access 
+            auth.tokens.access +
+            "&code=" +
+            code
         );
-        }
-  }, [auth.tokens]);
+      } else return;
 
-  useEffect(() => {
-    if (auth.tokens) {
-      setWSURL(
-        process.env.NEXT_PUBLIC_BACKEND_WS_BASE +
-          "ws/student/?token=" +
-          auth.tokens.access
-      );
-    } else return;
-
-    // Get initial data
-    getAccessToken().then((accessToken) => {
-      axios
-        .get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "student/initial/", {
-          headers: { Authorization: "Bearer " + accessToken },
-          params: { code: code },
-        })
-        .then((res) => {
-          setProfile(res.data.profile);
-          setClassroom(res.data.classroom);
-          setTasks(res.data.tasks);
-          setSubmissions(res.data.submissions);
-          setSubmissionStatuses(res.data.submission_statuses);
-          setAnnouncements(res.data.announcements);
-          setResources(res.data.resources);
-        });
-
-      axios
-        .get(
-          process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "student/leaderboard",
-          {
+      // Get initial data
+      getAccessToken().then((accessToken) => {
+        axios
+          .get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "student/initial/", {
             headers: { Authorization: "Bearer " + accessToken },
-          }
-        )
-        .then((res) => {
-          setLeaderboard(res.data);
-        });
-    });
-  }, []);
+            params: { code: code },
+          })
+          .then((res) => {
+            console.log("PROFILE: " + res.data.profile);
+            console.log("CLASSROOM: " + res.data.classroom);
+            setProfile(res.data.profile);
+            setClassroom(res.data.classroom);
+            setTasks(res.data.tasks);
+            setSubmissions(res.data.submissions);
+            setSubmissionStatuses(res.data.submission_statuses);
+            setAnnouncements(res.data.announcements);
+            setResources(res.data.resources);
+          });
+
+        axios
+          .get(
+            process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "student/leaderboard",
+            {
+              headers: { Authorization: "Bearer " + accessToken },
+              params: { code: code },
+            }
+          )
+          .then((res) => {
+            setLeaderboard(res.data);
+          });
+      });
+    }, []);
 
   //Update leaderboard and profile data every 30 seconds
   useEffect(() => {
+    const { code } = router.query;
     const interval = setInterval(() => {
       getAccessToken().then((accessToken) => {
         axios
@@ -109,6 +105,7 @@ const Course = () => {
             process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "student/leaderboard",
             {
               headers: { Authorization: "Bearer " + accessToken },
+              params: { code: code },
             }
           )
           .then((res) => {
@@ -118,6 +115,7 @@ const Course = () => {
         axios
           .get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "student/initial/", {
             headers: { Authorization: "Bearer " + accessToken },
+            params: { code: code },
           })
           .then((res) => {
             setProfile((profile) => res.data.profile);
@@ -147,6 +145,7 @@ const Course = () => {
               "/",
             {
               headers: { Authorization: "Bearer " + accessToken },
+              param: { code: code },
             }
           )
           .then((res) => {
@@ -263,7 +262,7 @@ const Course = () => {
                   className="focus:outline-none font-bold text-2xl mx-2 cursor-pointer text-gray-600"
                   onClick={() => toggleSidebar()}
                 >
-                  <img src="hamburger_menu_icon.svg" width="30px" />
+                  <img src="../../hamburger_menu_icon.svg" width="30px" />
                 </button>
                 <div
                   className={`hidden flex flex-row items-center py-1 px-4  ${statusColor[connectionStatus]}`}
@@ -272,7 +271,7 @@ const Course = () => {
                   <p>{connectionStatus}</p>
                 </div>
               </div>
-              <img src="linear_logo.svg" className="w-32 sm:w-40" />
+              <img src="../../linear_logo.svg" className="w-32 sm:w-40" />
             </div>
             <div></div>
 
@@ -288,6 +287,7 @@ const Course = () => {
               </div>
 
               <div className="h-1/6 py-3 flex items-center justify-center">
+                {/* Problematic */}
                 <Profile {...{ profile, classroom }} />
               </div>
             </div>
@@ -420,7 +420,7 @@ const Profile = ({ profile, classroom }) => {
     <Popup
       trigger={
         <div className="bg-white rounded-2xl shadow-lg hover:bg-gray-100 cursor-pointer p-4">
-          <img src="/profile_icon.svg" width="40px" />
+          <img src="../../profile_icon.svg" width="40px" />
         </div>
       }
       position="right bottom"
@@ -450,7 +450,7 @@ const Profile = ({ profile, classroom }) => {
         <div className="border-t border-gray-400"></div>
         <button className="mt-2 py-2 w-full outline-none focus:outline-none hover:bg-gray-200 cursor-pointer rounded-lg ">
           <div onClick={logout} className="flex items-center px-2">
-            <img src="/logout_icon.svg" width="20px" />
+            <img src="../../logout_icon.svg" width="20px" />
             <p className="font-semibold ml-3 text-red-500">Log Out</p>
           </div>
         </button>
@@ -467,7 +467,7 @@ const AnnouncementsNav = ({ changePage }) => {
           onClick={() => changePage("Announcements")}
           className="bg-white rounded-t-2xl hover:bg-gray-100 cursor-pointer px-4 py-6"
         >
-          <img src="/megaphone_icon.svg" width="40px" />
+          <img src="../../megaphone_icon.svg" width="40px" />
         </div>
       }
       position="right"
@@ -489,7 +489,7 @@ const ResourcesNav = ({ changePage }) => {
           onClick={() => changePage("Resources")}
           className="bg-white rounded-b-2xl hover:bg-gray-100 cursor-pointer px-4 py-6 shadow-lg"
         >
-          <img src="/folder_icon.svg" width="40px" />
+          <img src="../../folder_icon.svg" width="40px" />
         </div>
       }
       position="right"
@@ -567,7 +567,7 @@ const Sidebar = ({
             className="py-3 px-1 w-full outline-none focus:outline-none hover:bg-gray-200 cursor-pointer rounded-lg "
           >
             <div className="flex items-center px-2">
-              <img src="/megaphone_icon.svg" width="20px" />
+              <img src="../../megaphone_icon.svg" width="20px" />
               <p className="font-semibold ml-3">Announcements</p>
             </div>
           </button>
@@ -588,7 +588,7 @@ const Sidebar = ({
             className="py-3 px-1 w-full outline-none focus:outline-none hover:bg-gray-200 cursor-pointer rounded-lg "
           >
             <div className="flex items-center px-2">
-              <img src="/logout_icon.svg" width="20px" />
+              <img src="../../logout_icon.svg" width="20px" />
               <p className="font-semibold ml-3 text-red-500">Log Out</p>
             </div>
           </button>

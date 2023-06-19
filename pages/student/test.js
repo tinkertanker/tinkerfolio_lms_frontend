@@ -95,8 +95,7 @@ export default StudentTest;
 
 const Classroom = ({ classroom }) => {
   return (
-    // TODO: edit link once done with each classroom page
-    <Link href={"/student/class/" + classroom.code}>
+    <Link href={"/student/class/" + classroom?.classroom?.code}>
       <div className="py-2 px-2 border-b-2 border-gray-200 hover:bg-gray-100 cursor-pointer">
         <div className="flex flex-row items-center">
           <p className="text-lg font-semibold mr-4">
