@@ -15,12 +15,13 @@ const Leaderboard = ({ profile, leaderboard, classroom }) => {
     const RankAbove =
       leaderboard
         .sort((a, b) => (a.score <= b.score ? 1 : -1))
-        .findIndex((student) => student.index === profile.index) - 1;
-    if (sortedLeaderboard[RankAbove].name.length > 0) {
-      if (sortedLeaderboard[RankAbove].name.length > 11) {
-        return sortedLeaderboard[RankAbove].name.slice(0, 10) + "...";
+        .findIndex((student) => student.studentIndex === profile.studentIndex) -
+      1;
+    if (sortedLeaderboard[RankAbove].studentUserID.length > 0) {
+      if (sortedLeaderboard[RankAbove].studentUserID.length > 11) {
+        return sortedLeaderboard[RankAbove].studentUserID.slice(0, 10) + "...";
       } else {
-        return sortedLeaderboard[RankAbove].name;
+        return sortedLeaderboard[RankAbove].studentUserID;
       }
     } else {
       return <span className="italic">(unnamed)</span>;
@@ -32,11 +33,11 @@ const Leaderboard = ({ profile, leaderboard, classroom }) => {
     const sortedLeaderboard = leaderboard.sort((a, b) =>
       a.score <= b.score ? 1 : -1
     );
-    if (sortedLeaderboard[1].name.length > 0) {
-      if (sortedLeaderboard[1].name.length > 11) {
-        return sortedLeaderboard[1].name.slice(0, 10) + "...";
+    if (sortedLeaderboard[1].studentUserID.length > 0) {
+      if (sortedLeaderboard[1].studentUserID.length > 11) {
+        return sortedLeaderboard[1].studentUserID.slice(0, 10) + "...";
       } else {
-        return sortedLeaderboard[1].name;
+        return sortedLeaderboard[1].studentUserID;
       }
     } else {
       return <span className="italic">(unnamed)</span>;
@@ -49,8 +50,9 @@ const Leaderboard = ({ profile, leaderboard, classroom }) => {
       a.score <= b.score ? 1 : -1
     );
     const RankAbove =
-      getLeaderboard().findIndex((student) => student.index === profile.index) -
-      1;
+      getLeaderboard().findIndex(
+        (student) => student.studentIndex === profile.studentIndex
+      ) - 1;
     return sortedLeaderboard[RankAbove].score;
   };
 
@@ -96,7 +98,7 @@ const StudentStats = ({
         <div className="flex items-center justify-between bg-blue-600 hover:bg-blue-700 py-5 sm:px-6 rounded-2xl shadow-lg cursor-pointer h-full min-h-full">
           {classroom && (
             <h1 className="text-3xl font-bold pl-3 sm:pl-5 text-white ">
-              {classroom.name}
+              {classroom.studentUserID}
             </h1>
           )}
 
@@ -113,14 +115,14 @@ const StudentStats = ({
                   <h1 className="font-semibold text-2xl xl:text-3xl">
                     #
                     {getLeaderboard().findIndex(
-                      (student) => student.index === profile.index
+                      (student) => student.studentIndex === profile.studentIndex
                     ) + 1}
                   </h1>
                 </div>
               </div>
               <div className="mt-2 xl:mt-3">
                 {getLeaderboard().findIndex(
-                  (student) => student.index === profile.index
+                  (student) => student.studentIndex === profile.studentIndex
                 ) === 0 ? (
                   <h1 className="text-sm text-center whitespace-nowrap">
                     {profile.score - getSecondScore()} star
@@ -170,7 +172,7 @@ const StudentStats = ({
             {getLeaderboard().map((student, i) => (
               <div
                 className={`flex items-center my-3 rounded-xl justify-between ${
-                  profile.index === student.index
+                  profile.studentIndex === student.studentIndex
                     ? "bg-blue-600"
                     : "bg-gray-100"
                 }`}
@@ -191,11 +193,12 @@ const StudentStats = ({
                   </h2>
                   <p
                     className={`truncate w-40 sm:w-52 mr-5 ${
-                      profile.index === student.index && "text-white"
+                      profile.studentIndex === student.studentIndex &&
+                      "text-white"
                     }`}
                   >
-                    {student.name.length > 0 ? (
-                      student.name
+                    {student.studentUserID.length > 0 ? (
+                      student.studentUserID
                     ) : (
                       <span className="italic">(Unnamed)</span>
                     )}
@@ -203,7 +206,7 @@ const StudentStats = ({
                 </div>
                 <p
                   className={`font-medium text-xl sm:text-2xl mr-3 sm:mx-5 ${
-                    profile.index === student.index
+                    profile.studentIndex === student.studentIndex
                       ? "text-white"
                       : "text-blue-600"
                   }`}
