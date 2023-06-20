@@ -98,7 +98,7 @@ const StudentStats = ({
         <div className="flex items-center justify-between bg-blue-600 hover:bg-blue-700 py-5 sm:px-6 rounded-2xl shadow-lg cursor-pointer h-full min-h-full">
           {classroom && (
             <h1 className="text-3xl font-bold pl-3 sm:pl-5 text-white ">
-              {classroom.studentUserID}
+              {classroom.name}
             </h1>
           )}
 
