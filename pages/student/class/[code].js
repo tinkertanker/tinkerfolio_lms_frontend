@@ -20,6 +20,7 @@ const Course = () => {
   const { auth, getAccessToken } = useContext(AuthContext);
 
   const [profile, setProfile] = useState();
+  const [name, setName] = useState();
   const [classroom, setClassroom] = useState();
   const [tasks, setTasks] = useState();
   const [submissionStatuses, setSubmissionStatuses] = useState();
@@ -73,6 +74,8 @@ const Course = () => {
             console.log("PROFILE: " + res.data.profile);
             console.log("CLASSROOM: " + res.data.classroom);
             setProfile(res.data.profile);
+            setName(res.data.name)
+            console.log(res.data.name)
             setClassroom(res.data.classroom);
             setTasks(res.data.tasks);
             setSubmissions(res.data.submissions);
@@ -288,7 +291,7 @@ const Course = () => {
 
               <div className="h-1/6 py-3 flex items-center justify-center">
                 {/* Problematic */}
-                <Profile {...{ profile, classroom }} />
+                <Profile {...{ profile, classroom, name }} />
               </div>
             </div>
 
@@ -399,7 +402,7 @@ const Course = () => {
 
 export default Course;
 
-const Profile = ({ profile, classroom }) => {
+const Profile = ({ name, profile, classroom }) => {
   const { auth, setAuth } = useContext(AuthContext);
   const logout = () => {
     setAuth({ ...auth, loading: true });
@@ -428,8 +431,8 @@ const Profile = ({ profile, classroom }) => {
     >
       <div className="bg-white w-56 ml-6 p-5 shadow-xl rounded-2xl ">
         <p className="font-semibold text-lg mb-2 truncate">
-          {profile.name ? (
-            profile.name
+          {name ? (
+            name
           ) : (
             <span className="italic">(Unnamed)</span>
           )}
@@ -438,7 +441,7 @@ const Profile = ({ profile, classroom }) => {
           <p className="font-medium text-white bg-gray-500 px-3 py-1 rounded-lg text-sm">
             Index:
           </p>
-          <p className="font-medium">{profile.index}</p>
+          <p className="font-medium">{profile.studentIndex}</p>
         </div>
 
         <div className="flex justify-between items-center mb-2">

@@ -25,6 +25,7 @@ const AuthContextProvider = (props) => {
             userType: userType,
           });
         } else {
+          console.log("logging out")
           setAuth({ loading: false, isAuthenticated: false, tokens: null });
           localStorage.removeItem("tokens");
           localStorage.removeItem("userType");
@@ -46,7 +47,6 @@ const AuthContextProvider = (props) => {
   }, [auth.userType]);
 
   const getNewAccessToken = async () => {
-    // TODO: FETCH REMOTELY
     let accessToken = null;
 
     await axios

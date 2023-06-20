@@ -17,11 +17,11 @@ const Leaderboard = ({ profile, leaderboard, classroom }) => {
         .sort((a, b) => (a.score <= b.score ? 1 : -1))
         .findIndex((student) => student.studentIndex === profile.studentIndex) -
       1;
-    if (sortedLeaderboard[RankAbove].studentUserID.length > 0) {
-      if (sortedLeaderboard[RankAbove].studentUserID.length > 11) {
-        return sortedLeaderboard[RankAbove].studentUserID.slice(0, 10) + "...";
+    if (sortedLeaderboard[RankAbove].name.length > 0) {
+      if (sortedLeaderboard[RankAbove].name.length > 11) {
+        return sortedLeaderboard[RankAbove].name.slice(0, 10) + "...";
       } else {
-        return sortedLeaderboard[RankAbove].studentUserID;
+        return sortedLeaderboard[RankAbove].name;
       }
     } else {
       return <span className="italic">(unnamed)</span>;
@@ -33,11 +33,11 @@ const Leaderboard = ({ profile, leaderboard, classroom }) => {
     const sortedLeaderboard = leaderboard.sort((a, b) =>
       a.score <= b.score ? 1 : -1
     );
-    if (sortedLeaderboard[1].studentUserID.length > 0) {
-      if (sortedLeaderboard[1].studentUserID.length > 11) {
-        return sortedLeaderboard[1].studentUserID.slice(0, 10) + "...";
+    if (sortedLeaderboard[1].name.length > 0) {
+      if (sortedLeaderboard[1].name.length > 11) {
+        return sortedLeaderboard[1].name.slice(0, 10) + "...";
       } else {
-        return sortedLeaderboard[1].studentUserID;
+        return sortedLeaderboard[1].name;
       }
     } else {
       return <span className="italic">(unnamed)</span>;
@@ -98,7 +98,7 @@ const StudentStats = ({
         <div className="flex items-center justify-between bg-blue-600 hover:bg-blue-700 py-5 sm:px-6 rounded-2xl shadow-lg cursor-pointer h-full min-h-full">
           {classroom && (
             <h1 className="text-3xl font-bold pl-3 sm:pl-5 text-white ">
-              {classroom.studentUserID}
+              {classroom.name}
             </h1>
           )}
 
@@ -197,8 +197,8 @@ const StudentStats = ({
                       "text-white"
                     }`}
                   >
-                    {student.studentUserID.length > 0 ? (
-                      student.studentUserID
+                    {student.name.length > 0 ? (
+                      student.name
                     ) : (
                       <span className="italic">(Unnamed)</span>
                     )}
