@@ -290,7 +290,6 @@ const Course = () => {
               </div>
 
               <div className="h-1/6 py-3 flex items-center justify-center">
-                {/* Problematic */}
                 <Profile {...{ profile, classroom, name }} />
               </div>
             </div>
