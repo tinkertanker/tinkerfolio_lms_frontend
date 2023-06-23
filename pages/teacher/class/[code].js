@@ -175,7 +175,7 @@ const Classroom = () => {
           )
           .then((res) => {
             setSubmissions(res.data);
-            console.log(res.data)
+            console.log("submissions fetched ", res.data)
           });
       });
 
