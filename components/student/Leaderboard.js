@@ -9,23 +9,40 @@ const Leaderboard = ({ profile, leaderboard, classroom }) => {
 
   //Get name of the student one rank above
   const getStudentAbove = () => {
-    const sortedLeaderboard = leaderboard.sort((a, b) =>
-      a.score <= b.score ? 1 : -1
-    );
-    const RankAbove =
-      leaderboard
-        .sort((a, b) => (a.score <= b.score ? 1 : -1))
-        .findIndex((student) => student.studentIndex === profile.studentIndex) -
-      1;
-    if (sortedLeaderboard[RankAbove].name.length > 0) {
-      if (sortedLeaderboard[RankAbove].name.length > 11) {
-        return sortedLeaderboard[RankAbove].name.slice(0, 10) + "...";
-      } else {
-        return sortedLeaderboard[RankAbove].name;
+    // const sortedLeaderboard = leaderboard.sort((a, b) =>
+    //   a.score <= b.score ? 1 : -1
+    // );
+    const sortedLeaderboard = getLeaderboard();
+    const rankAboveIndex = sortedLeaderboard.findIndex(
+      (student) => student.studentIndex === profile.studentIndex) - 1;
+    
+    if (rankAboveIndex >= 0) {
+      const rankAboveStudent = sortedLeaderboard[rankAboveIndex];
+      if (rankAboveStudent.name.length > 0) {
+        if (rankAboveStudent.name.length > 11) {
+          return rankAboveStudent.name.slice(0, 10) + "...";
+        } else {
+          return rankAboveStudent.name;
+        }
       }
-    } else {
-      return <span className="italic">(unnamed)</span>;
     }
+
+    return <span className="italic">(unnamed)</span>;
+
+    // const RankAbove =
+    //   leaderboard
+    //     .sort((a, b) => (a.score <= b.score ? 1 : -1))
+    //     .findIndex((student) => student.studentIndex === profile.studentIndex) -
+    //   1;
+    // if (sortedLeaderboard[RankAbove].name.length > 0) {
+    //   if (sortedLeaderboard[RankAbove].name.length > 11) {
+    //     return sortedLeaderboard[RankAbove].name.slice(0, 10) + "...";
+    //   } else {
+    //     return sortedLeaderboard[RankAbove].name;
+    //   }
+    // } else {
+    //   return <span className="italic">(unnamed)</span>;
+    // }
   };
 
   //Get name of the student in second place
@@ -33,11 +50,11 @@ const Leaderboard = ({ profile, leaderboard, classroom }) => {
     const sortedLeaderboard = leaderboard.sort((a, b) =>
       a.score <= b.score ? 1 : -1
     );
-    if (sortedLeaderboard[1].name.length > 0) {
+    if (sortedLeaderboard.length > 1) {
       if (sortedLeaderboard[1].name.length > 11) {
         return sortedLeaderboard[1].name.slice(0, 10) + "...";
       } else {
-        return sortedLeaderboard[1].name;
+        return null;
       }
     } else {
       return <span className="italic">(unnamed)</span>;
@@ -46,14 +63,23 @@ const Leaderboard = ({ profile, leaderboard, classroom }) => {
 
   //Get score of the student one rank above
   const getRankAboveScore = () => {
-    const sortedLeaderboard = leaderboard.sort((a, b) =>
-      a.score <= b.score ? 1 : -1
-    );
-    const RankAbove =
-      getLeaderboard().findIndex(
+    const sortedLeaderboard = getLeaderboard();
+    const rankAboveIndex =
+      sortedLeaderboard.findIndex(
         (student) => student.studentIndex === profile.studentIndex
       ) - 1;
-    return sortedLeaderboard[RankAbove].score;
+
+    if (rankAboveIndex >= 0) {
+      return sortedLeaderboard[rankAboveIndex].score;
+    }
+
+    return null;
+
+    // const RankAbove =
+    //   getLeaderboard().findIndex(
+    //     (student) => student.studentIndex === profile.studentIndex
+    //   ) - 1;
+    // return sortedLeaderboard[RankAbove].score;
   };
 
   //Get score of student in second place
@@ -61,7 +87,10 @@ const Leaderboard = ({ profile, leaderboard, classroom }) => {
     const sortedLeaderboard = leaderboard.sort((a, b) =>
       a.score <= b.score ? 1 : -1
     );
-    return sortedLeaderboard[1].score;
+    if (sortedLeaderboard.length > 1) {
+      return sortedLeaderboard[1].score;
+    }
+    return null;
   };
 
   if (!profile || !leaderboard) return null;
@@ -123,18 +152,20 @@ const StudentStats = ({
               <div className="mt-2 xl:mt-3">
                 {getLeaderboard().findIndex(
                   (student) => student.studentIndex === profile.studentIndex
-                ) === 0 ? (
+                ) === 1 ? (
                   <h1 className="text-sm text-center whitespace-nowrap">
                     {profile.score - getSecondScore()} star
-                    {profile.score - getSecondScore() > 1 ? "s" : ""} ahead of{" "}
+                    {profile.score - getSecondScore() > 1 ? "s" : ""} ahead of {" "}
                     <span className="font-medium">{getSecondStudent()}</span>
+                  </h1>
+                ) : getLeaderboard().length === 1 ? (
+                  <h1 className="text-sm text-center whitespace-nowrap">
+              
                   </h1>
                 ) : (
                   <h1 className="text-sm text-center whitespace-nowrap">
                     {getRankAboveScore() - profile.score} star
-                    {profile.score - getSecondScore() > 1
-                      ? "s"
-                      : ""} behind{" "}
+                    {profile.score - getSecondScore() > 1 ? "s" : ""} behind{" "}
                     <span className="font-medium">{getStudentAbove()}</span>
                   </h1>
                 )}
