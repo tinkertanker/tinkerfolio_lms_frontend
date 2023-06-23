@@ -234,10 +234,10 @@ const Dashboard = ({
 
     // add stars to student's score
     const studentID = submissions.filter((sub) => sub.id === id)[0].student;
-    let name = tableNames.filter((name) => name.id === studentID)[0];
+    let name = tableNames.filter((name) => name.studentUserID === studentID)[0];
     name.score += stars;
     setTableNames([
-      ...tableNames.filter((name) => name.id !== studentID),
+      ...tableNames.filter((name) => name.studentUserID !== studentID),
       name,
     ]);
   };
@@ -994,15 +994,15 @@ const Submission = ({
   submissions = submissions
     .filter((s) => s.task === task.id)
     .sort((a, b) => a.student - b.student);
-  console.log(submissions.task);
+
   console.log(submissions);
 
   let submittedStudents = [];
   for (let i = 0; i < submissions.length; i++) {
     submittedStudents.push(submissions[i].student);
   }
-  const students = tableNames.filter((s) => submittedStudents.includes(s.id));
-  console.log(students);
+  const students = tableNames.filter((s) => submittedStudents.includes(s.studentUserID));
+  console.log("student: ", students);
 
   const [submission, setSubmission] = useState(sub);
   const [student, setStudent] = useState(sp);
