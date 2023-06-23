@@ -556,8 +556,6 @@ const Dashboard = ({
                 const sp = tableNames.filter((tn) => tn.studentIndex === index)[0];
                 if (typeof sp === "undefined") return;
                   const student_id = sp.studentUserID;
-                  console.log(sp)
-                  console.log(sp.name)
 
                 return (
                   <tr className="border-2" key={i}>
@@ -598,7 +596,6 @@ const Dashboard = ({
                         let sub = submissions.filter(
                           (s) => s.task === task.id && s.student === student_id
                         )[0];
-                        console.log("SUBMISSION: ", sub);
                         return sub ? (
                           <Submission
                             {...{
@@ -990,19 +987,15 @@ const Submission = ({
   addReview,
   sendJsonMessage,
 }) => {
-  console.log(submissions);
   submissions = submissions
     .filter((s) => s.task === task.id)
     .sort((a, b) => a.student - b.student);
-
-  console.log(submissions);
 
   let submittedStudents = [];
   for (let i = 0; i < submissions.length; i++) {
     submittedStudents.push(submissions[i].student);
   }
   const students = tableNames.filter((s) => submittedStudents.includes(s.studentUserID));
-  console.log("student: ", students);
 
   const [submission, setSubmission] = useState(sub);
   const [student, setStudent] = useState(sp);
