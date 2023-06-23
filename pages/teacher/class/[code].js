@@ -147,7 +147,7 @@ const Classroom = () => {
     getAccessToken().then((accessToken) => {
       axios
         .get(
-          process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/student_profiles/",
+          process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/student_list/",
           {
             headers: { Authorization: "Bearer " + accessToken },
             params: { code: classroom.code },
@@ -155,8 +155,10 @@ const Classroom = () => {
         )
         .then((res) => {
           setNames(res.data);
+          console.log(res.data);
         });
     });
+
   }, [classroom]);
 
   useEffect(() => {
@@ -173,6 +175,7 @@ const Classroom = () => {
           )
           .then((res) => {
             setSubmissions(res.data);
+            console.log(res.data)
           });
       });
 
@@ -188,6 +191,7 @@ const Classroom = () => {
           )
           .then((res) => {
             setSubmissionStatuses(res.data);
+            console.log(res.data)
           });
       });
     }
@@ -206,15 +210,15 @@ const Classroom = () => {
         ),
         msg.submission_status,
       ]);
-    } else if (Object.keys(msg)[0] === "student_profile") {
+    } else if (Object.keys(msg)[0] === "student_list") {
       setNames([
-        ...names.filter((name) => name.index !== msg.student_profile.index),
-        msg.student_profile,
+        ...names.filter((name) => name.studentIndex !== msg.student_list.studentIndex),
+        msg.student_list,
       ]);
       let newClassroom = {
         ...classroom,
         student_indexes: classroom.student_indexes.concat([
-          msg.student_profile.index,
+          msg.student_list.studentIndex,
         ]),
       };
       setClassroom(newClassroom);
@@ -303,7 +307,7 @@ const Classroom = () => {
       axios
         .put(
           process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-            "core/student_profiles/" +
+            "core/student_list/" +
             classroom.id +
             "/",
           {

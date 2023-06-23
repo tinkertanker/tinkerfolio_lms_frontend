@@ -290,7 +290,7 @@ const Dashboard = ({
     switch (sortBy) {
       case "indexLowToHigh":
         sortedTableNames = tableNames.sort((a, b) =>
-          a.index > b.index ? 1 : -1
+          a.studentIndex > b.studentIndex ? 1 : -1
         );
         break;
       case "indexHightoLow":
@@ -303,7 +303,7 @@ const Dashboard = ({
           if (a.score < b.score) return 1;
           else if (a.score > b.score) return -1;
           else {
-            if (a.index > b.index) return 1;
+            if (a.studentIndex > b.studentIndex) return 1;
             else return -1;
           }
         });
@@ -313,14 +313,14 @@ const Dashboard = ({
           if (a.score < b.score) return -1;
           else if (a.score > b.score) return 1;
           else {
-            if (a.index > b.index) return 1;
+            if (a.studentIndex > b.studentIndex) return 1;
             else return -1;
           }
         });
         break;
     }
 
-    return sortedTableNames.map((n, i) => n.index);
+    return sortedTableNames.map((n, i) => n.studentIndex);
   };
 
   // disabling add student when its loading is still not working
@@ -546,10 +546,14 @@ const Dashboard = ({
               </tr>
             </thead>
             <tbody className="align-top">
-              {sortStudentIndex().map((index, i) => {
-                const sp = tableNames.filter((tn) => tn.index === index)[0];
+                {sortStudentIndex().map((index, i) => {
+                console.log("index", index);
+                const sp = tableNames.filter((tn) => tn.studentIndex === index)[0];
                 if (typeof sp === "undefined") return;
                 const student_id = sp.id;
+                console.log("IMPOSSIBLE");
+                console.log(tableNames);
+                console.log(index)
 
                 return (
                   <tr className="border-2" key={i}>
@@ -561,12 +565,7 @@ const Dashboard = ({
                         <StudentName
                           {...{
                             index,
-                            student_id,
                             tableNames,
-                            setTableNames,
-                            updateName,
-                            bulkAddStudents,
-                            removeIndex,
                           }}
                         />
                         <StudentMenu index={index} removeIndex={removeIndex} />
@@ -795,46 +794,13 @@ const Sort = ({ sortBy, setSortBy, sortTasksBy, setSortTasksBy }) => {
 
 const StudentName = ({
   index,
-  student_id,
   tableNames,
-  setTableNames,
-  updateName,
-  bulkAddStudents,
-  removeIndex,
+
 }) => {
-  const nameChange = (input) => {
-    if (/\r|\n/.exec(input)) {
-      // if newline is found in string
-      const inputNames = input.split("\n").filter((e) => e);
-      // create new students with subsequent names
-      bulkAddStudents(inputNames);
-      // delete current row
-      // removeIndex(index)
-    } else {
-      let newTableName = tableNames.filter((n) => n.index === index)[0];
-      newTableName.name = input;
-      setTableNames([
-        ...tableNames.filter((n) => n.index !== index),
-        newTableName,
-      ]);
-    }
-  };
 
   return (
-    <textarea
-      rows="1"
-      onChange={(e) => nameChange(e.target.value)}
-      onBlur={(e) =>
-        updateName(
-          index,
-          tableNames.filter((n) => n.index === index)[0].name,
-          tableNames.filter((n) => n.index === index)[0].id
-        )
-      }
-      className="bg-transparent resize-none flex-grow outline-none hover:border-gray-400 focus:border-blue-500 border-b-2 border-gray-300"
-      value={tableNames.filter((name) => name.index === index)[0].name}
-    />
-  );
+    tableNames.filter((obj) => obj.studentIndex == index)[0].name
+    );
 };
 
 const SubmissionSummary = ({
