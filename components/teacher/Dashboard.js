@@ -2035,7 +2035,7 @@ const TaskSummary = ({
   sortedStudents().map((student, i) => {
     const sub = submissions.filter(
       (submission) =>
-        submission.student === student.id && submission.task === task.id
+        submission.student === student.studentUserID && submission.task === task.id
     )[0];
 
     const status = submissionStatuses.filter(
@@ -2128,11 +2128,12 @@ const TaskSubmissionsBar = ({
   sortedStudents().map((student, i) => {
     const sub = submissions.filter(
       (submission) =>
-        submission.student === student.id && submission.task === task.id
+        submission.student === student.studentUserID && submission.task === task.id
     )[0];
 
     const status = submissionStatuses.filter(
-      (status) => status.student === student.id && status.task === task.id
+      (status) =>
+        status.student === student.studentUserID && status.task === task.id
     )[0];
 
     if (!sub) {
