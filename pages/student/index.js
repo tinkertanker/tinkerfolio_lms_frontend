@@ -93,6 +93,7 @@ const StudentHome = () => {
         )
         .then((res) => {
           setLeaderboard(res.data);
+          console.log("leaderboard ", res.data);
         });
     });
   }, []);
