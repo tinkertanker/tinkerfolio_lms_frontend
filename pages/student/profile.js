@@ -17,25 +17,28 @@ const StudentProfile = () => {
 
   const [submissions, setSubmissions] = useState([]);
 
- useEffect(() => {
-   // Get classrooms
-   if (auth.tokens) {
-     getAccessToken().then((accessToken) => {
-       axios
-         .get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "student/portfolio/", {
-           headers: { Authorization: "Bearer " + accessToken },
-         })
-           .then((res) => {
-               console.log("fetching");
-               console.log(res.data);
-           setSubmissions(res.data);
-         })
-           .catch((res) => {
-           console.log(res);
-         });
-     });
-   }
- }, [auth.tokens]);
+  useEffect(() => {
+    // Get classrooms
+    if (auth.tokens) {
+      getAccessToken().then((accessToken) => {
+        axios
+          .get(
+            process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "student/portfolio/",
+            {
+              headers: { Authorization: "Bearer " + accessToken },
+            }
+          )
+          .then((res) => {
+            console.log("fetching");
+            console.log(res.data);
+            setSubmissions(res.data);
+          })
+          .catch((res) => {
+            console.log(res);
+          });
+      });
+    }
+  }, [auth.tokens]);
 
   return (
     <div>
@@ -49,7 +52,7 @@ const StudentProfile = () => {
         <h1 className="text-2xl font-semibold mb-4">Submissions</h1>
         {submissions.map((submission) => (
           <div key={submission.id} className="mb-4">
-            <Link legacyBehavior href={`/submissions/${submission.id}`} >
+            <Link legacyBehavior href={`/submissions/${submission.id}`}>
               <a className="text-blue-500">{submission.taskName}</a>
             </Link>
             <span className="text-gray-500"> - {submission.className}</span>

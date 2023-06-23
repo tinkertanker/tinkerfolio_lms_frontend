@@ -466,9 +466,9 @@ const Dashboard = ({
                 <p className="pl-1">Announcements</p>
               </button>
             </div>
-            </div>
-            
-            {/* TABLE */}
+          </div>
+
+          {/* TABLE */}
           <table
             className="block overflow-y-auto px-8 py-8 w-max min-w-full"
             style={{
@@ -476,8 +476,8 @@ const Dashboard = ({
               borderSpacing: "50px",
               marginTop: "60px",
             }}
-            >
-              {/* Table headers */}
+          >
+            {/* Table headers */}
             <thead>
               <tr className="border-2">
                 <th className="border-r-2 px-2 py-2 w-16">
@@ -547,15 +547,17 @@ const Dashboard = ({
                   </th>
                 ))}
               </tr>
-              </thead>
-              
-              {/* Body */}
-              <tbody className="align-top">
-                {/* map for each student */}
-                {sortStudentIndex().map((index, i) => {
-                const sp = tableNames.filter((tn) => tn.studentIndex === index)[0];
+            </thead>
+
+            {/* Body */}
+            <tbody className="align-top">
+              {/* map for each student */}
+              {sortStudentIndex().map((index, i) => {
+                const sp = tableNames.filter(
+                  (tn) => tn.studentIndex === index
+                )[0];
                 if (typeof sp === "undefined") return;
-                  const student_id = sp.studentUserID;
+                const student_id = sp.studentUserID;
 
                 return (
                   <tr className="border-2" key={i}>
@@ -585,7 +587,6 @@ const Dashboard = ({
                           submissionStatuses,
                         }}
                       />
-
                     </td>
                     <td className="border-r-2 px-2 py-2 text-center w-16">
                       {sp.score}
@@ -610,7 +611,7 @@ const Dashboard = ({
                             key={i}
                           />
                         ) : (
-                            // if no submission, show empty cell
+                          // if no submission, show empty cell
                           <td
                             className="px-2 py-2 border-r-2"
                             key={i}
@@ -799,15 +800,8 @@ const Sort = ({ sortBy, setSortBy, sortTasksBy, setSortTasksBy }) => {
   );
 };
 
-const StudentName = ({
-  index,
-  tableNames,
-
-}) => {
-
-  return (
-    tableNames.filter((obj) => obj.studentIndex == index)[0].name
-    );
+const StudentName = ({ index, tableNames }) => {
+  return tableNames.filter((obj) => obj.studentIndex == index)[0].name;
 };
 
 const SubmissionSummary = ({
@@ -995,7 +989,9 @@ const Submission = ({
   for (let i = 0; i < submissions.length; i++) {
     submittedStudents.push(submissions[i].student);
   }
-  const students = tableNames.filter((s) => submittedStudents.includes(s.studentUserID));
+  const students = tableNames.filter((s) =>
+    submittedStudents.includes(s.studentUserID)
+  );
 
   const [submission, setSubmission] = useState(sub);
   const [student, setStudent] = useState(sp);
@@ -2035,7 +2031,8 @@ const TaskSummary = ({
   sortedStudents().map((student, i) => {
     const sub = submissions.filter(
       (submission) =>
-        submission.student === student.studentUserID && submission.task === task.id
+        submission.student === student.studentUserID &&
+        submission.task === task.id
     )[0];
 
     const status = submissionStatuses.filter(
@@ -2128,7 +2125,8 @@ const TaskSubmissionsBar = ({
   sortedStudents().map((student, i) => {
     const sub = submissions.filter(
       (submission) =>
-        submission.student === student.studentUserID && submission.task === task.id
+        submission.student === student.studentUserID &&
+        submission.task === task.id
     )[0];
 
     const status = submissionStatuses.filter(

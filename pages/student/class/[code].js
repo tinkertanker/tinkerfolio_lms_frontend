@@ -49,54 +49,54 @@ const Course = () => {
     [ReadyState.UNINSTANTIATED]: "Uninstantiated",
   }[readyState];
 
-    useEffect(() => {
-      const { code } = router.query;
-      if (!code) return;
+  useEffect(() => {
+    const { code } = router.query;
+    if (!code) return;
 
-      if (auth.tokens) {
-        setWSURL(
-          process.env.NEXT_PUBLIC_BACKEND_WS_BASE +
-            "ws/student/?token=" +
-            auth.tokens.access +
-            "&code=" +
-            code
-        );
-      } else return;
+    if (auth.tokens) {
+      setWSURL(
+        process.env.NEXT_PUBLIC_BACKEND_WS_BASE +
+          "ws/student/?token=" +
+          auth.tokens.access +
+          "&code=" +
+          code
+      );
+    } else return;
 
-      // Get initial data
-      getAccessToken().then((accessToken) => {
-        axios
-          .get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "student/initial/", {
+    // Get initial data
+    getAccessToken().then((accessToken) => {
+      axios
+        .get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "student/initial/", {
+          headers: { Authorization: "Bearer " + accessToken },
+          params: { code: code },
+        })
+        .then((res) => {
+          console.log("PROFILE: " + res.data.profile);
+          console.log("CLASSROOM: " + res.data.classroom);
+          setProfile(res.data.profile);
+          setName(res.data.name);
+          console.log(res.data.name);
+          setClassroom(res.data.classroom);
+          setTasks(res.data.tasks);
+          setSubmissions(res.data.submissions);
+          setSubmissionStatuses(res.data.submission_statuses);
+          setAnnouncements(res.data.announcements);
+          setResources(res.data.resources);
+        });
+
+      axios
+        .get(
+          process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "student/leaderboard",
+          {
             headers: { Authorization: "Bearer " + accessToken },
             params: { code: code },
-          })
-          .then((res) => {
-            console.log("PROFILE: " + res.data.profile);
-            console.log("CLASSROOM: " + res.data.classroom);
-            setProfile(res.data.profile);
-            setName(res.data.name)
-            console.log(res.data.name)
-            setClassroom(res.data.classroom);
-            setTasks(res.data.tasks);
-            setSubmissions(res.data.submissions);
-            setSubmissionStatuses(res.data.submission_statuses);
-            setAnnouncements(res.data.announcements);
-            setResources(res.data.resources);
-          });
-
-        axios
-          .get(
-            process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "student/leaderboard",
-            {
-              headers: { Authorization: "Bearer " + accessToken },
-              params: { code: code },
-            }
-          )
-          .then((res) => {
-            setLeaderboard(res.data);
-          });
-      });
-    }, []);
+          }
+        )
+        .then((res) => {
+          setLeaderboard(res.data);
+        });
+    });
+  }, []);
 
   //Update leaderboard and profile data every 30 seconds
   useEffect(() => {
@@ -290,7 +290,6 @@ const Course = () => {
               </div>
 
               <div className="h-1/6 py-3 flex items-center justify-center">
-                {/* Problematic */}
                 <Profile {...{ profile, classroom, name }} />
               </div>
             </div>
@@ -431,11 +430,7 @@ const Profile = ({ name, profile, classroom }) => {
     >
       <div className="bg-white w-56 ml-6 p-5 shadow-xl rounded-2xl ">
         <p className="font-semibold text-lg mb-2 truncate">
-          {name ? (
-            name
-          ) : (
-            <span className="italic">(Unnamed)</span>
-          )}
+          {name ? name : <span className="italic">(Unnamed)</span>}
         </p>
         <div className="flex justify-between items-center mb-2">
           <p className="font-medium text-white bg-gray-500 px-3 py-1 rounded-lg text-sm">

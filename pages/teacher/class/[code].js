@@ -146,19 +146,15 @@ const Classroom = () => {
     // Get student profiles
     getAccessToken().then((accessToken) => {
       axios
-        .get(
-          process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/student_list/",
-          {
-            headers: { Authorization: "Bearer " + accessToken },
-            params: { code: classroom.code },
-          }
-        )
+        .get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/student_list/", {
+          headers: { Authorization: "Bearer " + accessToken },
+          params: { code: classroom.code },
+        })
         .then((res) => {
           setNames(res.data);
           console.log(res.data);
         });
     });
-
   }, [classroom]);
 
   useEffect(() => {
@@ -175,7 +171,7 @@ const Classroom = () => {
           )
           .then((res) => {
             setSubmissions(res.data);
-            console.log("submissions fetched ", res.data)
+            console.log("submissions fetched ", res.data);
           });
       });
 
@@ -191,7 +187,7 @@ const Classroom = () => {
           )
           .then((res) => {
             setSubmissionStatuses(res.data);
-            console.log(res.data)
+            console.log(res.data);
           });
       });
     }
@@ -212,7 +208,9 @@ const Classroom = () => {
       ]);
     } else if (Object.keys(msg)[0] === "student_list") {
       setNames([
-        ...names.filter((name) => name.studentIndex !== msg.student_list.studentIndex),
+        ...names.filter(
+          (name) => name.studentIndex !== msg.student_list.studentIndex
+        ),
         msg.student_list,
       ]);
       let newClassroom = {

@@ -7,14 +7,13 @@ const Leaderboard = ({ profile, leaderboard, classroom }) => {
     return leaderboard.sort((a, b) => (a.score <= b.score ? 1 : -1));
   };
 
-
   if (!profile || !leaderboard) return null;
 
   return (
     <StudentStats
       {...{
         profile,
-        getLeaderboard,       
+        getLeaderboard,
         classroom,
       }}
     />
@@ -23,11 +22,7 @@ const Leaderboard = ({ profile, leaderboard, classroom }) => {
 
 export default Leaderboard;
 
-const StudentStats = ({
-  profile,
-  getLeaderboard,
-  classroom,
-}) => {
+const StudentStats = ({ profile, getLeaderboard, classroom }) => {
   return (
     <CustomPopup
       trigger={

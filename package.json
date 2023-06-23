@@ -24,7 +24,7 @@
   "devDependencies": {
     "autoprefixer": "^10.2.6",
     "postcss": "^8.3.0",
-    "prettier": "2.8.8",
+    "prettier": "^2.8.8",
     "tailwindcss": "^2.1.2"
   },
   "main": "index.js",

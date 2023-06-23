@@ -47,7 +47,7 @@ const Layout = ({ children }) => {
 
   const profile = () => {
     router.push("/student/profile");
-  }
+  };
 
   let navStyle = "bg-white border-b-2 px-8 py-2 flex flex-row items-center";
   if (router.pathname === "/")
