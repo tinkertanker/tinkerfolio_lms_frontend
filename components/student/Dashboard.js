@@ -15,6 +15,7 @@ import {
 const contentStyle = { overflowY: "scroll", margin: "10px auto" };
 
 const Dashboard = ({
+  classroom,
   tasks,
   submissions,
   setSubmissions,
@@ -27,6 +28,7 @@ const Dashboard = ({
   const addSubmission = (textInput, fileInput, id) => {
     const formData = new FormData();
     formData.append("task_id", id);
+    formData.append("code", classroom);
     textInput && formData.append("text", textInput);
     fileInput && formData.append("image", fileInput);
 
@@ -56,6 +58,7 @@ const Dashboard = ({
 
       const formData = new FormData();
       formData.append("task_id", task_id);
+      formData.append("code", classroom);
       textInput && formData.append("text", textInput);
       fileInput && formData.append("image", fileInput);
 
