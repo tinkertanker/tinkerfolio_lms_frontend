@@ -1086,7 +1086,7 @@ const Submission = ({
         <div className="flex flex-col px-4 py-4 bg-white rounded-lg popup overflow-y-auto max-h-500px">
           <div className="flex flex-row text-xl">
             <p>Index:</p>
-            <p className="ml-2 font-bold">{student.index}</p>
+            <p className="ml-2 font-bold">{student.studentIndex}</p>
             {student.name !== "" && (
               <>
                 <p className="ml-4">Name:</p>
@@ -1097,6 +1097,7 @@ const Submission = ({
 
           <div className="flex flex-row mt-6 items-center">
             <h1 className="text-lg font-bold">Submission</h1>
+            {/* if it is an image */}
             {submission.image && (
               <a
                 href={submission.image}
@@ -1109,6 +1110,7 @@ const Submission = ({
             )}
           </div>
 
+          {/* if it is a text */}
           <div className="border-2 border-gray-300 rounded mt-4">
             <p className="ml-2 px-2 py-2 whitespace-pre-wrap">
               <CustomLinkify>{submission.text}</CustomLinkify>

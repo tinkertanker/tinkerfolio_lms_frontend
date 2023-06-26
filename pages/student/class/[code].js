@@ -301,6 +301,7 @@ const Course = () => {
               <div className="h-5/6 py-3 overflow-hidden">
                 <Dashboard
                   {...{
+                    classroom,
                     tasks,
                     submissions,
                     setSubmissions,
