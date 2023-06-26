@@ -234,10 +234,10 @@ const Dashboard = ({
 
     // add stars to student's score
     const studentID = submissions.filter((sub) => sub.id === id)[0].student;
-    let name = tableNames.filter((name) => name.id === studentID)[0];
+    let name = tableNames.filter((name) => name.studentUserID === studentID)[0];
     name.score += stars;
     setTableNames([
-      ...tableNames.filter((name) => name.id !== studentID),
+      ...tableNames.filter((name) => name.studentUserID !== studentID),
       name,
     ]);
   };
@@ -290,7 +290,7 @@ const Dashboard = ({
     switch (sortBy) {
       case "indexLowToHigh":
         sortedTableNames = tableNames.sort((a, b) =>
-          a.index > b.index ? 1 : -1
+          a.studentIndex > b.studentIndex ? 1 : -1
         );
         break;
       case "indexHightoLow":
@@ -303,7 +303,7 @@ const Dashboard = ({
           if (a.score < b.score) return 1;
           else if (a.score > b.score) return -1;
           else {
-            if (a.index > b.index) return 1;
+            if (a.studentIndex > b.studentIndex) return 1;
             else return -1;
           }
         });
@@ -313,14 +313,14 @@ const Dashboard = ({
           if (a.score < b.score) return -1;
           else if (a.score > b.score) return 1;
           else {
-            if (a.index > b.index) return 1;
+            if (a.studentIndex > b.studentIndex) return 1;
             else return -1;
           }
         });
         break;
     }
 
-    return sortedTableNames.map((n, i) => n.index);
+    return sortedTableNames.map((n, i) => n.studentIndex);
   };
 
   // disabling add student when its loading is still not working
@@ -467,6 +467,8 @@ const Dashboard = ({
               </button>
             </div>
           </div>
+
+          {/* TABLE */}
           <table
             className="block overflow-y-auto px-8 py-8 w-max min-w-full"
             style={{
@@ -475,6 +477,7 @@ const Dashboard = ({
               marginTop: "60px",
             }}
           >
+            {/* Table headers */}
             <thead>
               <tr className="border-2">
                 <th className="border-r-2 px-2 py-2 w-16">
@@ -545,28 +548,30 @@ const Dashboard = ({
                 ))}
               </tr>
             </thead>
+
+            {/* Body */}
             <tbody className="align-top">
+              {/* map for each student */}
               {sortStudentIndex().map((index, i) => {
-                const sp = tableNames.filter((tn) => tn.index === index)[0];
+                const sp = tableNames.filter(
+                  (tn) => tn.studentIndex === index
+                )[0];
                 if (typeof sp === "undefined") return;
-                const student_id = sp.id;
+                const student_id = sp.studentUserID;
 
                 return (
                   <tr className="border-2" key={i}>
                     <td className="border-r-2 px-2 py-2 w-16">
                       <p>{index}</p>
                     </td>
+
                     <td className="border-r-2 px-2 py-2 w-72">
                       <div className="flex flex-row">
+                        {/* student name panel */}
                         <StudentName
                           {...{
                             index,
-                            student_id,
                             tableNames,
-                            setTableNames,
-                            updateName,
-                            bulkAddStudents,
-                            removeIndex,
                           }}
                         />
                         <StudentMenu index={index} removeIndex={removeIndex} />
@@ -586,6 +591,7 @@ const Dashboard = ({
                     <td className="border-r-2 px-2 py-2 text-center w-16">
                       {sp.score}
                     </td>
+
                     {submissions &&
                       sortTableTasks().map((task, i) => {
                         let sub = submissions.filter(
@@ -605,6 +611,7 @@ const Dashboard = ({
                             key={i}
                           />
                         ) : (
+                          // if no submission, show empty cell
                           <td
                             className="px-2 py-2 border-r-2"
                             key={i}
@@ -793,48 +800,8 @@ const Sort = ({ sortBy, setSortBy, sortTasksBy, setSortTasksBy }) => {
   );
 };
 
-const StudentName = ({
-  index,
-  student_id,
-  tableNames,
-  setTableNames,
-  updateName,
-  bulkAddStudents,
-  removeIndex,
-}) => {
-  const nameChange = (input) => {
-    if (/\r|\n/.exec(input)) {
-      // if newline is found in string
-      const inputNames = input.split("\n").filter((e) => e);
-      // create new students with subsequent names
-      bulkAddStudents(inputNames);
-      // delete current row
-      // removeIndex(index)
-    } else {
-      let newTableName = tableNames.filter((n) => n.index === index)[0];
-      newTableName.name = input;
-      setTableNames([
-        ...tableNames.filter((n) => n.index !== index),
-        newTableName,
-      ]);
-    }
-  };
-
-  return (
-    <textarea
-      rows="1"
-      onChange={(e) => nameChange(e.target.value)}
-      onBlur={(e) =>
-        updateName(
-          index,
-          tableNames.filter((n) => n.index === index)[0].name,
-          tableNames.filter((n) => n.index === index)[0].id
-        )
-      }
-      className="bg-transparent resize-none flex-grow outline-none hover:border-gray-400 focus:border-blue-500 border-b-2 border-gray-300"
-      value={tableNames.filter((name) => name.index === index)[0].name}
-    />
-  );
+const StudentName = ({ index, tableNames }) => {
+  return tableNames.filter((obj) => obj.studentIndex == index)[0].name;
 };
 
 const SubmissionSummary = ({
@@ -1022,7 +989,9 @@ const Submission = ({
   for (let i = 0; i < submissions.length; i++) {
     submittedStudents.push(submissions[i].student);
   }
-  const students = tableNames.filter((s) => submittedStudents.includes(s.id));
+  const students = tableNames.filter((s) =>
+    submittedStudents.includes(s.studentUserID)
+  );
 
   const [submission, setSubmission] = useState(sub);
   const [student, setStudent] = useState(sp);
@@ -2062,7 +2031,8 @@ const TaskSummary = ({
   sortedStudents().map((student, i) => {
     const sub = submissions.filter(
       (submission) =>
-        submission.student === student.id && submission.task === task.id
+        submission.student === student.studentUserID &&
+        submission.task === task.id
     )[0];
 
     const status = submissionStatuses.filter(
@@ -2155,11 +2125,13 @@ const TaskSubmissionsBar = ({
   sortedStudents().map((student, i) => {
     const sub = submissions.filter(
       (submission) =>
-        submission.student === student.id && submission.task === task.id
+        submission.student === student.studentUserID &&
+        submission.task === task.id
     )[0];
 
     const status = submissionStatuses.filter(
-      (status) => status.student === student.id && status.task === task.id
+      (status) =>
+        status.student === student.studentUserID && status.task === task.id
     )[0];
 
     if (!sub) {

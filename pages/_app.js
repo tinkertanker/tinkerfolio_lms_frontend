@@ -45,6 +45,10 @@ const Layout = ({ children }) => {
     localStorage.removeItem("userType");
   };
 
+  const profile = () => {
+    router.push("/student/profile");
+  };
+
   let navStyle = "bg-white border-b-2 px-8 py-2 flex flex-row items-center";
   if (router.pathname === "/")
     navStyle =
@@ -96,9 +100,9 @@ const Layout = ({ children }) => {
               />
             </Link>
           ) : (
-            <div>
-              <h1 className="text-2xl font-logo text-blue-700">EchoClass</h1>
-            </div>
+            <Link legacyBehavior href="/">
+              <a className="text-2xl font-logo text-blue-700">EchoClass</a>
+            </Link>
           )}
 
           {!auth.isAuthenticated && (
@@ -129,6 +133,13 @@ const Layout = ({ children }) => {
 
           {auth.isAuthenticated && (
             <div className="ml-auto">
+              <button
+                onClick={profile}
+                className="border-2 border-gray-300 text-sm text-gray-500 py-0.5 px-2 rounded hover:bg-gray-100"
+              >
+                Profile
+              </button>
+
               <button
                 onClick={logout}
                 className="border-2 border-gray-300 text-sm text-gray-500 py-0.5 px-2 rounded hover:bg-gray-100"

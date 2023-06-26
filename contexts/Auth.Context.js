@@ -25,7 +25,7 @@ const AuthContextProvider = (props) => {
             userType: userType,
           });
         } else {
-          console.log("logging out")
+          console.log("logging out");
           setAuth({ loading: false, isAuthenticated: false, tokens: null });
           localStorage.removeItem("tokens");
           localStorage.removeItem("userType");
