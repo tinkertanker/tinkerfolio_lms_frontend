@@ -55,10 +55,10 @@ const StudentProfile = () => {
             key={submission.id}
             className="mb-4 bg-white rounded-md p-4 shadow"
           >
-            <Link legacyBehavior href={`/submissions/${submission.id}`}>
-              <a className="text-blue-500 font-semibold text-lg">
+            <Link href={"/student/project/" + submission.id}>
+              <div className="text-blue-500 font-semibold text-lg">
                 {submission.task_name}
-              </a>
+              </div>
             </Link>
             <p className="text-gray-500">Course: {submission.classroom_name}</p>
           </div>
