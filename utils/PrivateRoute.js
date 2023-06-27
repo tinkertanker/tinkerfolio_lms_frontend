@@ -18,7 +18,7 @@ const PrivateRoute = ({ children }) => {
     if (auth.userType === "teacher") {
       router.push("/teacher");
     } else {
-      router.push("/student/test");
+      router.push("/student/");
     }
   }
 
