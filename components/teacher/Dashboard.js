@@ -411,29 +411,6 @@ const Dashboard = ({
                 }}
               />
 
-              <button
-                className={
-                  "flex flex-row py-1 px-2 bg-blue-600 text-sm text-white rounded focus:outline-none " +
-                  (loadingAddStudent
-                    ? "filter brightness-50"
-                    : "hover:bg-blue-700")
-                }
-                onClick={() => {
-                  if (!loadingAddStudent) {
-                    addStudent("");
-                    setLoadingAddStudent(true);
-                  }
-                }}
-                disabled={loadingAddStudent}
-              >
-                <AddCircleOutline
-                  color={"#00000"}
-                  title={"Add"}
-                  height="20px"
-                  width="20px"
-                />
-                <p className="pl-1">Student</p>
-              </button>
             </div>
             <div className="flex flex-row justify-end gap-4">
               <button

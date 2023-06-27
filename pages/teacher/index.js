@@ -138,18 +138,6 @@ const CreateClassForm = ({ createClass }) => {
               onChange={(e) => setFormName(e.target.value)}
             />
           </label>
-          <label>
-            <p className="mt-4 font-semibold">No. of Students</p>
-            <p className="text-sm -mt-1 text-gray-500">At least 1.</p>
-            <input
-              className="mt-2 outline-none border-2 rounded"
-              type="number"
-              value={formStudents.toString()}
-              min="1"
-              name="number_of_students"
-              onChange={(e) => setFormStudents(e.target.value)}
-            />
-          </label>
           <br />
           {formError && (
             <p className="text-sm text-red-500">Class name cannot be empty.</p>
