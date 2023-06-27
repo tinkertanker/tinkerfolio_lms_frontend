@@ -271,15 +271,11 @@ const Course = () => {
                   <p>{connectionStatus}</p>
                 </div>
               </div>
-              <img src="../../linear_logo.svg" className="w-32 sm:w-40" />
             </div>
             <div></div>
 
             <div className="w-1/12 pr-2 pl-4 lg:flex flex-col justify-between hidden">
               <div className="h-1/2">
-                <div className="h-1/3 flex items-center">
-                  <img src="/main_logo_1.png"></img>
-                </div>
                 <div className="h-2/3 py-3 flex flex-col items-center">
                   <AnnouncementsNav {...{ changePage }} />
                   <ResourcesNav {...{ changePage }} />

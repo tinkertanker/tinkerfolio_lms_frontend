@@ -95,13 +95,18 @@ const Layout = ({ children }) => {
               <img
                 className="cursor-pointer"
                 src="/main_logo_1.png"
-                height="100px"
-                width="100px"
+                height="150px"
+                width="150px"
               />
             </Link>
           ) : (
-            <Link legacyBehavior href="/">
-              <a className="text-2xl font-logo text-blue-700">EchoClass</a>
+            <Link href="/">
+              <img
+                className="cursor-pointer"
+                src="/main_logo_1.png"
+                height="150px"
+                width="150px"
+              />
             </Link>
           )}
 
@@ -139,10 +144,8 @@ const Layout = ({ children }) => {
                   className="border-2 border-gray-300 text-sm text-gray-500 py-0.5 px-2 rounded hover:bg-gray-100"
                 >
                   Profile
-                  
                 </button>
-              )
-            }
+              )}
 
               <button
                 onClick={logout}
