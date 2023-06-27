@@ -55,7 +55,6 @@ const Register = () => {
           setIsLoading(false);
         });
     } else if (userType === "teacher") {
-      console.log("teacher");
       axios
         .post(
           process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
@@ -70,7 +69,6 @@ const Register = () => {
           { headers: { "Content-Type": "application/json" } }
         )
         .then((res) => {
-          console.log(res.data);
           setLoginDetails(res.data);
           setIsLoading(false);
           setSuccessfulLogin(true);

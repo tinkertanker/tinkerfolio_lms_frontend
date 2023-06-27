@@ -125,7 +125,7 @@ const Layout = ({ children }) => {
             <div>
               <Link href="/teacher">
                 <p className="text-gray-500 hover:text-gray-700 px-6 sm:px-12 cursor-pointer">
-                  Classes
+                  All Classes
                 </p>
               </Link>
             </div>

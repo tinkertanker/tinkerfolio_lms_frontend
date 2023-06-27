@@ -35,7 +35,7 @@ const Home = () => {
             <iframe
               src="https://player.vimeo.com/video/661595554?h=c6aff57f55&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479"
               frameBorder="0"
-              allow="autoplay; fullscreen; picture-in-picture"
+              allow="fullscreen"
               allowFullScreen
               style={{
                 position: "absolute",
@@ -75,7 +75,7 @@ const Home = () => {
                 <iframe
                   src="https://player.vimeo.com/video/661595554?h=c6aff57f55&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479"
                   frameBorder="0"
-                  allow="autoplay; fullscreen; picture-in-picture"
+                  allow="fullscreen"
                   allowFullScreen
                   style={{
                     position: "absolute",

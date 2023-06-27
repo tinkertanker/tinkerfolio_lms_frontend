@@ -82,7 +82,7 @@ const TeacherHome = () => {
 
         {classrooms &&
           sortClassrooms(classrooms).map((cr, i) => {
-            return <Classroom classroom={cr} key={i} />;
+            return <Classroom classroom={cr} key={cr.id} />;
           })}
       </main>
 

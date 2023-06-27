@@ -71,11 +71,8 @@ const Course = () => {
           params: { code: code },
         })
         .then((res) => {
-          console.log("PROFILE: " + res.data.profile);
-          console.log("CLASSROOM: " + res.data.classroom);
           setProfile(res.data.profile);
           setName(res.data.name);
-          console.log(res.data.name);
           setClassroom(res.data.classroom);
           setTasks(res.data.tasks);
           setSubmissions(res.data.submissions);
@@ -433,12 +430,6 @@ const Profile = ({ name, profile, classroom }) => {
         <p className="font-semibold text-lg mb-2 truncate">
           {name ? name : <span className="italic">(Unnamed)</span>}
         </p>
-        <div className="flex justify-between items-center mb-2">
-          <p className="font-medium text-white bg-gray-500 px-3 py-1 rounded-lg text-sm">
-            Index:
-          </p>
-          <p className="font-medium">{profile.studentIndex}</p>
-        </div>
 
         <div className="flex justify-between items-center mb-2">
           <p className="font-medium text-white bg-gray-500 px-3 py-1 rounded-lg text-sm">
@@ -546,12 +537,6 @@ const Sidebar = ({
               <span className="italic">(Unnamed)</span>
             )}
           </p>
-          <div className="flex justify-between items-center mb-1">
-            <p className="font-medium text-white bg-gray-500 px-3 py-1 rounded-lg text-sm">
-              Index:
-            </p>
-            <p className="font-medium">{profile.index}</p>
-          </div>
 
           <div className="flex justify-between items-center">
             <p className="font-medium text-white bg-gray-500 px-3 py-1 rounded-lg text-sm">

@@ -353,7 +353,7 @@ const Dashboard = ({
                       checked={filterStudentTasks.includes("incomplete")}
                       onChange={handleChangeCheckbox}
                     />
-                    <label for="incomplete" className="text-sm">
+                    <label htmlFor="incomplete" className="text-sm">
                       Incomplete
                     </label>
                     <br />
@@ -368,7 +368,7 @@ const Dashboard = ({
                       )}
                       onChange={handleChangeCheckbox}
                     />
-                    <label for="completed & ungraded" className="text-sm">
+                    <label htmlFor="completed & ungraded" className="text-sm">
                       Completed & Ungraded
                     </label>
                     <br />
@@ -383,7 +383,7 @@ const Dashboard = ({
                       )}
                       onChange={handleChangeCheckbox}
                     />
-                    <label for="completed & graded" className="text-sm">
+                    <label htmlFor="completed & graded" className="text-sm">
                       Completed & Graded
                     </label>
                   </form>
@@ -458,7 +458,7 @@ const Dashboard = ({
                           (status) => status.task == task.id
                         )[0],
                       }}
-                      key={i}
+                      key={task.id}
                     />
                   );
                 }
@@ -496,7 +496,7 @@ const Dashboard = ({
                       (status) => status.task == task.id
                     )[0],
                   }}
-                  key={i}
+                  key={task.id}
                 />
               );
             })}
@@ -526,7 +526,7 @@ const Dashboard = ({
                               (status) => status.task == task.id
                             )[0],
                           }}
-                          key={i}
+                          key={task.id}
                         />
                       );
                     })
@@ -560,7 +560,7 @@ const Dashboard = ({
                           (status) => status.task == task.id
                         )[0],
                       }}
-                      key={i}
+                      key={task.id}
                     />
                   );
                 }

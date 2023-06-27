@@ -1,3 +1,10 @@
+# To run locally
+- `yarn install`
+- `yarn dev`
+# To run prettier
+
+`prettier --write .`
+
 # How the table dashboard is created on the teacher's end
 
 - StudentName refers to the name of the student (it is retrieved from the list of student names tableNames and then identified by the index)

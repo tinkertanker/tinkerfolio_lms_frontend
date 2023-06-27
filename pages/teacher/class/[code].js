@@ -152,7 +152,6 @@ const Classroom = () => {
         })
         .then((res) => {
           setNames(res.data);
-          console.log(res.data);
         });
     });
   }, [classroom]);
@@ -171,7 +170,6 @@ const Classroom = () => {
           )
           .then((res) => {
             setSubmissions(res.data);
-            console.log("submissions fetched ", res.data);
           });
       });
 
@@ -187,7 +185,6 @@ const Classroom = () => {
           )
           .then((res) => {
             setSubmissionStatuses(res.data);
-            console.log(res.data);
           });
       });
     }
@@ -344,7 +341,7 @@ const Classroom = () => {
           }
         )
         .then((res) => {
-          console.log(res.data);
+          console.log("Success");
         })
         .catch((res) => {
           console.log(res);

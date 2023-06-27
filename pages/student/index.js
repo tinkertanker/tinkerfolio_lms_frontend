@@ -93,7 +93,6 @@ const StudentHome = () => {
         )
         .then((res) => {
           setLeaderboard(res.data);
-          console.log("leaderboard ", res.data);
         });
     });
   }, []);
@@ -432,12 +431,6 @@ const Profile = ({ profile, classroom }) => {
             <span className="italic">(Unnamed)</span>
           )}
         </p>
-        <div className="flex justify-between items-center mb-2">
-          <p className="font-medium text-white bg-gray-500 px-3 py-1 rounded-lg text-sm">
-            Index:
-          </p>
-          <p className="font-medium">{profile.index}</p>
-        </div>
 
         <div className="flex justify-between items-center mb-2">
           <p className="font-medium text-white bg-gray-500 px-3 py-1 rounded-lg text-sm">
@@ -545,12 +538,6 @@ const Sidebar = ({
               <span className="italic">(Unnamed)</span>
             )}
           </p>
-          <div className="flex justify-between items-center mb-1">
-            <p className="font-medium text-white bg-gray-500 px-3 py-1 rounded-lg text-sm">
-              Index:
-            </p>
-            <p className="font-medium">{profile.index}</p>
-          </div>
 
           <div className="flex justify-between items-center">
             <p className="font-medium text-white bg-gray-500 px-3 py-1 rounded-lg text-sm">

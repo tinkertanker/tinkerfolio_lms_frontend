@@ -29,8 +29,6 @@ const StudentProfile = () => {
             }
           )
           .then((res) => {
-            console.log("fetching");
-            console.log(res.data);
             setSubmissions(res.data);
           })
           .catch((res) => {

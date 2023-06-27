@@ -9,7 +9,7 @@ const contentStyle = { paddingLeft: "0.5rem", paddingRight: "0.5rem" };
 const Project = () => {
   const router = useRouter();
   const { auth, setAuth, getAccessToken } = useContext(AuthContext);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [submission, setSubmission] = useState([]);
 
   useEffect(() => {
@@ -27,8 +27,6 @@ const Project = () => {
             }
           )
           .then((res) => {
-            console.log("fetching");
-            console.log(res.data);
             setSubmission(res.data);
           })
           .catch((res) => {
