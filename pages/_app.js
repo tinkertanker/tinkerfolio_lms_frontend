@@ -95,8 +95,8 @@ const Layout = ({ children }) => {
               <img
                 className="cursor-pointer"
                 src="/main_logo_1.png"
-                height="150px"
-                width="150px"
+                height="100px"
+                width="100px"
               />
             </Link>
           ) : (
@@ -104,8 +104,8 @@ const Layout = ({ children }) => {
               <img
                 className="cursor-pointer"
                 src="/main_logo_1.png"
-                height="150px"
-                width="150px"
+                height="100"
+                width="100px"
               />
             </Link>
           )}
@@ -123,15 +123,6 @@ const Layout = ({ children }) => {
                 href="/register"
               >
                 Register{" "}
-              </Link>
-            </div>
-          )}
-          {auth.userType === "teacher" && (
-            <div>
-              <Link href="/teacher">
-                <p className="text-gray-500 hover:text-gray-700 px-6 sm:px-12 cursor-pointer">
-                  All Classes
-                </p>
               </Link>
             </div>
           )}

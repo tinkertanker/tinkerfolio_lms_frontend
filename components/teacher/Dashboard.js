@@ -332,7 +332,7 @@ const Dashboard = ({
         <>
           <div className="flex flex-row py-4 px-8 bg-gray-100 shadow-md w-full fixed">
             <button
-              className="flex flex-row py-1 px-2 bg-blue-600 text-sm text-white rounded focus:outline-none hover:bg-blue-700"
+              className="flex flex-row py-1 px-2 bg-red-600 text-sm text-white rounded focus:outline-none hover:bg-red-700"
               onClick={() => setShowAnnouncements(false)}
             >
               <ChevronBackOutline
@@ -375,7 +375,7 @@ const Dashboard = ({
                   changeNewTaskPage("newTask");
                   setNewTaskModalOpen(true);
                 }}
-                className="flex flex-row py-1 px-2 bg-blue-600 text-sm text-white rounded hover:bg-blue-700 focus:outline-none"
+                className="flex flex-row py-1 px-2 bg-red-600 text-sm text-white rounded hover:bg-red-700 focus:outline-none"
               >
                 <AddCircleOutline
                   color={"#00000"}
@@ -410,7 +410,6 @@ const Dashboard = ({
                   addImportedTask,
                 }}
               />
-
             </div>
             <div className="flex flex-row justify-end gap-4">
               <button
@@ -418,7 +417,7 @@ const Dashboard = ({
                   changeNewTaskPage("draftsMenu");
                   setNewTaskModalOpen(true);
                 }}
-                className="flex flex-row py-1 px-2 bg-blue-600 text-sm text-white rounded hover:bg-blue-700 focus:outline-none"
+                className="flex flex-row py-1 px-2 bg-gray-600 text-sm text-white rounded hover:bg-gray-700 focus:outline-none"
               >
                 <DocumentTextOutline
                   color={"#00000"}
@@ -431,7 +430,7 @@ const Dashboard = ({
                 </p>
               </button>{" "}
               <button
-                className="flex flex-row py-1 px-2 bg-blue-600 text-sm text-white rounded focus:outline-none hover:bg-blue-700"
+                className="flex flex-row py-1 px-2 bg-gray-600 text-sm text-white rounded focus:outline-none hover:bg-gray-700"
                 onClick={() => setShowAnnouncements(true)}
               >
                 <MegaphoneOutline
@@ -631,7 +630,7 @@ const Filter = ({ tasks, tasksToHide, setTasksToHide, classroom }) => {
   return (
     <Popup
       trigger={
-        <button className="flex flex-row py-1 px-2 bg-blue-600 text-sm text-white rounded hover:bg-blue-700 focus:outline-none">
+        <button className="flex flex-row py-1 px-2 bg-gray-500 text-sm text-white rounded hover:bg-gray-700 focus:outline-none">
           <FilterIcon color={"#ffffff"} height="20px" width="20px" />
           <p className="pl-2">
             Hide/Show Tasks (
@@ -648,7 +647,7 @@ const Filter = ({ tasks, tasksToHide, setTasksToHide, classroom }) => {
           <p className="text-xl font-bold mb-0.5">Tasks</p>
           <div className="flex flex-row items-center mb-4 text-sm">
             <p
-              className="text-blue-600 hover:underline cursor-pointer"
+              className="text-red-600 hover:underline cursor-pointer"
               onClick={() => {
                 setTasksToHide([]);
                 trackSettings([]);
@@ -658,7 +657,7 @@ const Filter = ({ tasks, tasksToHide, setTasksToHide, classroom }) => {
             </p>
             <p className="mx-2">|</p>
             <p
-              className="text-blue-600 hover:underline cursor-pointer"
+              className="text-red-600 hover:underline cursor-pointer"
               onClick={() => {
                 setTasksToHide(tasks.map((t) => t.id));
                 trackSettings(tasks.map((t) => t.id));
@@ -693,7 +692,7 @@ const Sort = ({ sortBy, setSortBy, sortTasksBy, setSortTasksBy }) => {
   return (
     <Popup
       trigger={
-        <button className="flex flex-row items-center py-1 px-2 bg-blue-600 text-sm text-white rounded hover:bg-blue-700 focus:outline-none">
+        <button className="flex flex-row items-center py-1 px-2 bg-gray-500 text-sm text-white rounded hover:bg-gray-700 focus:outline-none">
           <FunnelOutline color={"#ffffff"} height="17px" width="17px" />
           <p className="pl-2">Sort</p>
         </button>
@@ -1338,7 +1337,7 @@ const TaskDetails = ({ task, setOneTask, setIsCloseOnDocClick, subs }) => {
             })
           }
           onBlur={() => setOneTask(newTask)}
-          className="outline-none text-2xl border-b-2 border-gray-100 hover:border-gray-300 focus:border-blue-500 my-2 mx-2 w-min"
+          className="outline-none text-2xl border-b-2 border-gray-100 hover:border-gray-300 focus:border-red-500 my-2 mx-2 w-min"
           value={newTask.name}
           name="name"
         />
@@ -1350,7 +1349,7 @@ const TaskDetails = ({ task, setOneTask, setIsCloseOnDocClick, subs }) => {
             })
           }
           onBlur={() => setOneTask(newTask)}
-          className=" outline-none text-sm border-2 border-gray-100 hover:border-gray-300 focus:border-blue-500 py-2 px-2 my-2 mx-2 rounded-lg"
+          className=" outline-none text-sm border-2 border-gray-100 hover:border-gray-300 focus:border-red-500 py-2 px-2 my-2 mx-2 rounded-lg"
           rows="4"
           value={newTask.description}
           name="description"
@@ -1541,9 +1540,9 @@ const NewTask = ({
           <div className="flex flex-row">
             <button
               onClick={() => changeNewTaskPage("newTask")}
-              className="bg-white px-4 py-4 w-full rounded-tl-lg focus:outline-none cursor-pointer border-b-2 border-blue-600"
+              className="bg-white px-4 py-4 w-full rounded-tl-lg focus:outline-none cursor-pointer border-b-2 border-red-600"
             >
-              <p className="text-blue-600 font-medium">New Task</p>
+              <p className="text-red-600 font-medium">New Task</p>
             </button>
             <button
               onClick={() => {
@@ -1551,7 +1550,7 @@ const NewTask = ({
               }}
               className="bg-white px-4 py-4 w-full rounded-tr-lg focus:outline-none cursor-pointer border-b border-gray-300"
             >
-              <p className="text-gray-500 font-medium hover:text-blue-600">
+              <p className="text-gray-500 font-medium hover:text-red-600">
                 Import Tasks
               </p>
             </button>
@@ -1623,7 +1622,7 @@ const NewTask = ({
             <div className="flex">
               <button
                 type="submit"
-                className="mt-4 ml-2 px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 cursor-pointer focus:outline-none"
+                className="mt-4 ml-2 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 cursor-pointer focus:outline-none"
               >
                 Publish Task
               </button>
@@ -1736,7 +1735,7 @@ const NewTask = ({
               }}
               className="bg-white px-4 py-4 w-full rounded-tl-lg focus:outline-none cursor-pointer border-b border-gray-300"
             >
-              <p className="text-gray-500 font-medium hover:text-blue-600">
+              <p className="text-gray-500 font-medium hover:text-red-600">
                 New Task
               </p>
             </button>
@@ -1744,9 +1743,9 @@ const NewTask = ({
               onClick={() => {
                 changeNewTaskPage("importTask");
               }}
-              className="bg-white px-4 py-4 w-full rounded-tr-lg focus:outline-none cursor-pointer border-b-2 border-blue-600"
+              className="bg-white px-4 py-4 w-full rounded-tr-lg focus:outline-none cursor-pointer border-b-2 border-red-600"
             >
-              <p className="text-blue-600 font-medium">Import Tasks</p>
+              <p className="text-red-600 font-medium">Import Tasks</p>
             </button>
           </div>
           <div className="px-6 py-4 bg-white rounded-b-lg rounded-t-none shadow-md popup">
@@ -1788,7 +1787,7 @@ const NewTask = ({
                       onClick={() => {
                         setTasksIDToImport(importMenuTaskList.map((t) => t.id));
                       }}
-                      className="focus:outline-none cursor-pointer text-sm text-blue-500 font-medium hover:underline"
+                      className="focus:outline-none cursor-pointer text-sm text-red-500 font-medium hover:underline"
                     >
                       Select All
                     </button>
@@ -1798,7 +1797,7 @@ const NewTask = ({
                       onClick={() => {
                         setTasksIDToImport([]);
                       }}
-                      className="focus:outline-none cursor-pointer text-sm text-blue-500 font-medium hover:underline"
+                      className="focus:outline-none cursor-pointer text-sm text-red-500 font-medium hover:underline"
                     >
                       Unselect All
                     </button>
@@ -1863,7 +1862,7 @@ const NewTask = ({
                   <button
                     onClick={() => handlePostingImportedTask(1)}
                     type="button"
-                    className="bg-blue-500 rounded px-3 py-1 hover:bg-blue-600 focus:outline-none"
+                    className="bg-red-500 rounded px-3 py-1 hover:bg-red-600 focus:outline-none"
                   >
                     <p className="text-white text-sm">Publish Tasks</p>
                   </button>

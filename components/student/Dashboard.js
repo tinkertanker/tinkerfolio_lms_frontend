@@ -633,7 +633,7 @@ const Task = ({
             {task.max_stars > 0 ? (
               <h1
                 className={`text-xl ml-auto sm:mr-4 whitespace-nowrap ${
-                  isGraded ? "text-blue-600" : "text-gray-500"
+                  isGraded ? "text-red-600" : "text-gray-500"
                 }`}
               >
                 {isGraded ? sub.stars : "-"}/{task.max_stars} ★
