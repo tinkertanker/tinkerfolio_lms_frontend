@@ -325,7 +325,7 @@ const Course = () => {
                       className="text-sm font-medium text-blue-600 hover:underline focus:outline-none"
                       onClick={() => changePage("Resources")}
                     >
-                      View All Resources
+                      View All Resources ({resources?.length})
                     </button>
                   </div>
                 </div>

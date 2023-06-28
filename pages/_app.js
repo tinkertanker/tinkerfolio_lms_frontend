@@ -141,15 +141,15 @@ const Layout = ({ children }) => {
               {auth.userType === "student" && (
                 <button
                   onClick={profile}
-                  className="border-2 border-gray-300 text-sm text-gray-500 py-0.5 px-2 rounded hover:bg-gray-100"
+                  className="bg-white border-2 border-gray-300 text-sm text-gray-500 py-1 px-3 rounded-full hover:bg-gray-100 transition-colors duration-300"
                 >
-                  Profile
+                  Portfolio
                 </button>
               )}
 
               <button
                 onClick={logout}
-                className="border-2 border-gray-300 text-sm text-gray-500 py-0.5 px-2 rounded hover:bg-gray-100"
+                className="bg-white border-2 border-gray-300 text-sm text-gray-500 py-1 px-3 ml-2 rounded-full hover:bg-red-500 hover:text-white transition-colors duration-300"
               >
                 Logout
               </button>

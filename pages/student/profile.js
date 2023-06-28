@@ -48,19 +48,23 @@ const StudentProfile = () => {
 
       <main className="pt-8 px-8 bg-white">
         <h1 className="text-2xl font-semibold mb-4">Top Submissions</h1>
-        {submissions.map((submission) => (
-          <div
-            key={submission.id}
-            className="mb-4 bg-white rounded-md p-4 shadow"
-          >
-            <Link href={"/student/project/" + submission.id}>
-              <div className="text-blue-500 font-semibold text-lg">
-                {submission.task_name}
-              </div>
-            </Link>
-            <p className="text-gray-500">Course: {submission.classroom_name}</p>
-          </div>
-        ))}
+        <div className="grid grid-cols-2 gap-4">
+          {submissions.map((submission) => (
+            <div
+              key={submission.id}
+              className="mb-4 bg-white rounded-md p-4 shadow"
+            >
+              <Link href={"/student/project/" + submission.id}>
+                <div className="text-blue-500 font-semibold text-lg">
+                  {submission.task_name}
+                </div>
+              </Link>
+              <p className="text-gray-500">
+                Course: {submission.classroom_name}
+              </p>
+            </div>
+          ))}
+        </div>
       </main>
 
       <footer></footer>

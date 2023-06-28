@@ -10,7 +10,7 @@ import { ClassroomsContext } from "../../contexts/Classrooms.Context";
 
 const contentStyle = { paddingLeft: "0.5rem", paddingRight: "0.5rem" };
 
-const StudentTest = () => {
+const StudentHome = () => {
   const router = useRouter();
   const { auth, setAuth, getAccessToken } = useContext(AuthContext);
   const { classrooms, setClassrooms } = useContext(ClassroomsContext);
@@ -76,14 +76,12 @@ const StudentTest = () => {
           <JoinClassForm {...{ joinClass }} />
         </div>
 
-        {classrooms && classrooms.length === 0 && (
-          <p className="italic text-gray-500 py-2">No classrooms found.</p>
-        )}
-
-        {classrooms &&
-          sortClassrooms(classrooms).map((cr, i) => {
-            return <Classroom classroom={cr} key={i} />;
-          })}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          {classrooms &&
+            sortClassrooms(classrooms).map((cr, i) => {
+              return <Classroom classroom={cr} key={i} />;
+            })}
+        </div>
       </main>
 
       <footer></footer>
@@ -91,22 +89,41 @@ const StudentTest = () => {
   );
 };
 
-export default StudentTest;
+export default StudentHome;
 
 const Classroom = ({ classroom }) => {
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
+
+  const cardClassName = `border rounded-lg p-4 shadow-md ${
+    isHovered ? "shadow-lg" : ""
+    }`;
+  
   return (
     <Link href={"/student/class/" + classroom?.classroom?.code}>
-      <div className="py-2 px-2 border-b-2 border-gray-200 hover:bg-gray-100 cursor-pointer">
-        <div className="flex flex-row items-center">
-          <p className="text-lg font-semibold mr-4">
-            {classroom?.classroom?.name}
-          </p>
-          {classroom.status === 2 && (
-            <p className="py-0.5 px-1 text-sm text-white bg-red-500 rounded">
-              Archived
+      <div
+        className={cardClassName}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+        <div className="flex flex-row items-center mb-2">
+            <p className="text-lg font-semibold mr-4">
+              {classroom?.classroom?.name}
             </p>
-          )}
-        </div>
+            {classroom.status === 2 && (
+              <p className="py-0.5 px-1 text-sm text-white bg-red-500 rounded">
+                Archived
+              </p>
+            )}
+          </div>
+          
         <p className="text-gray-500">Code: {classroom?.classroom?.code}</p>
       </div>
     </Link>
