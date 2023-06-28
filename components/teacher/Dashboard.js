@@ -444,7 +444,7 @@ const Dashboard = ({
             </div>
           </div>
 
-          {/* TABLE */}
+            {/* TABLE */}
           <table
             className="block overflow-y-auto px-8 py-8 w-max min-w-full"
             style={{
