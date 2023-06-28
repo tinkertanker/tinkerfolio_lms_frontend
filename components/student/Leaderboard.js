@@ -26,7 +26,7 @@ const StudentStats = ({ profile, getLeaderboard, classroom }) => {
   return (
     <CustomPopup
       trigger={
-        <div className="flex items-center justify-between bg-blue-600 hover:bg-blue-700 py-5 sm:px-6 rounded-2xl shadow-lg cursor-pointer h-full min-h-full">
+        <div className="flex items-center justify-between bg-gray-600 hover:bg-gray-700 py-5 sm:px-6 rounded-2xl shadow-lg cursor-pointer h-full min-h-full">
           {classroom && (
             <h1 className="text-3xl font-bold pl-3 sm:pl-5 text-white ">
               {classroom.name}
@@ -85,7 +85,7 @@ const StudentStats = ({ profile, getLeaderboard, classroom }) => {
               <div
                 className={`flex items-center my-3 rounded-xl justify-between ${
                   profile.studentIndex === student.studentIndex
-                    ? "bg-blue-600"
+                    ? "bg-green-600"
                     : "bg-gray-100"
                 }`}
               >
@@ -120,7 +120,7 @@ const StudentStats = ({ profile, getLeaderboard, classroom }) => {
                   className={`font-medium text-xl sm:text-2xl mr-3 sm:mx-5 ${
                     profile.studentIndex === student.studentIndex
                       ? "text-white"
-                      : "text-blue-600"
+                      : "text-red-600"
                   }`}
                 >
                   {student.score} ★

@@ -10,10 +10,12 @@ import { ClassroomsContext } from "../../contexts/Classrooms.Context";
 
 const contentStyle = { paddingLeft: "0.5rem", paddingRight: "0.5rem" };
 
-const StudentTest = () => {
+const StudentHome = () => {
   const router = useRouter();
   const { auth, setAuth, getAccessToken } = useContext(AuthContext);
   const { classrooms, setClassrooms } = useContext(ClassroomsContext);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredClassrooms, setFilteredClassrooms] = useState([]);
 
   useEffect(() => {
     // Get classrooms
@@ -25,6 +27,7 @@ const StudentTest = () => {
           })
           .then((res) => {
             setClassrooms(res.data);
+            setFilteredClassrooms(res.data);
           })
           .catch((res) => {
             console.log(res);
@@ -37,6 +40,20 @@ const StudentTest = () => {
     return classes.sort((a, b) =>
       a.status > b.status ? 1 : b.status > a.status ? -1 : 0
     );
+  };
+
+  const handleSearch = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    const filtered = classrooms.filter((classroom) => {
+      return (
+        classroom &&
+        classroom.classroom &&
+        classroom.classroom.name &&
+        classroom.classroom.name.toLowerCase().includes(query.toLowerCase())
+      );
+    });
+    setFilteredClassrooms(filtered);
   };
 
   const joinClass = ({ formCode, setFormError }) => {
@@ -76,14 +93,26 @@ const StudentTest = () => {
           <JoinClassForm {...{ joinClass }} />
         </div>
 
-        {classrooms && classrooms.length === 0 && (
-          <p className="italic text-gray-500 py-2">No classrooms found.</p>
-        )}
+        <div className="mb-4">
+          <input
+            type="text"
+            placeholder="Search by course name"
+            className="border border-gray-300 rounded-lg px-4 py-2 w-full"
+            value={searchQuery}
+            onChange={handleSearch}
+          />
+        </div>
 
-        {classrooms &&
-          sortClassrooms(classrooms).map((cr, i) => {
-            return <Classroom classroom={cr} key={i} />;
-          })}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+          {filteredClassrooms.length === 0 ? (
+            <p className="text-gray-500">No courses found ¯\_(ツ)_/¯</p>
+          ) : (
+            filteredClassrooms &&
+            sortClassrooms(filteredClassrooms).map((cr, i) => {
+              return <Classroom classroom={cr} key={i} />;
+            })
+          )}
+        </div>
       </main>
 
       <footer></footer>
@@ -91,14 +120,32 @@ const StudentTest = () => {
   );
 };
 
-export default StudentTest;
+export default StudentHome;
 
 const Classroom = ({ classroom }) => {
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
+
+  const cardClassName = `border rounded-lg p-4 shadow-md ${
+    isHovered ? "shadow-lg" : ""
+    }`;
+  
   return (
     <Link href={"/student/class/" + classroom?.classroom?.code}>
-      <div className="py-2 px-2 border-b-2 border-gray-200 hover:bg-gray-100 cursor-pointer">
-        <div className="flex flex-row items-center">
-          <p className="text-lg font-semibold mr-4">
+      <div
+        className={cardClassName}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+        <div className="flex flex-row items-center mb-2">
+          <p className="text-lg font-semibold mr-4 overflow-hidden overflow-ellipsis">
             {classroom?.classroom?.name}
           </p>
           {classroom.status === 2 && (
@@ -107,6 +154,7 @@ const Classroom = ({ classroom }) => {
             </p>
           )}
         </div>
+
         <p className="text-gray-500">Code: {classroom?.classroom?.code}</p>
       </div>
     </Link>
@@ -127,7 +175,7 @@ const JoinClassForm = ({ joinClass }) => {
   return (
     <Popup
       trigger={
-        <button className="ml-6 mt-1 px-2 py-1 rounded text-white text-sm bg-gray-500 hover:bg-gray-600 cursor-pointer">
+        <button className="ml-6 mt-1 px-2 py-1 rounded-md text-white text-sm bg-gray-500 hover:bg-gray-600 cursor-pointer">
           Join Class
         </button>
       }
@@ -155,7 +203,7 @@ const JoinClassForm = ({ joinClass }) => {
             </p>
           )}
           <button
-            className="mt-4 py-1 px-2 bg-blue-500 hover:bg-blue-600 text-white rounded"
+            className="mt-4 py-1 px-2 bg-red-500 hover:bg-red-600 text-white rounded"
             onClick={() => {
               handleJoinClick();
             }}
