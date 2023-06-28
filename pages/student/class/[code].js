@@ -256,7 +256,7 @@ const Course = () => {
             <Sidebar
               {...{ changePage, toggleSidebar, profile, classroom, sidebar }}
             />
-            <div className="lg:hidden min-w-full w-full p-4 z-10 bg-white shadow-lg flex items-center justify-between">
+            <div className="lg:hidden min-w-full w-full p-4 z-10 bg-white shadow-lg flex items-center justify-between sticky top-0">
               <div className="flex items-center gap-3">
                 <button
                   className="focus:outline-none font-bold text-2xl mx-2 cursor-pointer text-gray-600"
@@ -276,7 +276,7 @@ const Course = () => {
 
             <div className="w-1/12 pr-2 pl-4 lg:flex flex-col justify-between hidden">
               <div className="h-1/2">
-                <div className="h-2/3 py-3 flex flex-col items-center">
+                <div className="h-2/3 py-3 flex flex-col items-center sticky top-0">
                   <AnnouncementsNav {...{ changePage }} />
                   <ResourcesNav {...{ changePage }} />
                 </div>
