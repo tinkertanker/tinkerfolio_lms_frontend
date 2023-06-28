@@ -14,6 +14,9 @@ const TeacherHome = () => {
   const router = useRouter();
   const { auth, setAuth, getAccessToken } = useContext(AuthContext);
   const { classrooms, setClassrooms } = useContext(ClassroomsContext);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredClassrooms, setFilteredClassrooms] = useState([]);
+
 
   useEffect(() => {
     // Get classrooms
@@ -25,6 +28,7 @@ const TeacherHome = () => {
           })
           .then((res) => {
             setClassrooms(res.data);
+            setFilteredClassrooms(res.data);
           })
           .catch((res) => {
             console.log(res);
@@ -33,6 +37,20 @@ const TeacherHome = () => {
     }
   }, [auth.tokens]);
 
+    const handleSearch = (e) => {
+      const query = e.target.value;
+      setSearchQuery(query);
+      const filtered = classrooms.filter((classroom) => {
+        return (
+          classroom &&
+          classroom.name &&
+          classroom.name.toLowerCase().includes(query.toLowerCase())
+        );
+      });
+      setFilteredClassrooms(filtered);
+    };
+
+  
   const sortClassrooms = (classes) => {
     return classes.sort((a, b) =>
       a.status > b.status ? 1 : b.status > a.status ? -1 : 0
@@ -75,15 +93,26 @@ const TeacherHome = () => {
           <h2 className="text-4xl font-bold">Classrooms</h2>
           <CreateClassForm {...{ createClass }} />
         </div>
+        <div className="mb-4">
+          <input
+            type="text"
+            placeholder="Search by classroom name"
+            className="border border-gray-300 rounded-lg px-4 py-2 w-full"
+            value={searchQuery}
+            onChange={handleSearch}
+          />
+        </div>
 
-        {classrooms && classrooms.length === 0 && (
-          <p className="italic text-gray-500 py-2">No classrooms found.</p>
-        )}
-
-        {classrooms &&
-          sortClassrooms(classrooms).map((cr, i) => {
-            return <Classroom classroom={cr} key={cr.id} />;
-          })}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+          {filteredClassrooms.length === 0 ? (
+            <p className="text-gray-500">No courses found ¯\_(ツ)_/¯</p>
+          ) : (
+            filteredClassrooms &&
+            sortClassrooms(filteredClassrooms).map((cr, i) => {
+              return <Classroom classroom={cr} key={i} />;
+            })
+          )}
+        </div>
       </main>
 
       <footer></footer>
@@ -94,11 +123,30 @@ const TeacherHome = () => {
 export default TeacherHome;
 
 const Classroom = ({ classroom }) => {
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
+  const cardClassName = `border rounded-lg p-4 shadow-md ${
+    isHovered ? "shadow-lg" : ""
+    }`;
+  
   return (
     <Link href={"/teacher/class/" + classroom.code}>
-      <div className="py-2 px-2 border-b-2 border-gray-200 hover:bg-gray-100 cursor-pointer">
-        <div className="flex flex-row items-center">
-          <p className="text-lg font-semibold mr-4">{classroom.name}</p>
+      <div
+        className={cardClassName}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+        <div className="flex flex-row items-center mb-2">
+          <p className="text-lg font-semibold mr-4 overflow-hidden overflow-ellipsis">
+            {classroom?.name}
+          </p>
           {classroom.status === 2 && (
             <p className="py-0.5 px-1 text-sm text-white bg-red-500 rounded">
               Archived
