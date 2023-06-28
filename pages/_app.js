@@ -52,7 +52,7 @@ const Layout = ({ children }) => {
   let navStyle = "bg-white border-b-2 px-8 py-2 flex flex-row items-center";
   if (router.pathname === "/")
     navStyle =
-      "max-w-5xl 2xl:max-w-7xl mx-auto py-6 px-6 md:px-0 bg-purple-50 flex flex-row items-center";
+      "max-w-5xl 2xl:max-w-7xl mx-auto py-4 px-6 md:px-0 bg-gray-100 flex flex-row items-center";
   if (router.pathname === "/login")
     navStyle = "bg-white border-b-2 px-6 py-2 flex flex-row items-center";
   if (router.pathname === "/student/");
@@ -88,15 +88,15 @@ const Layout = ({ children }) => {
           key="twitter_image"
         />
       </Head>
-      <div className={router.pathname === "/" ? "bg-purple-50" : "bg-gray-100"}>
+      <div className={router.pathname === "/" ? "bg-gray-100" : "bg-gray-100"}>
         <nav className={navStyle}>
           {["/", "/login", "/register"].includes(router.pathname) ? (
             <Link href="/">
               <img
                 className="cursor-pointer"
                 src="/main_logo_1.png"
-                height="100px"
-                width="100px"
+                height="150"
+                width="150"
               />
             </Link>
           ) : (
@@ -104,8 +104,8 @@ const Layout = ({ children }) => {
               <img
                 className="cursor-pointer"
                 src="/main_logo_1.png"
-                height="100"
-                width="100px"
+                height="150"
+                width="150"
               />
             </Link>
           )}
@@ -114,7 +114,7 @@ const Layout = ({ children }) => {
             <div className="flex flex-row-reverse items-center ml-auto gap-4 sm:gap-8">
               <Link
                 href="/login"
-                className="px-4 py-0.5 border-2 border-blue-500 hover:border-blue-700 text-blue-500 hover:text-blue-700 text-lg rounded font-semibold"
+                className="px-4 py-0.5 border-2 border-red-500 hover:border-red-700 text-red-500 hover:text-red-700 text-lg rounded-full font-semibold"
               >
                 Login
               </Link>
