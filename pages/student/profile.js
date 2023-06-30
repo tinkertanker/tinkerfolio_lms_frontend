@@ -46,7 +46,7 @@ const StudentProfile = () => {
         <link rel="icon" href="/mini_logo.ico" />
       </Head>
 
-      <main className="pt-8 px-8 bg-white">
+      <main className="pt-8 px-8 bg-white flex-grow">
         <h1 className="text-2xl font-semibold mb-4">Top Submissions</h1>
         <div className="grid grid-cols-2 gap-4">
           {submissions.map((submission) => (
