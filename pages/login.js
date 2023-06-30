@@ -64,12 +64,16 @@ const Login = () => {
     }
   }, [auth]);
   return (
-    <div>
+    <div className="bg-gray-100 min-h-screen">
       <Head>
         <title>Login | EchoClass</title>
+        <link
+          rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css"
+        />
       </Head>
 
-      <main className="flex flex-col items-center pt-8 px-8 bg-white">
+      <main className="flex flex-col items-center pt-8 px-8">
         {invalidInput && (
           <p className="py-2 px-2 border-2 border-red-500 rounded-lg font-bold text-red-500">
             Invalid inputs.
@@ -78,49 +82,59 @@ const Login = () => {
 
         <h1 className="text-5xl my-6 font-bold">Login</h1>
 
-        <form onSubmit={(e) => loginUser(e)}>
-          <label>
-            <h2 className="font-semibold text-lg pb-2">Username</h2>
+        <form onSubmit={(e) => loginUser(e)} className="max-w-sm w-full">
+          <div className="mb-4">
+            <label className="text-lg font-semibold" htmlFor="username">
+              Username
+            </label>
             <input
-              className="outline-none border-b-2 text-xl w-full"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
               type="text"
-              placeholder="Enter Username"
+              id="username"
+              placeholder="Enter username"
               name="code"
               onChange={(e) => setUsername(e.target.value)}
               autoComplete="off"
             />
-          </label>
-          <label>
-            <h2 className="font-semibold text-lg pb-2 mt-4">Password</h2>
+          </div>
+          <div className="mb-4">
+            <label className="text-lg font-semibold" htmlFor="password">
+              Password
+            </label>
             <input
-              className="outline-none border-b-2 text-xl"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
               type="password"
-              placeholder="Enter Password"
+              id="password"
+              placeholder="Enter password"
               name="index"
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="off"
             />
-          </label>
-          <br />
-          <div className="mb-4 mt-4">
-            <label className="mr-4">
-              <input
-                type="radio"
-                value="teacher"
-                checked={userType === "teacher"}
-                onChange={() => handleUserTypeSelect("teacher")}
-              />{" "}
-              Teacher
-            </label>
-            <label>
-              <input
-                type="radio"
-                value="student"
-                checked={userType === "student"}
-                onChange={() => handleUserTypeSelect("student")}
-              />{" "}
-              Student
-            </label>
+          </div>
+          <div className="mb-4">
+            <label className="text-lg font-semibold">Register as</label>
+            <div className="flex items-center mt-2">
+              <label className="mr-4">
+                <input
+                  type="radio"
+                  value="teacher"
+                  checked={userType === "teacher"}
+                  onChange={() => handleUserTypeSelect("teacher")}
+                  className="mr-2"
+                />
+                Teacher
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  value="student"
+                  checked={userType === "student"}
+                  onChange={() => handleUserTypeSelect("student")}
+                  className="mr-2"
+                />
+                Student
+              </label>
+            </div>
           </div>
           {loginFailed && (
             <small className="text-red-500 mt-2">
@@ -128,26 +142,23 @@ const Login = () => {
             </small>
           )}
           {auth.loading ? (
-            <div
-              className="flex flex-row justify-center bg-blue-500 mt-4 py-1 px-2 rounded-md w-full"
-              style={{ height: "36px" }}
-            >
-              <SyncLoader color={"#ffffff"} size={8} margin={1} />
+            <div className="flex flex-row justify-center mt-4">
+              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
             </div>
           ) : (
             <button
               type="submit"
-              className="bg-blue-500 hover:bg-blue-600 text-white text-lg mt-4 py-1 px-2 rounded-md w-full"
+              className="bg-red-500 hover:bg-red-600 text-white text-lg py-2 px-4 rounded-lg w-full"
             >
               Login
             </button>
           )}
         </form>
       </main>
-
-      <footer></footer>
     </div>
   );
+
+
 };
 
 export default Login;
