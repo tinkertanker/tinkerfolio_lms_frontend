@@ -14,7 +14,6 @@ const Register = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [formError, setFormError] = useState(false);
@@ -33,7 +32,6 @@ const Register = () => {
             username,
             email,
             first_name: firstName,
-            last_name: lastName,
             password,
           },
           { headers: { "Content-Type": "application/json" } }
@@ -63,7 +61,6 @@ const Register = () => {
             username,
             email,
             first_name: firstName,
-            last_name: lastName,
             password,
           },
           { headers: { "Content-Type": "application/json" } }
@@ -135,7 +132,7 @@ const Register = () => {
           </label>
           <br />
           <label>
-            <h2 className="font-semibold text-lg pb-2 mt-4">First name</h2>
+            <h2 className="font-semibold text-lg pb-2 mt-4">Name</h2>
             <input
               className="outline-none border-b-2 text-xl"
               type="text"
@@ -148,19 +145,7 @@ const Register = () => {
           </label>
           <br />
 
-          <label>
-            <h2 className="font-semibold text-lg pb-2 mt-4">Last name</h2>
-            <input
-              className="outline-none border-b-2 text-xl"
-              type="text"
-              placeholder="Enter last name"
-              name="last_name"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              autoComplete="off"
-            />
-          </label>
-          <br />
+    
 
           <label>
             <h2 className="font-semibold text-lg pb-2 mt-4">Email</h2>
