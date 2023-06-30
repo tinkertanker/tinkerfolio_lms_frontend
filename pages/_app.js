@@ -153,8 +153,12 @@ const Layout = ({ children }) => {
           {children}
           <footer
             className={
-              router.pathname === "/register" || router.pathname === "/login" || router.pathname === "/"
+              router.pathname === "/register" ||
+              router.pathname === "/login" ||
+              router.pathname === "/"
                 ? "bg-gray-100 py-12 mt-auto"
+                : router.pathname.startsWith("/student/class")
+                ? "bg-gray-200 py-12 mt-auto"
                 : "bg-white py-12 mt-auto"
             }
           >

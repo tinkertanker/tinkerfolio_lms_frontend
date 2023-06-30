@@ -115,7 +115,7 @@ const StudentHome = () => {
         </div>
       </main>
 
-      <footer></footer>
+
     </div>
   );
 };
