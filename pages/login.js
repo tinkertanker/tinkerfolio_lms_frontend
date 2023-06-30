@@ -114,7 +114,7 @@ const Login = () => {
             />
           </div>
           <div className="mb-4">
-            <label className="text-lg font-semibold">Register as</label>
+            <label className="text-lg font-semibold">Login as</label>
             <div className="flex items-center mt-2">
               <label className="mr-4">
                 <input
