@@ -32,7 +32,7 @@ const Register = () => {
       axios
         .post(
           process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-          "auth/token/student_signup/",
+            "auth/token/student_signup/",
           {
             username,
             email,
@@ -54,14 +54,26 @@ const Register = () => {
           setUserType("student");
         })
         .catch((error) => {
-          console.log("failed");
+          if (
+            error.response &&
+            error.response.data.error === "Username already exists."
+          ) {
+            setFormError("Username taken. Choose another username.");
+          } else if (
+            error.response &&
+            error.response.data.error === "Email already exists."
+          ) {
+            setFormError("Email taken. Choose another email.");
+          } else {
+            setFormError("Registration failed. Please try again.");
+          }
           setIsLoading(false);
         });
     } else if (userType === "teacher") {
       axios
         .post(
           process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-          "auth/token/teacher_signup/",
+            "auth/token/teacher_signup/",
           {
             username,
             email,
@@ -83,6 +95,14 @@ const Register = () => {
           setUserType("teacher");
         })
         .catch((error) => {
+          if (
+            error.response &&
+            error.response.data.error === "Duplicate student"
+          ) {
+            setFormError("Username taken. Choose another username.");
+          } else {
+            setFormError("Registration failed. Please try again.");
+          }
           setIsLoading(false);
         });
     } else {
