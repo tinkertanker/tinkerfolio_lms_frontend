@@ -16,12 +16,17 @@ const Register = () => {
   const [firstName, setFirstName] = useState("");
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [formError, setFormError] = useState(false);
+  const [formError, setFormError] = useState("");
   const [successfulLogin, setSuccessfulLogin] = useState(false);
   const [userType, setUserType] = useState("");
 
   const registerUser = (e) => {
     e.preventDefault();
+
+    if (username.length > 150 || firstName.length > 150) {
+      setFormError("Name and username should be less than 150 characters.");
+      return;
+    }
 
     if (userType === "student") {
       axios
@@ -82,7 +87,7 @@ const Register = () => {
         });
     } else {
       setIsLoading(false);
-      setFormError(true);
+      setFormError("Unsuccessful registration. Please try again.");
     }
   };
 
@@ -207,7 +212,7 @@ return (
         {!loginDetails && formError && (
           <div className="flex items-center justify-center">
             <small className="text-red-500 mt-2">
-              Registration failed. Please try again.
+              {formError}
             </small>
           </div>
         )}

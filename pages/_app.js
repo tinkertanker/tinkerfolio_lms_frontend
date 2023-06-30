@@ -159,7 +159,7 @@ const Layout = ({ children }) => {
             }
           >
             <div className="container mx-auto px-4">
-              <p className="text-center text-gray-400">
+              <p className="text-center text-gray-500">
                 &copy; Tinkertanker 2023
               </p>
             </div>
