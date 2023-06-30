@@ -144,13 +144,13 @@ return (
         </div>
         <div className="mb-4">
           <label className="text-lg font-semibold" htmlFor="firstName">
-            First Name
+            Name
           </label>
           <input
             className="w-full px-3 py-2 border border-gray-300 rounded-lg"
             type="text"
             id="firstName"
-            placeholder="Enter first name"
+            placeholder="Enter name"
             name="first_name"
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
@@ -184,6 +184,8 @@ return (
                 checked={userType === "teacher"}
                 onChange={() => setUserType("teacher")}
                 className="mr-2"
+                name="userType"
+                required
               />
               Teacher
             </label>
@@ -194,6 +196,8 @@ return (
                 checked={userType === "student"}
                 onChange={() => setUserType("student")}
                 className="mr-2"
+                name="userType"
+                required
               />
               Student
             </label>
@@ -201,9 +205,11 @@ return (
         </div>
 
         {!loginDetails && formError && (
-          <small className="text-red-500 mt-2">
-            Registration failed. Please try again.
-          </small>
+          <div className="flex items-center justify-center">
+            <small className="text-red-500 mt-2">
+              Registration failed. Please try again.
+            </small>
+          </div>
         )}
         {isLoading ? (
           <div className="flex flex-row justify-center mt-4">

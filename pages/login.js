@@ -95,6 +95,7 @@ const Login = () => {
               name="code"
               onChange={(e) => setUsername(e.target.value)}
               autoComplete="off"
+              required
             />
           </div>
           <div className="mb-4">
@@ -109,6 +110,7 @@ const Login = () => {
               name="index"
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="off"
+              required
             />
           </div>
           <div className="mb-4">
@@ -121,6 +123,8 @@ const Login = () => {
                   checked={userType === "teacher"}
                   onChange={() => handleUserTypeSelect("teacher")}
                   className="mr-2"
+                  name="userType"
+                  required
                 />
                 Teacher
               </label>
@@ -131,15 +135,19 @@ const Login = () => {
                   checked={userType === "student"}
                   onChange={() => handleUserTypeSelect("student")}
                   className="mr-2"
+                  name="userType"
+                  required
                 />
                 Student
               </label>
             </div>
           </div>
           {loginFailed && (
-            <small className="text-red-500 mt-2">
-              Invalid username or password.
-            </small>
+            <div className="flex items-center justify-center">
+              <small className="text-red-500 mt-2">
+                Invalid username or password.
+              </small>
+            </div>
           )}
           {auth.loading ? (
             <div className="flex flex-row justify-center mt-4">
