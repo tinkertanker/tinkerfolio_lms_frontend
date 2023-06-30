@@ -88,66 +88,83 @@ const Layout = ({ children }) => {
           key="twitter_image"
         />
       </Head>
-      <div className={router.pathname === "/" ? "bg-gray-100" : "bg-gray-100"}>
-        <nav className={navStyle}>
-          {["/", "/login", "/register"].includes(router.pathname) ? (
-            <Link href="/">
-              <img
-                className="cursor-pointer"
-                src="/main_logo_1.png"
-                height="150"
-                width="150"
-              />
-            </Link>
-          ) : (
-            <Link href="/">
-              <img
-                className="cursor-pointer"
-                src="/main_logo_1.png"
-                height="150"
-                width="150"
-              />
-            </Link>
-          )}
-
-          {!auth.isAuthenticated && (
-            <div className="flex flex-row-reverse items-center ml-auto gap-4 sm:gap-8">
-              <Link
-                href="/login"
-                className="px-4 py-0.5 border-2 border-red-500 hover:border-red-700 text-red-500 hover:text-red-700 text-lg rounded-full font-semibold"
-              >
-                Login
+      <div className="flex flex-col min-h-screen">
+        <div
+          className={router.pathname === "/" ? "bg-gray-100 " : "bg-gray-100 "}
+        >
+          <nav className={navStyle}>
+            {["/", "/login", "/register"].includes(router.pathname) ? (
+              <Link href="/">
+                <img
+                  className="cursor-pointer"
+                  src="/main_logo_1.png"
+                  height="150"
+                  width="150"
+                />
               </Link>
-              <Link
-                className="text-gray-500 hover:text-gray-700"
-                href="/register"
-              >
-                Register{" "}
+            ) : (
+              <Link href="/">
+                <img
+                  className="cursor-pointer"
+                  src="/main_logo_1.png"
+                  height="150"
+                  width="150"
+                />
               </Link>
-            </div>
-          )}
+            )}
 
-          {auth.isAuthenticated && (
-            <div className="ml-auto">
-              {auth.userType === "student" && (
-                <button
-                  onClick={profile}
-                  className="bg-white border-2 border-gray-300 text-sm text-gray-500 py-1 px-3 rounded-full hover:bg-gray-100 transition-colors duration-300"
+            {!auth.isAuthenticated && (
+              <div className="flex flex-row-reverse items-center ml-auto gap-4 sm:gap-8">
+                <Link
+                  href="/login"
+                  className="px-4 py-0.5 border-2 border-red-500 hover:border-red-700 text-red-500 hover:text-red-700 text-lg rounded-full font-semibold"
                 >
-                  Portfolio
-                </button>
-              )}
+                  Login
+                </Link>
+                <Link
+                  className="text-gray-500 hover:text-gray-700"
+                  href="/register"
+                >
+                  Register{" "}
+                </Link>
+              </div>
+            )}
 
-              <button
-                onClick={logout}
-                className="bg-white border-2 border-gray-300 text-sm text-gray-500 py-1 px-3 ml-2 rounded-full hover:bg-red-500 hover:text-white transition-colors duration-300"
-              >
-                Logout
-              </button>
+            {auth.isAuthenticated && (
+              <div className="ml-auto">
+                {auth.userType === "student" && (
+                  <button
+                    onClick={profile}
+                    className="bg-white border-2 border-gray-300 text-sm text-gray-500 py-1 px-3 rounded-full hover:bg-gray-100 transition-colors duration-300"
+                  >
+                    Portfolio
+                  </button>
+                )}
+
+                <button
+                  onClick={logout}
+                  className="bg-white border-2 border-gray-300 text-sm text-gray-500 py-1 px-3 ml-2 rounded-full hover:bg-red-500 hover:text-white transition-colors duration-300"
+                >
+                  Logout
+                </button>
+              </div>
+            )}
+          </nav>
+          {children}
+          <footer
+            className={
+              router.pathname === "/register" || router.pathname === "/login" || router.pathname === "/"
+                ? "bg-gray-100 py-12 mt-auto"
+                : "bg-white py-12 mt-auto"
+            }
+          >
+            <div className="container mx-auto px-4">
+              <p className="text-center text-gray-400">
+                &copy; Tinkertanker 2023
+              </p>
             </div>
-          )}
-        </nav>
-        {children}
+          </footer>
+        </div>
       </div>
     </>
   );
