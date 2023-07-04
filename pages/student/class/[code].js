@@ -56,7 +56,7 @@ const Course = () => {
     if (auth.tokens) {
       setWSURL(
         process.env.NEXT_PUBLIC_BACKEND_WS_BASE +
-          "/ws/student/?token=" +
+          "ws/student/?token=" +
           auth.tokens.access +
           "&code=" +
           code
@@ -66,7 +66,7 @@ const Course = () => {
     // Get initial data
     getAccessToken().then((accessToken) => {
       axios
-        .get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "/student/initial/", {
+        .get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "student/initial/", {
           headers: { Authorization: "Bearer " + accessToken },
           params: { code: code },
         })
@@ -83,7 +83,7 @@ const Course = () => {
 
       axios
         .get(
-          process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "/student/leaderboard",
+          process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "student/leaderboard",
           {
             headers: { Authorization: "Bearer " + accessToken },
             params: { code: code },
@@ -102,7 +102,7 @@ const Course = () => {
       getAccessToken().then((accessToken) => {
         axios
           .get(
-            process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "/student/leaderboard",
+            process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "student/leaderboard",
             {
               headers: { Authorization: "Bearer " + accessToken },
               params: { code: code },
@@ -113,7 +113,7 @@ const Course = () => {
           });
 
         axios
-          .get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "/student/initial/", {
+          .get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "student/initial/", {
             headers: { Authorization: "Bearer " + accessToken },
             params: { code: code },
           })
@@ -140,7 +140,7 @@ const Course = () => {
         axios
           .get(
             process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-              "/student/resource/" +
+              "student/resource/" +
               id.toString() +
               "/",
             {

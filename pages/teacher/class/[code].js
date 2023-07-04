@@ -59,7 +59,7 @@ const Classroom = () => {
     if (auth.tokens) {
       setWSURL(
         process.env.NEXT_PUBLIC_BACKEND_WS_BASE +
-          "/ws/teacher/?token=" +
+          "ws/teacher/?token=" +
           auth.tokens.access +
           "&code=" +
           code
@@ -70,7 +70,7 @@ const Classroom = () => {
       // Get classrooms data if user went directly to classroom link
       getAccessToken().then((accessToken) => {
         axios
-          .get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "/core/classrooms/", {
+          .get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/classrooms/", {
             headers: { Authorization: "Bearer " + accessToken },
           })
           .then((res) => {
@@ -91,7 +91,7 @@ const Classroom = () => {
     // Get all task data
     getAccessToken().then((accessToken) => {
       axios
-        .get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "/core/tasks/", {
+        .get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/tasks/", {
           headers: { Authorization: "Bearer " + accessToken },
           params: { code: code },
         })
@@ -107,7 +107,7 @@ const Classroom = () => {
     getAccessToken().then((accessToken) => {
       axios
         .get(
-          process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "/core/announcements/",
+          process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/announcements/",
           {
             headers: { Authorization: "Bearer " + accessToken },
             params: { code: code },
@@ -125,7 +125,7 @@ const Classroom = () => {
     getAccessToken().then((accessToken) => {
       axios
         .get(
-          process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "/core/resource_section/",
+          process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/resource_section/",
           {
             headers: { Authorization: "Bearer " + accessToken },
             params: { code: code },
@@ -146,7 +146,7 @@ const Classroom = () => {
     // Get student profiles
     getAccessToken().then((accessToken) => {
       axios
-        .get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "/core/student_list/", {
+        .get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/student_list/", {
           headers: { Authorization: "Bearer " + accessToken },
           params: { code: classroom.code },
         })
@@ -162,7 +162,7 @@ const Classroom = () => {
       getAccessToken().then((accessToken) => {
         axios
           .get(
-            process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "/core/submissions/",
+            process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/submissions/",
             {
               headers: { Authorization: "Bearer " + accessToken },
               params: { code: classroom.code },
@@ -177,7 +177,7 @@ const Classroom = () => {
         axios
           .get(
             process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-              "/core/submission_status/",
+              "core/submission_status/",
             {
               headers: { Authorization: "Bearer " + accessToken },
               params: { code: classroom.code },
@@ -278,7 +278,7 @@ const Classroom = () => {
       axios
         .put(
           process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-            "/core/classrooms/" +
+            "core/classrooms/" +
             newClassroom.id +
             "/",
           newClassroom,
@@ -302,7 +302,7 @@ const Classroom = () => {
       axios
         .put(
           process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-            "/core/student_list/" +
+            "core/student_list/" +
             classroom.id +
             "/",
           {
@@ -327,7 +327,7 @@ const Classroom = () => {
       axios
         .put(
           process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-            "/core/classrooms/" +
+            "core/classrooms/" +
             classroom.id +
             "/",
           {
@@ -354,7 +354,7 @@ const Classroom = () => {
       axios
         .delete(
           process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-            "/core/classrooms/" +
+            "core/classrooms/" +
             id +
             "/",
           { headers: { Authorization: "Bearer " + accessToken } }

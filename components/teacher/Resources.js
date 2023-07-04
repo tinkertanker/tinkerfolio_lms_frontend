@@ -20,7 +20,7 @@ const Resources = ({ classroom, resources, setResources }) => {
     getAccessToken().then((accessToken) => {
       axios
         .post(
-          process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "/core/resource_section/",
+          process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/resource_section/",
           formData,
           { headers: { Authorization: "Bearer " + accessToken } }
         )
@@ -39,7 +39,7 @@ const Resources = ({ classroom, resources, setResources }) => {
         axios
           .delete(
             process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-              "/core/resource_section/" +
+              "core/resource_section/" +
               id.toString() +
               "/",
             { headers: { Authorization: "Bearer " + accessToken } }
@@ -73,7 +73,7 @@ const Resources = ({ classroom, resources, setResources }) => {
     getAccessToken().then((accessToken) => {
       axios
         .post(
-          process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "/core/resource/",
+          process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/resource/",
           formData,
           { headers: { Authorization: "Bearer " + accessToken } }
         )
@@ -110,7 +110,7 @@ const Resources = ({ classroom, resources, setResources }) => {
         axios
           .delete(
             process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-              "/core/resource/" +
+              "core/resource/" +
               id +
               "/",
             { headers: { Authorization: "Bearer " + accessToken } }
@@ -152,7 +152,7 @@ const Resources = ({ classroom, resources, setResources }) => {
         axios
           .get(
             process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-              "/core/resource/" +
+              "core/resource/" +
               id.toString() +
               "/",
             {

@@ -19,7 +19,7 @@ const Project = () => {
         axios
           .get(
             process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-              "/student/submission/" +
+              "student/submission/" +
               router.query.id +
               "/",
             {

@@ -32,7 +32,7 @@ const Register = () => {
       axios
         .post(
           process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-            "/auth/token/student_signup/",
+            "auth/token/student_signup/",
           {
             username,
             email,
@@ -73,7 +73,7 @@ const Register = () => {
       axios
         .post(
           process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-            "/auth/token/teacher_signup/",
+            "auth/token/teacher_signup/",
           {
             username,
             email,

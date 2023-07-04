@@ -22,7 +22,7 @@ const StudentHome = () => {
     if (auth.tokens) {
       getAccessToken().then((accessToken) => {
         axios
-          .get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "/student/enroll/", {
+          .get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "student/enroll/", {
             headers: { Authorization: "Bearer " + accessToken },
           })
           .then((res) => {
@@ -60,7 +60,7 @@ const StudentHome = () => {
     getAccessToken().then((accessToken) => {
       axios
         .post(
-          process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "/student/enroll/",
+          process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "student/enroll/",
           {
             code: formCode,
           },

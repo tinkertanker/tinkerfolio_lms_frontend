@@ -102,7 +102,7 @@ const Dashboard = ({
         axios
           .put(
             process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-              "/core/tasks/" +
+              "core/tasks/" +
               newTask.id.toString() +
               "/",
             newTask,
@@ -121,7 +121,7 @@ const Dashboard = ({
     getAccessToken().then((accessToken) => {
       axios
         .post(
-          process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "/core/tasks/",
+          process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/tasks/",
           { code: classroom.code, ...task },
           { headers: { Authorization: "Bearer " + accessToken } }
         )
@@ -135,7 +135,7 @@ const Dashboard = ({
     getAccessToken().then((accessToken) => {
       axios
         .post(
-          process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "/core/tasks/?bulk=true",
+          process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/tasks/?bulk=true",
           tasksArray,
           { headers: { Authorization: "Bearer " + accessToken } }
         )
@@ -152,7 +152,7 @@ const Dashboard = ({
       axios
         .delete(
           process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-            "/core/tasks/" +
+            "core/tasks/" +
             id.toString() +
             "/",
           { headers: { Authorization: "Bearer " + accessToken } }
@@ -168,7 +168,7 @@ const Dashboard = ({
       axios
         .put(
           process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-            "/core/tasks/" +
+            "core/tasks/" +
             draftTaskID.toString() +
             "/",
           {
@@ -196,7 +196,7 @@ const Dashboard = ({
       axios
         .get(
           process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-            "/core/tasks/?code=" +
+            "core/tasks/?code=" +
             code.toString(),
           {
             headers: { Authorization: "Bearer " + accessToken },
@@ -217,7 +217,7 @@ const Dashboard = ({
       axios
         .put(
           process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-            "/core/submissions/" +
+            "core/submissions/" +
             id.toString() +
             "/",
           { stars, comment },

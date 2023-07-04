@@ -51,7 +51,7 @@ const AuthContextProvider = (props) => {
 
     await axios
       .post(
-        process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "/auth/token/refresh/",
+        process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "auth/token/refresh/",
         {
           refresh: auth.tokens.refresh,
         },
@@ -78,7 +78,7 @@ const AuthContextProvider = (props) => {
 
     await axios
       .post(
-        process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "/auth/token/verify/",
+        process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "auth/token/verify/",
         {
           token: tokens.refresh,
         },
@@ -100,7 +100,7 @@ const AuthContextProvider = (props) => {
     let accessToken = null;
     try {
       await axios.post(
-        process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "/auth/token/verify/",
+        process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "auth/token/verify/",
         {
           token: auth.tokens.access,
         },

@@ -34,7 +34,7 @@ const StudentLogin = () => {
     console.log("ran");
     axios
       .post(
-        process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "/auth/token/",
+        process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "auth/token/",
         {
           username: code + "_" + index,
           password: index,
@@ -70,7 +70,7 @@ const StudentLogin = () => {
     axios
       .post(
         process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-          "/auth/token/student_register/",
+          "auth/token/student_register/",
         {
           code,
           name,
