@@ -24,7 +24,7 @@ const Login = () => {
     console.log("ran");
     axios
       .post(
-        process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "auth/token/",
+        process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "/auth/token/",
         {
           username,
           password,

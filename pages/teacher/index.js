@@ -23,7 +23,7 @@ const TeacherHome = () => {
     if (auth.tokens) {
       getAccessToken().then((accessToken) => {
         axios
-          .get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/classrooms/", {
+          .get(process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "/core/classrooms/", {
             headers: { Authorization: "Bearer " + accessToken },
           })
           .then((res) => {
@@ -61,7 +61,7 @@ const TeacherHome = () => {
     getAccessToken().then((accessToken) => {
       axios
         .post(
-          process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/classrooms/",
+          process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "/core/classrooms/",
           {
             name: formName,
             no_of_students: formStudents > 1 ? parseInt(formStudents) : 1,

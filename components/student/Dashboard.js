@@ -35,7 +35,7 @@ const Dashboard = ({
     getAccessToken().then((accessToken) => {
       axios
         .post(
-          process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "student/submission/",
+          process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "/student/submission/",
           formData,
           {
             headers: { Authorization: "Bearer " + accessToken },
@@ -66,7 +66,7 @@ const Dashboard = ({
         axios
           .put(
             process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-              "student/submission/" +
+              "/student/submission/" +
               existingSubmission[0].id +
               "/",
             formData,
@@ -99,7 +99,7 @@ const Dashboard = ({
         axios
           .put(
             process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-              "student/submission_status/" +
+              "/student/submission_status/" +
               existingStatus[0].id +
               "/",
             { status },
@@ -125,7 +125,7 @@ const Dashboard = ({
         axios
           .post(
             process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-              "student/submission_status/",
+              "/student/submission_status/",
             {
               task_id: taskID,
               status,
@@ -155,7 +155,7 @@ const Dashboard = ({
       axios
         .get(
           process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-            "student/submission/" +
+            "/student/submission/" +
             id.toString() +
             "/",
           {

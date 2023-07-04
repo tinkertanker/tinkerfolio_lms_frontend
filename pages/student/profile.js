@@ -23,7 +23,7 @@ const StudentProfile = () => {
       getAccessToken().then((accessToken) => {
         axios
           .get(
-            process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "student/portfolio/",
+            process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "/student/portfolio/",
             {
               headers: { Authorization: "Bearer " + accessToken },
             }

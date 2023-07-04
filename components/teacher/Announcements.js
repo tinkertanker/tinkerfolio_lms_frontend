@@ -14,7 +14,7 @@ const Announcements = ({ classroom, announcements, setAnnouncements }) => {
     getAccessToken().then((accessToken) => {
       axios
         .post(
-          process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "core/announcements/",
+          process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "/core/announcements/",
           { code: classroom.code, ...announcement },
           { headers: { Authorization: "Bearer " + accessToken } }
         )
@@ -37,7 +37,7 @@ const Announcements = ({ classroom, announcements, setAnnouncements }) => {
         axios
           .delete(
             process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-              "core/announcements/" +
+              "/core/announcements/" +
               id.toString() +
               "/",
             { headers: { Authorization: "Bearer " + accessToken } }
@@ -82,7 +82,7 @@ const Announcements = ({ classroom, announcements, setAnnouncements }) => {
         axios
           .put(
             process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-              "core/announcements/" +
+              "/core/announcements/" +
               id.toString() +
               "/",
             formData,
