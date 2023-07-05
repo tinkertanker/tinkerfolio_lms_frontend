@@ -19,7 +19,7 @@ const ResourcesPreview = ({ resources, reloadResource }) => {
                   className="flex flex-col mt-3 bg-gray-100 p-4 rounded-lg"
                   key={i}
                 >
-                  <h3 className="font-semibold text-base text-blue-600 truncate">
+                  <h3 className="font-semibold text-base text-black-600 truncate">
                     {resource.section.name}
                   </h3>
                   <div className="mt-1 flex flex-col">

@@ -72,7 +72,7 @@ const joinClass = ({ formCode, setFormError }) => {
         let classroom = res.data;
         setClassrooms([...classrooms, classroom]);
         setFilteredClassrooms([...filteredClassrooms, classroom]);
-        setSearchQuery(""); // Clear the search query
+        setSearchQuery(""); 
       })
       .catch((res) => {
         console.log(res);
@@ -106,18 +106,19 @@ const joinClass = ({ formCode, setFormError }) => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-          {filteredClassrooms.length === 0 ? (
+          {filteredClassrooms && filteredClassrooms.length === 0 ? (
             <p className="text-gray-500">No courses found ¯\_(ツ)_/¯</p>
           ) : (
-            filteredClassrooms &&
-            sortClassrooms(filteredClassrooms).map((cr, i) => {
-              return <Classroom classroom={cr} key={i} />;
-            })
+            filteredClassrooms
+              ?.sort((a, b) =>
+                a.status > b.status ? 1 : b.status > a.status ? -1 : 0
+              )
+              .map((cr, i) => {
+                return <Classroom classroom={cr} key={i} />;
+              })
           )}
         </div>
       </main>
-
-
     </div>
   );
 };

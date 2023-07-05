@@ -15,8 +15,7 @@ const TeacherHome = () => {
   const { auth, setAuth, getAccessToken } = useContext(AuthContext);
   const { classrooms, setClassrooms } = useContext(ClassroomsContext);
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredClassrooms, setFilteredClassrooms] = useState([]);
-
+  const [filteredClassrooms, setFilteredClassrooms] = useState(null);
 
   useEffect(() => {
     // Get classrooms
@@ -73,11 +72,11 @@ const TeacherHome = () => {
         .then((res) => {
           let classroom = res.data;
           setClassrooms((prevClassrooms) => [...prevClassrooms, classroom]);
-          setSearchQuery(""); // Clear the search query
+          setSearchQuery(""); 
           setFilteredClassrooms((prevClassrooms) => [
             ...prevClassrooms,
             classroom,
-          ]); // Add the new class to the filtered classrooms
+          ]); 
         })
         .catch((res) => {
           console.log(res);
@@ -109,20 +108,16 @@ const TeacherHome = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-          {searchQuery === "" ? (
-            filteredClassrooms.length === 0 ? (
-              <p className="text-gray-500">No classes found ¯\_(ツ)_/¯</p>
-            ) : (
-              filteredClassrooms &&
-              sortClassrooms(filteredClassrooms).map((cr, i) => {
+          {filteredClassrooms && filteredClassrooms.length === 0 ? (
+            <p className="text-gray-500">No classrooms found ¯\_(ツ)_/¯</p>
+          ) : (
+            filteredClassrooms
+              ?.sort((a, b) =>
+                a.status > b.status ? 1 : b.status > a.status ? -1 : 0
+              )
+              .map((cr, i) => {
                 return <Classroom classroom={cr} key={i} />;
               })
-            )
-          ) : (
-            classrooms &&
-            sortClassrooms(classrooms).map((cr, i) => {
-              return <Classroom classroom={cr} key={i} />;
-            })
           )}
         </div>
       </main>

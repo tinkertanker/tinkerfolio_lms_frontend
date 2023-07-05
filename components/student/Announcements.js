@@ -15,7 +15,7 @@ const Announcements = ({ announcements }) => {
                   key={i}
                 >
                   <div className="flex items-center justify-between">
-                    <h3 className="font-bold text-md sm:text-2xl text-blue-600">
+                    <h3 className="font-bold text-md sm:text-2xl text-black-600">
                       {announcement.name}
                     </h3>
                     <p className="my-2 text-sm text-gray-500 font-medium">
