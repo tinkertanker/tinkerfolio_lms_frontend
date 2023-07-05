@@ -56,28 +56,30 @@ const StudentHome = () => {
     setFilteredClassrooms(filtered);
   };
 
-  const joinClass = ({ formCode, setFormError }) => {
-    getAccessToken().then((accessToken) => {
-      axios
-        .post(
-          process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "student/enroll/",
-          {
-            code: formCode,
-          },
-          {
-            headers: { Authorization: "Bearer " + accessToken },
-          }
-        )
-        .then((res) => {
-          let classroom = res.data;
-          setClassrooms([...classrooms, classroom]);
-        })
-        .catch((res) => {
-          console.log(res);
-          setFormError(true);
-        });
-    });
-  };
+const joinClass = ({ formCode, setFormError }) => {
+  getAccessToken().then((accessToken) => {
+    axios
+      .post(
+        process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "student/enroll/",
+        {
+          code: formCode,
+        },
+        {
+          headers: { Authorization: "Bearer " + accessToken },
+        }
+      )
+      .then((res) => {
+        let classroom = res.data;
+        setClassrooms([...classrooms, classroom]);
+        setFilteredClassrooms([...filteredClassrooms, classroom]);
+        setSearchQuery(""); // Clear the search query
+      })
+      .catch((res) => {
+        console.log(res);
+        setFormError(true);
+      });
+  });
+};
 
   return (
     <div className="flex flex-col min-h-screen">

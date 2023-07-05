@@ -72,7 +72,12 @@ const TeacherHome = () => {
         )
         .then((res) => {
           let classroom = res.data;
-          setClassrooms([...classrooms, classroom]);
+          setClassrooms((prevClassrooms) => [...prevClassrooms, classroom]);
+          setSearchQuery(""); // Clear the search query
+          setFilteredClassrooms((prevClassrooms) => [
+            ...prevClassrooms,
+            classroom,
+          ]); // Add the new class to the filtered classrooms
         })
         .catch((res) => {
           console.log(res);
@@ -104,11 +109,18 @@ const TeacherHome = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-          {filteredClassrooms.length === 0 ? (
-            <p className="text-gray-500">No courses found ¯\_(ツ)_/¯</p>
+          {searchQuery === "" ? (
+            filteredClassrooms.length === 0 ? (
+              <p className="text-gray-500">No classes found ¯\_(ツ)_/¯</p>
+            ) : (
+              filteredClassrooms &&
+              sortClassrooms(filteredClassrooms).map((cr, i) => {
+                return <Classroom classroom={cr} key={i} />;
+              })
+            )
           ) : (
-            filteredClassrooms &&
-            sortClassrooms(filteredClassrooms).map((cr, i) => {
+            classrooms &&
+            sortClassrooms(classrooms).map((cr, i) => {
               return <Classroom classroom={cr} key={i} />;
             })
           )}
@@ -189,7 +201,7 @@ const CreateClassForm = ({ createClass }) => {
             <p className="text-sm text-red-500">Class name cannot be empty.</p>
           )}
           <button
-            className="mt-4 py-1 px-2 bg-blue-500 hover:bg-blue-600 text-white rounded"
+            className="mt-4 py-1 px-2 bg-red-500 hover:bg-red-600 text-white rounded"
             onClick={() => {
               if (!formName) {
                 setFormError(true);
