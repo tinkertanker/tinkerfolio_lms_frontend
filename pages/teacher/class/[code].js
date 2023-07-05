@@ -536,16 +536,7 @@ const StudentJoinInfo = ({ code }) => {
         <div className="flex flex-col px-4 py-4 bg-white rounded-lg shadow-md">
           <div className="flex flex-row items-center justify-center">
             <h1 className="text-lg sm:text-xl text-center">
-              Join at{" "}
-              <a
-                className="text-blue-500 hover:underline"
-                href="https://joinclass.me"
-                target="_blank"
-                rel="noreferrer"
-              >
-                joinclass.me
-              </a>{" "}
-              using this code.
+              Join with this code:
             </h1>
           </div>
           <div className="flex flex-row items-center justify-center mt-4">
