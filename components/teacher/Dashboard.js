@@ -175,7 +175,7 @@ const Dashboard = ({
             name: task.name,
             status: 1,
             description: task.description,
-            max_stars: task.max_stars,
+            max_stars: 5,
             display: task.display,
           },
           {
@@ -1376,33 +1376,7 @@ const TaskDetails = ({ task, setOneTask, setIsCloseOnDocClick, subs }) => {
             </select>
           </div>
           <div>
-            <label htmlFor="max_stars" className="px-2 pt-2">
-              Max. Stars
-            </label>
-            <select
-              onChange={(e) =>
-                setNewTask({
-                  ...newTask,
-                  [e.target.name]: parseInt(e.target.value),
-                })
-              }
-              onKeyDown={(e) => {
-                e.preventDefault();
-                return false;
-              }}
-              onBlur={() => setOneTask(newTask)}
-              className="outline-none py-1.5 px-2 bg-gray-100 rounded-lg my-1 mx-2 w-min"
-              name="max_stars"
-              id="max_stars"
-              value={newTask.max_stars}
-            >
-              <option value={0}>0</option>
-              <option value={1}>1</option>
-              <option value={2}>2</option>
-              <option value={3}>3</option>
-              <option value={4}>4</option>
-              <option value={5}>5</option>
-            </select>
+            
           </div>
         </div>
       </div>
@@ -1478,7 +1452,7 @@ const NewTask = ({
     setTask({
       name: draftTask.name,
       description: draftTask.description,
-      max_stars: draftTask.max_stars,
+      max_stars: 5,
       display: 0,
     });
   };
@@ -1510,7 +1484,7 @@ const NewTask = ({
         code: classroom.code,
         name: t.name,
         description: t.description,
-        max_stars: t.max_stars,
+        max_stars: 5,
         display: displayNum,
       }));
 
@@ -1592,33 +1566,9 @@ const NewTask = ({
               placeholder="Enter task description here..."
             />
             <label htmlFor="max_stars" className="px-2 pt-2">
-              Max. Stars
+              Max. Stars: 5
             </label>
-            <select
-              onChange={(e) =>
-                setTask({
-                  ...task,
-                  [e.target.name]: parseInt(e.target.value),
-                })
-              }
-              onKeyDown={(e) => {
-                e.preventDefault();
-                return false;
-              }}
-              className="outline-none py-1.5 px-2 bg-gray-100 rounded-lg my-1 mx-2 w-min"
-              name="max_stars"
-              id="max_stars"
-            >
-              <option value={0}>0</option>
-              <option value={1}>1</option>
-              <option value={2}>2</option>
-              <option value={3}>3</option>
-              <option value={4}>4</option>
-              <option selected value={5}>
-                5
-              </option>
-            </select>
-            <small className="ml-2 text-gray-500">Capped at 5 stars.</small>
+            
             <div className="flex">
               <button
                 type="submit"

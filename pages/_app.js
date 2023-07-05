@@ -2,7 +2,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import "../styles/globals.css";
 import AuthContextProvider from "../contexts/Auth.Context";
 import ClassroomsContextProvider, {
@@ -32,7 +32,7 @@ const Layout = ({ children }) => {
   const router = useRouter();
   const { auth, setAuth } = useContext(AuthContext);
   const { classroom, setClassroom } = useContext(ClassroomsContext);
-
+  
   const logout = () => {
     setAuth({ ...auth, loading: true });
     setAuth({
@@ -45,6 +45,20 @@ const Layout = ({ children }) => {
     localStorage.removeItem("userType");
   };
 
+   useEffect(() => {
+     if (auth.tokens) {
+       if (auth.userRole === "student") {
+         router.push("/student");
+       } else if (auth.userRole === "teacher") {
+         router.push("/teacher");
+       }
+     }
+   }, [auth.tokens, auth.userRole, router]);
+
+   const handleClick = () => {
+     router.push("/");
+   };
+  
   const profile = () => {
     router.push("/student/profile");
   };
@@ -93,25 +107,15 @@ const Layout = ({ children }) => {
           className={router.pathname === "/" ? "bg-gray-100 " : "bg-gray-100 "}
         >
           <nav className={navStyle}>
-            {["/", "/login", "/register"].includes(router.pathname) ? (
-              <Link href="/">
-                <img
-                  className="cursor-pointer"
-                  src="/main_logo_1.png"
-                  height="150"
-                  width="150"
-                />
-              </Link>
-            ) : (
-              <Link href="/">
-                <img
-                  className="cursor-pointer"
-                  src="/main_logo_1.png"
-                  height="150"
-                  width="150"
-                />
-              </Link>
-            )}
+            <Link href="/">
+              <img
+                className="cursor-pointer"
+                src="/main_logo_1.png"
+                height="150"
+                width="150"
+                onClick={handleClick}
+              />
+            </Link>
 
             {!auth.isAuthenticated && (
               <div className="flex flex-row-reverse items-center ml-auto gap-4 sm:gap-8">
