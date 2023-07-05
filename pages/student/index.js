@@ -56,28 +56,30 @@ const StudentHome = () => {
     setFilteredClassrooms(filtered);
   };
 
-  const joinClass = ({ formCode, setFormError }) => {
-    getAccessToken().then((accessToken) => {
-      axios
-        .post(
-          process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "student/enroll/",
-          {
-            code: formCode,
-          },
-          {
-            headers: { Authorization: "Bearer " + accessToken },
-          }
-        )
-        .then((res) => {
-          let classroom = res.data;
-          setClassrooms([...classrooms, classroom]);
-        })
-        .catch((res) => {
-          console.log(res);
-          setFormError(true);
-        });
-    });
-  };
+const joinClass = ({ formCode, setFormError }) => {
+  getAccessToken().then((accessToken) => {
+    axios
+      .post(
+        process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "student/enroll/",
+        {
+          code: formCode,
+        },
+        {
+          headers: { Authorization: "Bearer " + accessToken },
+        }
+      )
+      .then((res) => {
+        let classroom = res.data;
+        setClassrooms([...classrooms, classroom]);
+        setFilteredClassrooms([...filteredClassrooms, classroom]);
+        setSearchQuery(""); 
+      })
+      .catch((res) => {
+        console.log(res);
+        setFormError(true);
+      });
+  });
+};
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -104,18 +106,19 @@ const StudentHome = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-          {filteredClassrooms.length === 0 ? (
+          {filteredClassrooms && filteredClassrooms.length === 0 ? (
             <p className="text-gray-500">No courses found ¯\_(ツ)_/¯</p>
           ) : (
-            filteredClassrooms &&
-            sortClassrooms(filteredClassrooms).map((cr, i) => {
-              return <Classroom classroom={cr} key={i} />;
-            })
+            filteredClassrooms
+              ?.sort((a, b) =>
+                a.status > b.status ? 1 : b.status > a.status ? -1 : 0
+              )
+              .map((cr, i) => {
+                return <Classroom classroom={cr} key={i} />;
+              })
           )}
         </div>
       </main>
-
-
     </div>
   );
 };

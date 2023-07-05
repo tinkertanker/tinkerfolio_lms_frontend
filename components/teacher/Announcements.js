@@ -129,7 +129,7 @@ const Announcements = ({ classroom, announcements, setAnnouncements }) => {
                 key={i}
               >
                 <div className="flex flex-row">
-                  <h3 className="font-bold text-xl text-blue-600">
+                  <h3 className="font-bold text-xl text-black-600">
                     {announcement.name}
                   </h3>
                   <div className="ml-auto flex flex-row gap-2">
@@ -171,7 +171,7 @@ const NewAnnouncement = ({ addAnnouncement, popupClose }) => {
   return (
     <CustomPopup
       trigger={
-        <button className="w-1/2 text-base flex justify-end text-gray-500 hover:text-blue-600 focus:outline-none">
+        <button className="w-1/2 text-base flex justify-end text-gray-500 hover:text-red-600 focus:outline-none">
           <p>Add Announcement</p>
         </button>
       }
@@ -231,7 +231,7 @@ const NewAnnouncement = ({ addAnnouncement, popupClose }) => {
             </button>
             <button
               type="submit"
-              className="focus:outline-none mt-4 ml-2 px-2 py-1 w-min bg-blue-500 text-white rounded hover:bg-blue-600 font-bold"
+              className="focus:outline-none mt-4 ml-2 px-2 py-1 w-min bg-red-500 text-white rounded hover:bg-red-600 font-bold"
             >
               Done
             </button>
@@ -375,7 +375,7 @@ const UpdateAnnouncement = ({
             </button>
             <button
               type="submit"
-              className="focus:outline-none mt-4 ml-2 px-2 py-1 w-min bg-blue-500 text-white rounded hover:bg-blue-600 font-bold"
+              className="focus:outline-none mt-4 ml-2 px-2 py-1 w-min bg-red-500 text-white rounded hover:bg-red-600 font-bold"
             >
               Done
             </button>
