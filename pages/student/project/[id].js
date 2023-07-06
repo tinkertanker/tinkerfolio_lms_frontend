@@ -62,7 +62,9 @@ const Project = () => {
             )}
 
             {submission.text && (
-              <p className="text-gray-600 mb-4">Text: {submission.text}</p>
+              <p className="text-gray-600 mb-4 break-words">
+                Text: {submission.text}
+              </p>
             )}
 
             {submission.image && (
