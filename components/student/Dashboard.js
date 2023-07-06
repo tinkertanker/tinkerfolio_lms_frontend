@@ -26,6 +26,12 @@ const Dashboard = ({
   const { getAccessToken } = useContext(AuthContext);
 
   const addSubmission = (textInput, fileInput, id) => {
+    if (!textInput && !fileInput) {
+      console.log(
+        "Both text and image inputs are blank. Submission not created."
+      );
+      return;
+    }
     const formData = new FormData();
     formData.append("task_id", id);
     formData.append("code", classroom);
@@ -629,6 +635,7 @@ const Task = ({
                   No Description
                 </p>
               )}
+              
             </div>
             {task.max_stars > 0 ? (
               <h1

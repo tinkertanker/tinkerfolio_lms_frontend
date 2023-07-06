@@ -583,6 +583,7 @@ const Dashboard = ({
                               task,
                               addReview,
                               sendJsonMessage,
+                              submissionStatuses,
                             }}
                             key={i}
                           />
@@ -592,7 +593,26 @@ const Dashboard = ({
                             className="px-2 py-2 border-r-2"
                             key={i}
                             style={{ width: "241.36px" }}
-                          ></td>
+                          >
+                            {submissionStatuses?.filter(
+                              (s) =>
+                                s.student === student_id && s.task === task.id
+                            )[0]?.status === 1
+                              ? "Not Started❗️"
+                              : submissionStatuses?.filter(
+                                  (s) =>
+                                    s.student === student_id &&
+                                    s.task === task.id
+                                )[0]?.status === 2
+                              ? "Working On It❗️"
+                              : submissionStatuses?.filter(
+                                  (s) =>
+                                    s.student === student_id &&
+                                    s.task === task.id
+                                )[0]?.status === 3
+                              ? "Stuck❗️"
+                              : ""}
+                          </td>
                         );
                       })}
                   </tr>
@@ -956,6 +976,7 @@ const Submission = ({
   task,
   addReview,
   sendJsonMessage,
+  submissionStatuses,
 }) => {
   submissions = submissions
     .filter((s) => s.task === task.id)
@@ -971,6 +992,20 @@ const Submission = ({
 
   const [submission, setSubmission] = useState(sub);
   const [student, setStudent] = useState(sp);
+  const [subStatus, setSubStatus] = useState(-1);
+
+  useEffect(() => {
+    
+      const filteredStatus = submissionStatuses.filter(
+        (s) => s.student === student.studentUserID && s.task === task.id
+      )
+    console.log(submissionStatuses);
+      if (filteredStatus.length > 0) {
+        setSubStatus(filteredStatus[0].status);
+      }
+    
+  }, [student.id, task.id, submissionStatuses]);
+
 
   const shortened = (text, maxLength) => {
     if (text.length > maxLength) return text.substring(0, maxLength) + "...";
@@ -1013,6 +1048,18 @@ const Submission = ({
           ) : (
             <p className="italic text-xs mb-2">Not reviewed yet.</p>
           )}
+          <p>
+            {subStatus === -1
+              ? " "
+              : subStatus === 1
+              ? "Not Started❗️"
+              : subStatus === 2
+              ? "Working On It❗️"
+              : subStatus === 3
+              ? "Stuck❗️"
+              : ""}
+          </p>
+
           <p className="border-t border-gray-300"></p>
           {sub.text && (
             <p className="flex-none text-xs text-gray-700 mt-2">
