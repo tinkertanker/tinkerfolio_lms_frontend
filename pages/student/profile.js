@@ -29,7 +29,8 @@ const StudentProfile = () => {
             }
           )
           .then((res) => {
-            setSubmissions(res.data);
+            const mostRecentSubmissions = res.data.reverse();
+            setSubmissions(mostRecentSubmissions);
           })
           .catch((res) => {
             console.log(res);

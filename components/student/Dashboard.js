@@ -635,7 +635,6 @@ const Task = ({
                   No Description
                 </p>
               )}
-              
             </div>
             {task.max_stars > 0 ? (
               <h1

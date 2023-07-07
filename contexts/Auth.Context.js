@@ -16,7 +16,6 @@ const AuthContextProvider = (props) => {
       const tokens = JSON.parse(localStorage.getItem("tokens"));
       const userType = JSON.parse(localStorage.getItem("userType"));
       validateRefreshToken(tokens).then((isValid) => {
-        console.log("here");
         if (isValid) {
           setAuth({
             loading: false,

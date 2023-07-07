@@ -32,7 +32,7 @@ const Layout = ({ children }) => {
   const router = useRouter();
   const { auth, setAuth } = useContext(AuthContext);
   const { classroom, setClassroom } = useContext(ClassroomsContext);
-  
+
   const logout = () => {
     setAuth({ ...auth, loading: true });
     setAuth({
@@ -45,20 +45,20 @@ const Layout = ({ children }) => {
     localStorage.removeItem("userType");
   };
 
-   useEffect(() => {
-     if (auth.tokens) {
-       if (auth.userRole === "student") {
-         router.push("/student");
-       } else if (auth.userRole === "teacher") {
-         router.push("/teacher");
-       }
-     }
-   }, [auth.tokens, auth.userRole, router]);
+  useEffect(() => {
+    if (auth.tokens) {
+      if (auth.userRole === "student") {
+        router.push("/student");
+      } else if (auth.userRole === "teacher") {
+        router.push("/teacher");
+      }
+    }
+  }, [auth.tokens, auth.userRole, router]);
 
-   const handleClick = () => {
-     router.push("/");
-   };
-  
+  const handleClick = () => {
+    router.push("/");
+  };
+
   const profile = () => {
     router.push("/student/profile");
   };
@@ -154,7 +154,7 @@ const Layout = ({ children }) => {
               </div>
             )}
           </nav>
-          
+
           <div className="flex-grow">{children}</div>
           <footer
             className={
@@ -175,7 +175,6 @@ const Layout = ({ children }) => {
           </footer>
         </div>
       </div>
-      
     </>
   );
 };

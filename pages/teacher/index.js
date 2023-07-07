@@ -36,20 +36,19 @@ const TeacherHome = () => {
     }
   }, [auth.tokens]);
 
-    const handleSearch = (e) => {
-      const query = e.target.value;
-      setSearchQuery(query);
-      const filtered = classrooms.filter((classroom) => {
-        return (
-          classroom &&
-          classroom.name &&
-          classroom.name.toLowerCase().includes(query.toLowerCase())
-        );
-      });
-      setFilteredClassrooms(filtered);
-    };
+  const handleSearch = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    const filtered = classrooms.filter((classroom) => {
+      return (
+        classroom &&
+        classroom.name &&
+        classroom.name.toLowerCase().includes(query.toLowerCase())
+      );
+    });
+    setFilteredClassrooms(filtered);
+  };
 
-  
   const sortClassrooms = (classes) => {
     return classes.sort((a, b) =>
       a.status > b.status ? 1 : b.status > a.status ? -1 : 0
@@ -72,11 +71,11 @@ const TeacherHome = () => {
         .then((res) => {
           let classroom = res.data;
           setClassrooms((prevClassrooms) => [...prevClassrooms, classroom]);
-          setSearchQuery(""); 
+          setSearchQuery("");
           setFilteredClassrooms((prevClassrooms) => [
             ...prevClassrooms,
             classroom,
-          ]); 
+          ]);
         })
         .catch((res) => {
           console.log(res);
@@ -139,8 +138,8 @@ const Classroom = ({ classroom }) => {
   };
   const cardClassName = `border rounded-lg p-4 shadow-md ${
     isHovered ? "shadow-lg" : ""
-    }`;
-  
+  }`;
+
   return (
     <Link href={"/teacher/class/" + classroom.code}>
       <div

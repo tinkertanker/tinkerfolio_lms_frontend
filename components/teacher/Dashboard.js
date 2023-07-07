@@ -445,7 +445,7 @@ const Dashboard = ({
             </div>
           </div>
 
-            {/* TABLE */}
+          {/* TABLE */}
           <table
             className="block overflow-y-auto px-8 py-8 w-max min-w-full"
             style={{
@@ -996,17 +996,13 @@ const Submission = ({
   const [subStatus, setSubStatus] = useState(-1);
 
   useEffect(() => {
-    
-      const filteredStatus = submissionStatuses.filter(
-        (s) => s.student === student.studentUserID && s.task === task.id
-      )
-    console.log(submissionStatuses);
-      if (filteredStatus.length > 0) {
-        setSubStatus(filteredStatus[0].status);
-      }
-    
+    const filteredStatus = submissionStatuses.filter(
+      (s) => s.student === student.studentUserID && s.task === task.id
+    );
+    if (filteredStatus.length > 0) {
+      setSubStatus(filteredStatus[0].status);
+    }
   }, [student.id, task.id, submissionStatuses]);
-
 
   const shortened = (text, maxLength) => {
     if (text.length > maxLength) return text.substring(0, maxLength) + "...";
@@ -1374,7 +1370,7 @@ const TaskDetails = ({ task, setOneTask, setIsCloseOnDocClick, subs }) => {
       onClose={() => {
         if (newTask.name.trim() === "") {
           alert("Task name should not be empty.");
-          setIsCloseOnDocClick(false); 
+          setIsCloseOnDocClick(false);
           return;
         }
         setIsCloseOnDocClick(true);
@@ -1620,7 +1616,7 @@ const NewTask = ({
             <label htmlFor="max_stars" className="px-2 pt-2">
               Max. Stars: 5
             </label>
-            
+
             <div className="flex">
               <button
                 type="submit"

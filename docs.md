@@ -1,6 +1,8 @@
 # To run locally
+
 - `yarn install`
 - `yarn dev`
+
 # To run prettier
 
 `prettier --write .`

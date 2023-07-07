@@ -21,7 +21,6 @@ const Login = () => {
     e.preventDefault();
     setAuth({ ...auth, loading: true });
 
-    console.log("ran");
     axios
       .post(
         process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "auth/token/",
@@ -165,8 +164,6 @@ const Login = () => {
       </main>
     </div>
   );
-
-
 };
 
 export default Login;
