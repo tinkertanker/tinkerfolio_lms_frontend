@@ -154,7 +154,8 @@ const Layout = ({ children }) => {
               </div>
             )}
           </nav>
-          {children}
+          
+          <div className="flex-grow">{children}</div>
           <footer
             className={
               router.pathname === "/register" ||
@@ -174,6 +175,7 @@ const Layout = ({ children }) => {
           </footer>
         </div>
       </div>
+      
     </>
   );
 };

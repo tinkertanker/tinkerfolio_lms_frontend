@@ -202,7 +202,7 @@ const Resources = ({ classroom, resources, setResources }) => {
           <>
             {resource.section && (
               <div
-                className="flex flex-col mt-6 bg-gray-200 shadow-md p-4 border rounded-lg"
+                className="flex flex-col mt-6 bg-white-200 shadow-md p-4 border rounded-lg"
                 key={i}
               >
                 <div className="flex flex-row">
@@ -255,6 +255,20 @@ const NewResource = ({ addResource, popupClose }) => {
     name: "",
     files: [],
   });
+  const [showMessage, setShowMessage] = useState(false);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (resource.name.trim() === "") {
+      setShowMessage(true);
+      return;
+    }
+
+    addResource(resource);
+    setResource({ name: "", files: [] }); // reset form fields
+    popupClose();
+  };
 
   return (
     <CustomPopup
@@ -267,12 +281,7 @@ const NewResource = ({ addResource, popupClose }) => {
       {(close) => (
         <form
           className="flex flex-col px-4 py-4 bg-white rounded-lg shadow-md popup"
-          onSubmit={(e) => {
-            e.preventDefault();
-            addResource(resource);
-            setResource({ name: "", files: [] }); // reset form fields
-            close();
-          }}
+          onSubmit={handleSubmit}
         >
           <h1 className="font-bold text-2xl border-b-2 border-gray-300 focus:border-gray-500 my-2 mx-2">
             Create Resource Category
@@ -292,6 +301,11 @@ const NewResource = ({ addResource, popupClose }) => {
             name="name"
             autoComplete="off"
           />
+          {showMessage && (
+            <p className="text-red-500 text-sm mx-2 mt-1">
+              Please enter a valid resource name.
+            </p>
+          )}
           <input
             type="file"
             multiple
@@ -305,6 +319,7 @@ const NewResource = ({ addResource, popupClose }) => {
               className="focus:outline-none mt-4 ml-2 px-2 py-1 w-min border bg-gray-500 hover:bg-gray-600 rounded text-white font-bold"
               onClick={() => {
                 setResource({ name: "", files: [] });
+                setShowMessage(false);
                 close();
               }}
             >
@@ -312,7 +327,7 @@ const NewResource = ({ addResource, popupClose }) => {
             </button>
             <button
               type="submit"
-              className="focus:outline-none mt-4 ml-2 px-2 py-1 w-min bg-blue-500 text-white rounded hover:bg-blue-600 font-bold"
+              className="focus:outline-none mt-4 ml-2 px-2 py-1 w-min bg-red-500 text-white rounded hover:bg-red-600 font-bold"
             >
               Done
             </button>
@@ -506,7 +521,7 @@ const UpdateResource = ({
             </button>
             <button
               type="submit"
-              className="focus:outline-none mt-4 ml-2 px-2 py-1 w-min bg-blue-500 text-white rounded hover:bg-blue-600 font-bold"
+              className="focus:outline-none mt-4 ml-2 px-2 py-1 w-min bg-red-500 text-white rounded hover:bg-red-600 font-bold"
             >
               Done
             </button>

@@ -302,7 +302,7 @@ const Dashboard = ({
 
   return (
     <>
-      <div className="bg-white h-full rounded-2xl shadow-lg">
+      <div className="bg-white h-full rounded-2xl shadow-md">
         <div className="flex items-center mb-2 ml-1 sm:ml-0 px-3 sm:px-5 pt-5">
           <div className="flex items-center gap-3">
             <img src="/tasks_icon.svg" width="20px" />

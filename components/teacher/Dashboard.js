@@ -203,7 +203,8 @@ const Dashboard = ({
           }
         )
         .then((res) => {
-          setImportMenuTaskList(res.data);
+          const nonDraftTasks = res.data.filter((t) => t.display !== 2);
+          setImportMenuTaskList(nonDraftTasks);
         })
         .catch((res) => {
           console.log(res);
@@ -1371,6 +1372,11 @@ const TaskDetails = ({ task, setOneTask, setIsCloseOnDocClick, subs }) => {
       }
       onOpen={() => setIsCloseOnDocClick(false)}
       onClose={() => {
+        if (newTask.name.trim() === "") {
+          alert("Task name should not be empty.");
+          setIsCloseOnDocClick(false); 
+          return;
+        }
         setIsCloseOnDocClick(true);
         setOneTask(newTask);
       }}
@@ -1422,9 +1428,7 @@ const TaskDetails = ({ task, setOneTask, setIsCloseOnDocClick, subs }) => {
               <option value={2}>Completed</option>
             </select>
           </div>
-          <div>
-            
-          </div>
+          <div></div>
         </div>
       </div>
     </CustomPopup>
@@ -1598,6 +1602,7 @@ const NewTask = ({
               name="name"
               placeholder="Enter task name here..."
               autoComplete="off"
+              required
             />
             <textarea
               onChange={(e) =>
