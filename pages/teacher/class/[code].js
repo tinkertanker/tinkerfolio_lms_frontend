@@ -455,8 +455,6 @@ const Classroom = () => {
           </div>
         </div>
       )}
-
-      <footer></footer>
     </div>
   );
 };

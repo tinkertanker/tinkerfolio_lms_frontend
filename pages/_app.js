@@ -67,7 +67,7 @@ const Layout = ({ children }) => {
   if (router.pathname === "/")
     navStyle =
       "max-w-5xl 2xl:max-w-7xl mx-auto py-4 px-6 md:px-0 bg-gray-100 flex flex-row items-center";
-  if (router.pathname === "/login")
+  if (router.pathname === "/login" || router.pathname === "/register")
     navStyle = "bg-white border-b-2 px-6 py-2 flex flex-row items-center";
   if (router.pathname === "/student/");
   if (router.pathname.includes("/teacher/"))
@@ -154,7 +154,8 @@ const Layout = ({ children }) => {
               </div>
             )}
           </nav>
-          {children}
+          
+          <div className="flex-grow">{children}</div>
           <footer
             className={
               router.pathname === "/register" ||
@@ -174,6 +175,7 @@ const Layout = ({ children }) => {
           </footer>
         </div>
       </div>
+      
     </>
   );
 };
