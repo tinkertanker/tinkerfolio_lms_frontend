@@ -996,6 +996,9 @@ const Submission = ({
   const [subStatus, setSubStatus] = useState(-1);
 
   useEffect(() => {
+    if (!submissionStatuses) {
+      return;
+    }
     const filteredStatus = submissionStatuses.filter(
       (s) => s.student === student.studentUserID && s.task === task.id
     );
