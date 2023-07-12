@@ -281,7 +281,6 @@ const Dashboard = ({
         tasksToShow.sort((a, b) => (a.published_at < b.published_at ? 1 : -1));
         break;
     }
-
     return tasksToShow;
   };
 
@@ -489,7 +488,7 @@ const Dashboard = ({
                         className="truncate text-left"
                         style={{ width: "150px" }}
                       >
-                        {task.name}
+                        {task.name} {task.is_group ? "(Group)" : "(Individual"}
                       </p>
                       <TaskSummary
                         {...{
@@ -1616,6 +1615,33 @@ const NewTask = ({
               name="description"
               placeholder="Enter task description here..."
             />
+            <div className="flex flex-row items-center space-x-4">
+              <label>
+                <input
+                  type="radio"
+                  name="isGroupSubmission"
+                  value="true"
+                  checked={task.isGroupSubmission === true}
+                  onChange={(e) =>
+                    setTask({ ...task, isGroupSubmission: true })
+                  }
+                />
+                Group Submission
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="isGroupSubmission"
+                  value="false"
+                  checked={task.isGroupSubmission === false}
+                  onChange={(e) =>
+                    setTask({ ...task, isGroupSubmission: false })
+                  }
+                />
+                Individual Submission
+              </label>
+            </div>
+
             <label htmlFor="max_stars" className="px-2 pt-2">
               Max. Stars: 5
             </label>
