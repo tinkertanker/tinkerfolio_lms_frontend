@@ -626,8 +626,18 @@ const Task = ({
                   </p>
                 )}
               </span>
+              {task.is_group ? (
+                <p className="my-1 font-regular text-gray-600 text-sm">
+                  Group Submission
+                </p>
+              ) : (
+                <p className="my-1 font-regular text-gray-600 text-sm">
+                  Individual Submission
+                </p>
+              )}
+
               {task.description ? (
-                <p className="my-1 font-medium text-gray-500 text-sm truncate">
+                <p className="my-1 font-medium text-gray-400 text-sm truncate">
                   {task.description}
                 </p>
               ) : (
