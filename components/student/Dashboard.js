@@ -54,6 +54,7 @@ const Dashboard = ({
           )
           .then((res) => {
             setSubmissions([...submissions, res.data]);
+            console.log(res.data);
           })
           .catch((res) => {
             console.log(res);
@@ -151,8 +152,6 @@ const Dashboard = ({
             });
         });
       } else {
-        console.log(selectedStudents);
-        console.log("Hi");
         getAccessToken().then((accessToken) => {
           axios
             .post(
@@ -690,8 +689,7 @@ const Task = ({
     : false;
   
    const [selectedStudents, setSelectedStudents] = useState([]);
-   const [groupName, setGroupName] = useState("");
-
+const [groupName, setGroupName] = useState("");
   const handleStudentSelection = (event) => {
     const studentId = event.target.value;
     if (event.target.checked) {
@@ -699,7 +697,6 @@ const Task = ({
     } else {
       setSelectedStudents(selectedStudents.filter((id) => id !== studentId));
     }
-    console.log(selectedStudents)
   };
      
   
@@ -801,7 +798,6 @@ const Task = ({
               {/* TO ADD GROUP */}
               {task.is_group && (
                 <>
-                  <p>{classMembers}</p>
                   <label>
                     Group Name:
                     <input
@@ -812,32 +808,44 @@ const Task = ({
                       required
                     />
                   </label>
+                  <div className='mt-2 mb-2'>
+                    <p>Current members in team: </p>
+                    {selectedStudents.map((student) => (
+                      <li className="ml-4">{student}</li>
+                    ))}
+                  </div>
 
                   <label>
                     Select Group Members:
-                    {classMembers.map((member) => (
-                      <div key={member}>
-                        <input className="mr-2"
-                          type="checkbox"
-                          value={member}
-                          onChange={handleStudentSelection}
-                        />
-                        {member}
-                      </div>
-                    ))}
+                    {classMembers.map((member) => {
+                      if (!selectedStudents.includes(member)) {
+                        return (
+                          <div key={member}>
+                            <input
+                              className="mr-2"
+                              type="checkbox"
+                              value={member}
+                              onChange={handleStudentSelection}
+                            />
+                            {member}
+                          </div>
+                        );
+                      }
+                    })}
                   </label>
                 </>
               )}
-              <SubmissionStatus {...{ task, status, updateStatus, selectedStudents }} />
+              <SubmissionStatus
+                {...{ task, status, updateStatus, selectedStudents }}
+              />
               <SubmissionForm
                 task={task}
                 addSubmission={addSubmission}
                 updateSubmission={updateSubmission}
                 close={close}
                 isUpdate={false}
-                  sub={sub}
-                  group={groupName}
-                  team_students={selectedStudents}
+                sub={sub}
+                team_students={selectedStudents}
               />
             </>
           )}
