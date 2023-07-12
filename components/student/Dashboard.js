@@ -22,10 +22,11 @@ const Dashboard = ({
   submissionStatuses,
   setSubmissionStatuses,
   sendJsonMessage,
+  classMembers,
 }) => {
   const { getAccessToken } = useContext(AuthContext);
 
-  const addSubmission = (textInput, fileInput, id) => {
+  const addSubmission = (task, textInput, fileInput, id, group, team_students) => {
     if (!textInput && !fileInput) {
       console.log(
         "Both text and image inputs are blank. Submission not created."
@@ -38,22 +39,45 @@ const Dashboard = ({
     textInput && formData.append("text", textInput);
     fileInput && formData.append("image", fileInput);
 
-    getAccessToken().then((accessToken) => {
-      axios
-        .post(
-          process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "student/submission/",
-          formData,
-          {
-            headers: { Authorization: "Bearer " + accessToken },
-          }
-        )
-        .then((res) => {
-          setSubmissions([...submissions, res.data]);
-        })
-        .catch((res) => {
-          console.log(res);
-        });
-    });
+    if (task.is_group) {
+      formData.append("group", group);
+      formData.append("team_students", team_students);
+
+      getAccessToken().then((accessToken) => {
+        axios
+          .post(
+            process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "student/group_submission/",
+            formData,
+            {
+              headers: { Authorization: "Bearer " + accessToken },
+            }
+          )
+          .then((res) => {
+            setSubmissions([...submissions, res.data]);
+          })
+          .catch((res) => {
+            console.log(res);
+          });
+      });
+    
+    } else {
+      getAccessToken().then((accessToken) => {
+        axios
+          .post(
+            process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "student/submission/",
+            formData,
+            {
+              headers: { Authorization: "Bearer " + accessToken },
+            }
+          )
+          .then((res) => {
+            setSubmissions([...submissions, res.data]);
+          })
+          .catch((res) => {
+            console.log(res);
+          });
+      });
+    };
   };
 
   const updateSubmission = (textInput, fileInput, id, task_id) => {
@@ -95,63 +119,123 @@ const Dashboard = ({
     }
   };
 
-  const updateStatus = ({ taskID, status }) => {
+  const updateStatus = ({ taskID, status, task, selectedStudents }) => {
     const existingStatus = submissionStatuses.filter(
       (substatus) => substatus.task === taskID
     );
-    if (existingStatus.length === 1) {
-      // status already exists
-      getAccessToken().then((accessToken) => {
-        axios
-          .put(
-            process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-              "student/submission_status/" +
-              existingStatus[0].id +
-              "/",
-            { status },
-            {
-              headers: { Authorization: "Bearer " + accessToken },
-            }
-          )
-          .then((res) => {
-            setSubmissionStatuses([
-              ...submissionStatuses.filter(
-                (substatus) => substatus.task !== taskID
-              ),
-              res.data,
-            ]);
-          })
-          .catch((res) => {
-            console.log(res);
-          });
-      });
+
+    if (task.is_group) {
+      if (existingStatus.length === 1) {
+        getAccessToken().then((accessToken) => {
+          axios
+            .put(
+              process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
+                "student/group_submission_status/" +
+                existingStatus[0].id +
+                "/",
+              { status, team_students: selectedStudents },
+              {
+                headers: { Authorization: "Bearer " + accessToken },
+              }
+            )
+            .then((res) => {
+              setSubmissionStatuses([
+                ...submissionStatuses.filter(
+                  (substatus) => substatus.task !== taskID
+                ),
+                res.data,
+              ]);
+            })
+            .catch((res) => {
+              console.log(res);
+            });
+        });
+      } else {
+        console.log(selectedStudents);
+        console.log("Hi");
+        getAccessToken().then((accessToken) => {
+          axios
+            .post(
+              process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
+                "student/group_submission_status/",
+              {
+                team_students: selectedStudents,
+                task_id: taskID,
+                status,
+              },
+              {
+                headers: { Authorization: "Bearer " + accessToken },
+              }
+            )
+            .then((res) => {
+              setSubmissionStatuses([
+                ...submissionStatuses.filter(
+                  (substatus) => substatus.task !== taskID
+                ),
+                res.data,
+              ]);
+            })
+            .catch((res) => {
+              console.log(res);
+            });
+        });
+      }
     } else {
-      // status does not exist yet
-      getAccessToken().then((accessToken) => {
-        axios
-          .post(
-            process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-              "student/submission_status/",
-            {
-              task_id: taskID,
-              status,
-            },
-            {
-              headers: { Authorization: "Bearer " + accessToken },
-            }
-          )
-          .then((res) => {
-            setSubmissionStatuses([
-              ...submissionStatuses.filter(
-                (substatus) => substatus.task !== taskID
-              ),
-              res.data,
-            ]);
-          })
-          .catch((res) => {
-            console.log(res);
-          });
-      });
+      // individual task
+      if (existingStatus.length === 1) {
+        // status already exists
+        getAccessToken().then((accessToken) => {
+          axios
+            .put(
+              process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
+                "student/submission_status/" +
+                existingStatus[0].id +
+                "/",
+              { status },
+              {
+                headers: { Authorization: "Bearer " + accessToken },
+              }
+            )
+            .then((res) => {
+              setSubmissionStatuses([
+                ...submissionStatuses.filter(
+                  (substatus) => substatus.task !== taskID
+                ),
+                res.data,
+              ]);
+            })
+            .catch((res) => {
+              console.log(res);
+            });
+        });
+      } else {
+        // status does not exist yet
+        getAccessToken().then((accessToken) => {
+          axios
+            .post(
+              process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
+                "student/submission_status/",
+              {
+                task_id: taskID,
+                status,
+              },
+              {
+                headers: { Authorization: "Bearer " + accessToken },
+              }
+            )
+            .then((res) => {
+              setSubmissionStatuses([
+                ...submissionStatuses.filter(
+                  (substatus) => substatus.task !== taskID
+                ),
+                res.data,
+              ]);
+            })
+            .catch((res) => {
+              console.log(res);
+            });
+        });
+      }
     }
   };
 
@@ -463,6 +547,7 @@ const Dashboard = ({
                         status: submissionStatuses.filter(
                           (status) => status.task == task.id
                         )[0],
+                        classMembers,
                       }}
                       key={task.id}
                     />
@@ -501,6 +586,7 @@ const Dashboard = ({
                     status: submissionStatuses.filter(
                       (status) => status.task == task.id
                     )[0],
+                    classMembers,
                   }}
                   key={task.id}
                 />
@@ -531,6 +617,7 @@ const Dashboard = ({
                             status: submissionStatuses.filter(
                               (status) => status.task == task.id
                             )[0],
+                            classMembers,
                           }}
                           key={task.id}
                         />
@@ -565,6 +652,7 @@ const Dashboard = ({
                         status: submissionStatuses.filter(
                           (status) => status.task == task.id
                         )[0],
+                        classMembers,
                       }}
                       key={task.id}
                     />
@@ -592,6 +680,7 @@ const Task = ({
   reloadSubmission,
   status,
   updateStatus,
+  classMembers,
 }) => {
   const isSubmitted = sub ? true : false;
   const isGraded = sub
@@ -599,6 +688,21 @@ const Task = ({
       ? true
       : false
     : false;
+  
+   const [selectedStudents, setSelectedStudents] = useState([]);
+   const [groupName, setGroupName] = useState("");
+
+  const handleStudentSelection = (event) => {
+    const studentId = event.target.value;
+    if (event.target.checked) {
+      setSelectedStudents([...selectedStudents, studentId]);
+    } else {
+      setSelectedStudents(selectedStudents.filter((id) => id !== studentId));
+    }
+    console.log(selectedStudents)
+  };
+     
+  
 
   return (
     <CustomPopup
@@ -684,6 +788,8 @@ const Task = ({
                   close={close}
                   isUpdate={true}
                   sub={sub}
+                  group={groupName}
+                  team_students={selectedStudents}
                 />
               ) : (
                 <></>
@@ -692,14 +798,46 @@ const Task = ({
             </>
           ) : (
             <>
-              <SubmissionStatus {...{ task, status, updateStatus }} />
+              {/* TO ADD GROUP */}
+              {task.is_group && (
+                <>
+                  <p>{classMembers}</p>
+                  <label>
+                    Group Name:
+                    <input
+                      className="border-2 border-gray-300 p-2 w-full rounded-md"
+                      type="text"
+                      value={groupName}
+                      onChange={(e) => setGroupName(e.target.value)}
+                      required
+                    />
+                  </label>
+
+                  <label>
+                    Select Group Members:
+                    {classMembers.map((member) => (
+                      <div key={member}>
+                        <input className="mr-2"
+                          type="checkbox"
+                          value={member}
+                          onChange={handleStudentSelection}
+                        />
+                        {member}
+                      </div>
+                    ))}
+                  </label>
+                </>
+              )}
+              <SubmissionStatus {...{ task, status, updateStatus, selectedStudents }} />
               <SubmissionForm
                 task={task}
                 addSubmission={addSubmission}
                 updateSubmission={updateSubmission}
                 close={close}
                 isUpdate={false}
-                sub={sub}
+                  sub={sub}
+                  group={groupName}
+                  team_students={selectedStudents}
               />
             </>
           )}
@@ -762,7 +900,7 @@ const TeacherComment = ({ isGraded, task, sub }) => {
   );
 };
 
-const SubmissionStatus = ({ task, status, updateStatus }) => {
+const SubmissionStatus = ({ task, status, updateStatus, selectedStudents }) => {
   let subStatus = { status: 0 };
   if (status) subStatus = status;
 
@@ -781,6 +919,7 @@ const SubmissionStatus = ({ task, status, updateStatus }) => {
           selected={subStatus.status == 0}
           task={task}
           updateStatus={updateStatus}
+          selectedStudents={selectedStudents}
         />
         <SubmissionStatusOption
           imgPath="/happy.svg"
@@ -789,6 +928,7 @@ const SubmissionStatus = ({ task, status, updateStatus }) => {
           selected={subStatus.status == 1}
           task={task}
           updateStatus={updateStatus}
+          selectedStudents={selectedStudents}
         />
         <SubmissionStatusOption
           imgPath="/crying.svg"
@@ -797,6 +937,7 @@ const SubmissionStatus = ({ task, status, updateStatus }) => {
           selected={subStatus.status == 2}
           task={task}
           updateStatus={updateStatus}
+          selectedStudents={selectedStudents}
         />
       </div>
 
@@ -812,6 +953,7 @@ const SubmissionStatusOption = ({
   status,
   selected,
   updateStatus,
+  selectedStudents,
 }) => {
   let optionStyle =
     "flex flex-col items-center gap-2 px-2 py-2 border rounded cursor-pointer hover:border-blue-500";
@@ -823,7 +965,7 @@ const SubmissionStatusOption = ({
     <div className="col-span-1">
       <div
         className={optionStyle}
-        onClick={() => updateStatus({ taskID: task.id, status })}
+        onClick={() => updateStatus({ taskID: task.id, status, task, selectedStudents })}
       >
         <img src={imgPath} height="50" width="50" />
         <p className="text-sm text-gray-700">{text}</p>
@@ -839,6 +981,8 @@ const SubmissionForm = ({
   close,
   isUpdate,
   sub,
+  group,
+  team_students,
 }) => {
   const [textInput, setTextInput] = useState("");
   const [fileInput, setFileInput] = useState();
@@ -864,7 +1008,7 @@ const SubmissionForm = ({
     if (isUpdate) {
       updateSubmission(textInput, fileInput, sub.id, task.id);
     } else {
-      addSubmission(textInput, fileInput, task.id);
+      addSubmission(task, textInput, fileInput, task.id, group, team_students);
     }
     setTextInput("");
     setFileInput(null);
@@ -905,6 +1049,7 @@ const SubmissionForm = ({
                 onChange={(e) => setFileInput(e.target.files[0])}
               />
             </div>
+            {/* Submit */}
             <button
               type="submit"
               className="mt-4 px-2 py-1 bg-green-600 hover:bg-green-700 text-white rounded m-2 focus:outline-none"

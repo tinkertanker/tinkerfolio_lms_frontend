@@ -33,7 +33,7 @@ const Course = () => {
   const [showAllAnnouncements, setShowAllAnnouncements] = useState(false);
   const [showAllResources, setShowAllResources] = useState(false);
   const [sidebar, setSideBar] = useState(false);
-
+  const [classMembers, setClassMembers] = useState([]);
   const [wsURL, setWSURL] = useState(null);
   const { sendJsonMessage, lastMessage, readyState } = useWebSocket(wsURL, {
     onOpen: () => console.log("opened"), // do not remove
@@ -91,6 +91,9 @@ const Course = () => {
         )
         .then((res) => {
           setLeaderboard(res.data);
+          const students = res.data.map((student) => student.name.trim());
+          setClassMembers(students);
+          console.log(classMembers);
         });
     });
   }, []);
@@ -301,6 +304,7 @@ const Course = () => {
                     submissionStatuses,
                     setSubmissionStatuses,
                     sendJsonMessage,
+                    classMembers,
                   }}
                 />
               </div>
