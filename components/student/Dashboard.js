@@ -26,7 +26,7 @@ const Dashboard = ({
 }) => {
   const { getAccessToken } = useContext(AuthContext);
 
-  const addSubmission = (task, textInput, fileInput, id, team_students) => {
+  const addSubmission = (task, textInput, fileInput, id, team_students, setIsSubmitted, setIsGraded) => {
     if (!textInput && !fileInput) {
       console.log(
         "Both text and image inputs are blank. Submission not created."
@@ -53,6 +53,8 @@ const Dashboard = ({
           )
           .then((res) => {
             setSubmissions([...submissions, res.data]);
+            setIsSubmitted(true);
+            setIsGraded([0, 1, 2, 3, 4, 5].includes(res.data.stars));
           })
           .catch((res) => {
             console.log(res);
@@ -71,6 +73,8 @@ const Dashboard = ({
           )
           .then((res) => {
             setSubmissions([...submissions, res.data]);
+            setIsSubmitted(true);
+            setIsGraded([0, 1, 2, 3, 4, 5].includes(res.data.stars));
           })
           .catch((res) => {
             console.log(res);
@@ -300,6 +304,7 @@ const Dashboard = ({
           ? true
           : false
         : false;
+      
 
       if (!isSubmitted) return 2;
       if (isSubmitted && isGraded) return 1;
@@ -679,12 +684,17 @@ const Task = ({
   updateStatus,
   classMembers,
 }) => {
-  const isSubmitted = sub ? true : false;
-  const isGraded = sub
-    ? [0, 1, 2, 3, 4, 5].includes(sub.stars)
-      ? true
-      : false
-    : false;
+  // const isSubmitted = sub ? true : false;
+  // const isGraded = sub
+  //   ? [0, 1, 2, 3, 4, 5].includes(sub.stars)
+  //     ? true
+  //     : false
+  //   : false;
+
+  const [isSubmitted, setIsSubmitted] = useState(!!sub);
+  const [isGraded, setIsGraded] = useState(
+    sub && [0, 1, 2, 3, 4, 5].includes(sub.stars)
+  );
 
   
    const [selectedStudents, setSelectedStudents] = useState([]);
@@ -784,6 +794,8 @@ const Task = ({
                   isUpdate={true}
                   sub={sub}
                   team_students={selectedStudents}
+                  setIsSubmitted={setIsSubmitted}
+                  setIsGraded={setIsGraded}
                 />
               ) : (
                 <></>
@@ -832,7 +844,9 @@ const Task = ({
                 close={close}
                 isUpdate={false}
                 sub={sub}
-                team_students={selectedStudents}
+                  team_students={selectedStudents}
+                  setIsSubmitted={setIsSubmitted}
+                  setIsGraded={setIsGraded}
               />
             </>
           )}
@@ -977,6 +991,8 @@ const SubmissionForm = ({
   isUpdate,
   sub,
   team_students,
+  setIsSubmitted, 
+  setIsGraded,
 }) => {
   const [textInput, setTextInput] = useState("");
   const [fileInput, setFileInput] = useState();
@@ -1002,7 +1018,7 @@ const SubmissionForm = ({
     if (isUpdate) {
       updateSubmission(textInput, fileInput, sub.id, task.id);
     } else {
-      addSubmission(task, textInput, fileInput, task.id, team_students);
+      addSubmission(task, textInput, fileInput, task.id, team_students, setIsSubmitted, setIsGraded);
     }
     setTextInput("");
     setFileInput(null);

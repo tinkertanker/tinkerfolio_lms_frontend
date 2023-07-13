@@ -93,7 +93,7 @@ const Course = () => {
           setLeaderboard(res.data);
           const students = res.data.map((student) => student.name);
           setClassMembers(students);
-          console.log(classMembers);
+  
         });
     });
   }, []);
