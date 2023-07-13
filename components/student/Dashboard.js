@@ -26,7 +26,7 @@ const Dashboard = ({
 }) => {
   const { getAccessToken } = useContext(AuthContext);
 
-  const addSubmission = (task, textInput, fileInput, id, group, team_students) => {
+  const addSubmission = (task, textInput, fileInput, id, team_students) => {
     if (!textInput && !fileInput) {
       console.log(
         "Both text and image inputs are blank. Submission not created."
@@ -40,9 +40,8 @@ const Dashboard = ({
     fileInput && formData.append("image", fileInput);
 
     if (task.is_group) {
-      formData.append("group", group);
       formData.append("team_students", team_students);
-
+      console.log("team_students", team_students);
       getAccessToken().then((accessToken) => {
         axios
           .post(
@@ -54,7 +53,6 @@ const Dashboard = ({
           )
           .then((res) => {
             setSubmissions([...submissions, res.data]);
-            console.log(res.data);
           })
           .catch((res) => {
             console.log(res);
@@ -687,9 +685,9 @@ const Task = ({
       ? true
       : false
     : false;
+
   
    const [selectedStudents, setSelectedStudents] = useState([]);
-const [groupName, setGroupName] = useState("");
   const handleStudentSelection = (event) => {
     const studentId = event.target.value;
     if (event.target.checked) {
@@ -785,7 +783,6 @@ const [groupName, setGroupName] = useState("");
                   close={close}
                   isUpdate={true}
                   sub={sub}
-                  group={groupName}
                   team_students={selectedStudents}
                 />
               ) : (
@@ -798,16 +795,6 @@ const [groupName, setGroupName] = useState("");
               {/* TO ADD GROUP */}
               {task.is_group && (
                 <>
-                  <label>
-                    Group Name:
-                    <input
-                      className="border-2 border-gray-300 p-2 w-full rounded-md"
-                      type="text"
-                      value={groupName}
-                      onChange={(e) => setGroupName(e.target.value)}
-                      required
-                    />
-                  </label>
                   <div className='mt-2 mb-2'>
                     <p>Current members in team: </p>
                     {selectedStudents.map((student) => (
@@ -989,7 +976,6 @@ const SubmissionForm = ({
   close,
   isUpdate,
   sub,
-  group,
   team_students,
 }) => {
   const [textInput, setTextInput] = useState("");
@@ -1016,7 +1002,7 @@ const SubmissionForm = ({
     if (isUpdate) {
       updateSubmission(textInput, fileInput, sub.id, task.id);
     } else {
-      addSubmission(task, textInput, fileInput, task.id, group, team_students);
+      addSubmission(task, textInput, fileInput, task.id, team_students);
     }
     setTextInput("");
     setFileInput(null);
@@ -1025,14 +1011,16 @@ const SubmissionForm = ({
 
   if (isUpdate) {
     if (!editing) {
-      return (
-        <button
-          className="mt-4 px-2 py-1 bg-green-600 hover:bg-green-700 text-white rounded m-2 focus:outline-none"
-          onClick={() => setEditing(true)}
-        >
-          Edit Submission
-        </button>
-      );
+      if (!task.is_group) {
+        return (
+          <button
+            className="mt-4 px-2 py-1 bg-green-600 hover:bg-green-700 text-white rounded m-2 focus:outline-none"
+            onClick={() => setEditing(true)}
+          >
+            Edit Submission
+          </button>
+        );
+      }
     } else {
       return (
         <div className="w-full">
