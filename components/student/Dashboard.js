@@ -41,7 +41,6 @@ const Dashboard = ({
 
     if (task.is_group) {
       formData.append("team_students", team_students);
-      console.log("team_students", team_students);
       getAccessToken().then((accessToken) => {
         axios
           .post(
@@ -129,30 +128,31 @@ const Dashboard = ({
 
     if (task.is_group) {
       if (existingStatus.length === 1) {
-        getAccessToken().then((accessToken) => {
-          axios
-            .put(
-              process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-                "student/group_submission_status/" +
-                existingStatus[0].id +
-                "/",
-              { status, team_students: selectedStudents },
-              {
-                headers: { Authorization: "Bearer " + accessToken },
-              }
-            )
-            .then((res) => {
-              setSubmissionStatuses([
-                ...submissionStatuses.filter(
-                  (substatus) => substatus.task !== taskID
-                ),
-                res.data,
-              ]);
-            })
-            .catch((res) => {
-              console.log(res);
-            });
-        });
+        // getAccessToken().then((accessToken) => {
+        //   axios
+        //     .put(
+        //       process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
+        //         "student/group_submission_status/" +
+        //         existingStatus[0].id +
+        //         "/",
+        //       { status, team_students: selectedStudents },
+        //       {
+        //         headers: { Authorization: "Bearer " + accessToken },
+        //       }
+        //     )
+        //     .then((res) => {
+        //       setSubmissionStatuses([
+        //         ...submissionStatuses.filter(
+        //           (substatus) => substatus.task !== taskID
+        //         ),
+        //         res.data,
+        //       ]);
+        //     })
+        //     .catch((res) => {
+        //       console.log(res);
+        //     });
+        // });
+        return;
       } else {
         getAccessToken().then((accessToken) => {
           axios
@@ -965,11 +965,13 @@ const SubmissionStatusOption = ({
   selectedStudents,
 }) => {
   let optionStyle =
-    "flex flex-col items-center gap-2 px-2 py-2 border rounded cursor-pointer hover:border-blue-500";
-  if (selected)
-    optionStyle =
-      "flex flex-col items-center gap-2 px-2 py-2 border-2 border-blue-500 rounded cursor-pointer";
-
+    "flex flex-col items-center gap-2 px-2 py-2 rounded cursor-pointer";
+  if (selected) {
+    optionStyle += " border-2 border-blue-500";
+  }
+  if (!task.is_group) {
+    optionStyle += " border hover:border-blue-500";
+  }
   return (
     <div className="col-span-1">
       <div
