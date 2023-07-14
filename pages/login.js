@@ -65,7 +65,7 @@ const Login = () => {
   return (
     <div className="bg-gray-100 min-h-screen">
       <Head>
-        <title>Login | EchoClass</title>
+        <title>Login | Tinkerfolio</title>
         <link
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css"
