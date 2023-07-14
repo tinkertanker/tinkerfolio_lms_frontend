@@ -27,7 +27,6 @@ const PrivateRoute = ({ children }) => {
   if (isLoading) {
      return (
        <div className="flex flex-col items-center justify-center h-screen bg-white">
-         <img src="main_logo_1.png" alt="Tinkertanker Logo" className="w-20 mb-4" />
          <div className="flex items-center justify-center">
            <svg
              className="animate-spin h-10 w-10 mr-3 text-red-500"

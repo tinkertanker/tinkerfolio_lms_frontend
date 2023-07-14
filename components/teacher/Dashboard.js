@@ -1625,6 +1625,7 @@ const NewTask = ({
                   onChange={(e) =>
                     setTask({ ...task, isGroupSubmission: true })
                   }
+                  required
                 />
                 Group Submission
               </label>
