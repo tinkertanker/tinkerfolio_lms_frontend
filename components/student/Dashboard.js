@@ -40,7 +40,9 @@ const Dashboard = ({
     fileInput && formData.append("image", fileInput);
 
     if (task.is_group) {
+      console.log("submitting group")
       formData.append("team_students", team_students);
+      console.log(team_students);
       getAccessToken().then((accessToken) => {
         axios
           .post(
@@ -62,6 +64,7 @@ const Dashboard = ({
     
     } else {
       getAccessToken().then((accessToken) => {
+        console.log("submitting indiv");
         axios
           .post(
             process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "student/submission/",
@@ -834,9 +837,9 @@ const Task = ({
                   </label>
                 </>
               )}
-              <SubmissionStatus
-                {...{ task, status, updateStatus, selectedStudents }}
-              />
+                {!task.is_group && <SubmissionStatus
+                  {...{ task, status, updateStatus, selectedStudents }}
+                />}
               <SubmissionForm
                 task={task}
                 addSubmission={addSubmission}
@@ -861,7 +864,7 @@ const Submission = ({ sub, reloadSubmission }) => {
     <div className="w-full">
       <div className="flex flex-row items-center">
         <h2 className="text-xl pt-4 pb-2 pl-2">My Submission</h2>
-        {sub.image && (
+        {sub?.image && (
           <a
             href={sub.image}
             className="text-sm text-white py-0.5 px-1 ml-2 bg-gray-500 hover:bg-gray-600 rounded"
@@ -874,9 +877,9 @@ const Submission = ({ sub, reloadSubmission }) => {
       </div>
       <div className="border-2 border-gray-300 rounded mx-2">
         <p className="text-gray-700 px-2 py-2 whitespace-pre-wrap">
-          <CustomLinkify>{sub.text}</CustomLinkify>
+          <CustomLinkify>{sub?.text}</CustomLinkify>
         </p>
-        {sub.image && (
+        {sub?.image && (
           <img
             src={sub.image}
             className="px-2 py-2 mx-auto"

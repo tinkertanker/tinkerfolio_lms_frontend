@@ -488,7 +488,7 @@ const Dashboard = ({
                         className="truncate text-left"
                         style={{ width: "150px" }}
                       >
-                        {task.name} {task.is_group ? "(Group)" : "(Individual"}
+                        {task.name} {task.is_group ? "(Group)" : "(Individual)"}
                       </p>
                       <TaskSummary
                         {...{
@@ -1060,7 +1060,7 @@ const Submission = ({
           </p>
 
           <p className="border-t border-gray-300"></p>
-          {sub.text && (
+          {sub?.text && (
             <p className="flex-none text-xs text-gray-700 mt-2">
               {shortened(sub.text, sub.text && sub.image ? 40 : 100)}
             </p>
