@@ -28,10 +28,15 @@ const Dashboard = ({
 
   const addSubmission = (task, textInput, fileInput, id, team_students, setIsSubmitted, setIsGraded) => {
     if (!textInput && !fileInput) {
-      console.log(
+      alert(
         "Both text and image inputs are blank. Submission not created."
       );
       return;
+    }
+    if (task.is_group && (!team_students|| team_students.length === 0)) {
+      alert("Select at least one member!");
+      return;
+
     }
     const formData = new FormData();
     formData.append("task_id", id);
@@ -42,7 +47,6 @@ const Dashboard = ({
     if (task.is_group) {
       console.log("submitting group")
       formData.append("team_students", team_students);
-      console.log(team_students);
       getAccessToken().then((accessToken) => {
         axios
           .post(
@@ -131,30 +135,7 @@ const Dashboard = ({
 
     if (task.is_group) {
       if (existingStatus.length === 1) {
-        // getAccessToken().then((accessToken) => {
-        //   axios
-        //     .put(
-        //       process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-        //         "student/group_submission_status/" +
-        //         existingStatus[0].id +
-        //         "/",
-        //       { status, team_students: selectedStudents },
-        //       {
-        //         headers: { Authorization: "Bearer " + accessToken },
-        //       }
-        //     )
-        //     .then((res) => {
-        //       setSubmissionStatuses([
-        //         ...submissionStatuses.filter(
-        //           (substatus) => substatus.task !== taskID
-        //         ),
-        //         res.data,
-        //       ]);
-        //     })
-        //     .catch((res) => {
-        //       console.log(res);
-        //     });
-        // });
+        // group only can submit
         return;
       } else {
         getAccessToken().then((accessToken) => {
@@ -709,6 +690,10 @@ const Task = ({
       setSelectedStudents(selectedStudents.filter((id) => id !== studentId));
     }
   };
+
+  const handleCancelSelection = () => {
+    setSelectedStudents([]); // clear the selectedStudents array
+  };
      
   
 
@@ -807,12 +792,12 @@ const Task = ({
             </>
           ) : (
             <>
-              {/* TO ADD GROUP */}
               {task.is_group && (
                 <>
-                  <div className='mt-2 mb-2'>
-                    <p>Current members in team: </p>
-                    {selectedStudents.map((student) => (
+                  <div className="mt-2 mb-2">
+                      <p>Current members in team: </p>
+                      {selectedStudents.length === 0 && (<p className="text-gray-600">None</p>)}
+                    {selectedStudents.length !== 0 && selectedStudents.map((student) => (
                       <li className="ml-4">{student}</li>
                     ))}
                   </div>
@@ -835,11 +820,20 @@ const Task = ({
                       }
                     })}
                   </label>
+
+                  <button
+                    className="px-1 py-1 mx-1 bg-gray-600 text-xs hover:bg-gray-700 text-white rounded m-2 focus:outline-none"
+                    onClick={handleCancelSelection}
+                  >
+                    Cancel Selection
+                  </button>
                 </>
               )}
-                {!task.is_group && <SubmissionStatus
+              {!task.is_group && (
+                <SubmissionStatus
                   {...{ task, status, updateStatus, selectedStudents }}
-                />}
+                />
+              )}
               <SubmissionForm
                 task={task}
                 addSubmission={addSubmission}
@@ -847,9 +841,9 @@ const Task = ({
                 close={close}
                 isUpdate={false}
                 sub={sub}
-                  team_students={selectedStudents}
-                  setIsSubmitted={setIsSubmitted}
-                  setIsGraded={setIsGraded}
+                team_students={selectedStudents}
+                setIsSubmitted={setIsSubmitted}
+                setIsGraded={setIsGraded}
               />
             </>
           )}
@@ -1042,48 +1036,21 @@ const SubmissionForm = ({
           </button>
         );
       }
-    } else {
-      return (
-        <div className="w-full">
-          <h2 className="text-xl pl-2 pt-4">Edit</h2>
-          <small className="text-gray-500 pl-2">
-            Both text and images are accepted.
-          </small>
-          <form onSubmit={(e) => submitForm(e)}>
-            <div className="px-2">
-              <textarea
-                onChange={(e) => setTextInput(e.target.value)}
-                className="outline-none border-2 border-gray-100 focus:border-gray-300 px-2 py-2 my-2 rounded-lg w-full"
-                rows="4"
-                value={textInput}
-                name="description"
-              />
-            </div>
-            <div className="flex flex-row-reverse items-center">
-              <input
-                type="file"
-                className="bg-gray-400 text-white px-2 py-1 w-min text-sm rounded-lg"
-                onChange={(e) => setFileInput(e.target.files[0])}
-              />
-            </div>
-            {/* Submit */}
-            <button
-              type="submit"
-              className="mt-4 px-2 py-1 bg-green-600 hover:bg-green-700 text-white rounded m-2 focus:outline-none"
-            >
-              Submit
-            </button>
-          </form>
-        </div>
-      );
-    }
+    } 
   } else {
     return (
       <div className="w-full">
         <h2 className="text-xl pl-2 pt-4">Submit</h2>
-        <small className="text-gray-500 pl-2">
-          Both text and images are accepted.
-        </small>
+        {!task.is_group ? (
+          <small className="text-gray-500 pl-2">
+            Both text and images are accepted.
+          </small>
+        ) : (
+          <small className="text-gray-500 pl-2">
+            Text and links are accepted.
+          </small>
+        )}
+
         <form onSubmit={(e) => submitForm(e)}>
           <div className="px-2">
             <textarea
@@ -1094,13 +1061,13 @@ const SubmissionForm = ({
               name="description"
             />
           </div>
-          <div className="flex flex-row-reverse items-center">
+          {!task.is_group && <div className="flex flex-row-reverse items-center">
             <input
               type="file"
               className="bg-gray-400 text-white px-2 py-1 w-min text-sm rounded-lg"
               onChange={(e) => setFileInput(e.target.files[0])}
             />
-          </div>
+          </div>}
           <button
             type="submit"
             className="mt-4 px-2 py-1 bg-green-600 hover:bg-green-700 text-white rounded focus:outline-none"

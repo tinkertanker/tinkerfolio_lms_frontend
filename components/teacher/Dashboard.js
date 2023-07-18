@@ -225,10 +225,23 @@ const Dashboard = ({
           { headers: { Authorization: "Bearer " + accessToken } }
         )
         .then((res) => {
-          setSubmissions([
-            ...submissions.filter((s) => s.id !== res.data.id),
-            res.data,
-          ]);
+          if (!res.data.hasOwnProperty("image")) {
+            // If not, add the image property to the response data manually
+            res.data.image = submissions.find((s) => s.id === id)?.image;
+          }
+
+          // Update the submissions state with the new review data, preserving the image property
+          const updatedSubmissions = submissions.map((sub) => {
+            if (sub.id === id) {
+              return { ...sub, stars, comment, image: res.data.image };
+            }
+            return sub;
+          });
+
+          // Update the state with the new submissions data
+          setSubmissions(updatedSubmissions);
+
+          // Update the submission state separately (if needed)
           setSubmission(res.data);
         });
     });
@@ -1011,6 +1024,8 @@ const Submission = ({
     return text;
   };
 
+
+
   const toggleSubmissions = (direction) => {
     switch (direction) {
       case "forward":
@@ -1035,6 +1050,7 @@ const Submission = ({
         break;
     }
   };
+
 
   return (
     <CustomPopup
@@ -1143,7 +1159,7 @@ const Submission = ({
                 src={submission.image}
                 className="px-2 py-2 mx-auto"
                 style={{ maxHeight: 300 }}
-                onError={() => reloadSubmission(submission.id)}
+                // onError={() => reloadSubmission(submission.id)}
               />
             )}
           </div>
@@ -1615,7 +1631,7 @@ const NewTask = ({
               name="description"
               placeholder="Enter task description here..."
             />
-            <div className="flex flex-row items-center space-x-4">
+            <div className="flex flex-row items-center space-x-4 ml-4">
               <label>
                 <input
                   type="radio"
@@ -1627,7 +1643,7 @@ const NewTask = ({
                   }
                   required
                 />
-                Group Submission
+                <span className="ml-1">Group Submission</span>
               </label>
               <label>
                 <input
@@ -1639,7 +1655,7 @@ const NewTask = ({
                     setTask({ ...task, isGroupSubmission: false })
                   }
                 />
-                Individual Submission
+                <span className="ml-1">Individual Submission</span>
               </label>
             </div>
 
