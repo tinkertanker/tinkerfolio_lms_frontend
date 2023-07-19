@@ -257,7 +257,7 @@ Otherwise, you can submit the task, by providing either a text or file submissio
 
 If you want to edit your submission, you can click on the green `Edit Submission` button. 
 
-<kbd><img src="https://hackmd.io/_uploads/HkJV6HHKn.png"></kbd>
+<kbd><img src="https://github.com/tinkertanker/LMS_Frontend/assets/88123171/da6c94bb-d031-42eb-bd68-1c8d66297d8f"></kbd>
 
 The same interface will appear, allowing you to enter the new submission details. If you had previously submitted an image and now submit a text, the text will be added to the submission, and the image will still remain. The same will happen if you had already submitted text and decide to add an image. Changing the pre-existing text or image will replace the current text or image. 
 
@@ -266,3 +266,15 @@ The same interface will appear, allowing you to enter the new submission details
 Teachers can review your tasks and grade it and provide feedback. 
 
 <kbd><img src="https://hackmd.io/_uploads/Syxmf8rtn.png"></kbd>
+
+
+## Portfolio
+
+If you want to view all of your submitted work, across classrooms, you can do so by clicking the "Portfolio" button on the top right. 
+
+
+Here, you can view all the work you have ever submitted, listed from the most recent to least recent submission. Each submission is listed with the name of the task and the classroom name. To view details of the submission, you can click on the title of the submission. After clicking on it, you should see something like this:
+
+<kbd><img src="https://github.com/tinkertanker/LMS_Frontend/assets/88123171/8ad6fb8a-7448-400c-82f6-24b7ef840cc1"></kbd>
+
+The name of the task, the classroom, and your submission will be listed, so that you can easily show it off to others! To return back to the portfolio page, you can click the "Portfolio" button at the top right, and to return to the home page, you can click the icon at the top left. 
