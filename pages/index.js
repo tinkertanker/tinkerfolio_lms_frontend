@@ -112,42 +112,6 @@ const Home = () => {
             </div>
           </div>
         </section>
-        <section className="bg-gray-800 text-white py-20" id="testimonials">
-          <div className="container mx-auto px-4">
-            <h1 className="text-3xl md:text-5xl font-bold text-center mb-8 sm:mb-16">
-              Made for instructors who care.
-            </h1>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-              {/* testimonial 1 */}
-              <Testimonial
-                text="Tinkerfolio helps our instructors understand how students are doing during a lesson."
-                imageUrl="/yj_testimonials.jfif"
-                name="YJ Soon"
-                title="CEO @ Tinkertanker"
-              />
-
-              {/* testimonial 2 */}
-              <Testimonial
-                text="Tinkerfolio tells me what my students are struggling with so I can tailor my teaching for them."
-                imageUrl="/zj_testimonials.jfif"
-                name="Jane Zhang"
-                title="Lecturer @ Republic Polytechnic"
-              />
-
-              {/* Add more testimonials here */}
-            </div>
-          </div>
-        </section>{" "}
-        <section className="bg-gray-800 text-white py-20">
-          <div className="max-w-2xl mx-auto text-center">
-            <a
-              href="/register"
-              className="inline-block py-3 px-6 text-lg font-semibold bg-red-600 hover:bg-red-700 text-white rounded"
-            >
-              Register for Free
-            </a>
-          </div>
-        </section>
       </main>
     </div>
   );

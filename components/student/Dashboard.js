@@ -23,6 +23,7 @@ const Dashboard = ({
   setSubmissionStatuses,
   sendJsonMessage,
   classMembers,
+  name,
 }) => {
   const { getAccessToken } = useContext(AuthContext);
 
@@ -534,6 +535,7 @@ const Dashboard = ({
                           (status) => status.task == task.id
                         )[0],
                         classMembers,
+                        name,
                       }}
                       key={task.id}
                     />
@@ -573,6 +575,7 @@ const Dashboard = ({
                       (status) => status.task == task.id
                     )[0],
                     classMembers,
+                    name,
                   }}
                   key={task.id}
                 />
@@ -604,6 +607,7 @@ const Dashboard = ({
                               (status) => status.task == task.id
                             )[0],
                             classMembers,
+                            name,
                           }}
                           key={task.id}
                         />
@@ -639,6 +643,7 @@ const Dashboard = ({
                           (status) => status.task == task.id
                         )[0],
                         classMembers,
+                        name,
                       }}
                       key={task.id}
                     />
@@ -657,31 +662,14 @@ const Dashboard = ({
 
 export default Dashboard;
 
-const Task = ({
-  task,
-  sub,
-  i,
-  addSubmission,
-  updateSubmission,
-  reloadSubmission,
-  status,
-  updateStatus,
-  classMembers,
-}) => {
-  // const isSubmitted = sub ? true : false;
-  // const isGraded = sub
-  //   ? [0, 1, 2, 3, 4, 5].includes(sub.stars)
-  //     ? true
-  //     : false
-  //   : false;
-
-  const [isSubmitted, setIsSubmitted] = useState(!!sub);
-  const [isGraded, setIsGraded] = useState(
-    sub && [0, 1, 2, 3, 4, 5].includes(sub.stars)
+const GroupSelection = ({ taskId, name, classMembers }) => {
+  const storedSelectedStudents = localStorage.getItem(
+    `${taskId}_selectedStudents`
+  );
+  const [selectedStudents, setSelectedStudents] = useState(
+    storedSelectedStudents ? JSON.parse(storedSelectedStudents) : [name]
   );
 
-  
-   const [selectedStudents, setSelectedStudents] = useState([]);
   const handleStudentSelection = (event) => {
     const studentId = event.target.value;
     if (event.target.checked) {
@@ -692,7 +680,96 @@ const Task = ({
   };
 
   const handleCancelSelection = () => {
-    setSelectedStudents([]); // clear the selectedStudents array
+    setSelectedStudents([name]);
+  };
+
+  useEffect(() => {
+    localStorage.setItem(
+      `${taskId}_selectedStudents`,
+      JSON.stringify(selectedStudents)
+    );
+  }, [selectedStudents, taskId]);
+
+  return (
+    <>
+      <div className="mt-2 mb-2">
+        <p>Current members in team: </p>
+        {selectedStudents.length === 0 ? (
+          <p className="text-gray-600">None</p>
+        ) : (
+          selectedStudents.map((student) => <li className="ml-4">{student}</li>)
+        )}
+      </div>
+
+      <label>
+        Select Group Members:
+        {classMembers.map((member) => {
+          if (!selectedStudents.includes(member) && member.trim() !== name) {
+            return (
+              <div key={member}>
+                <input
+                  className="mr-2"
+                  type="checkbox"
+                  value={member}
+                  onChange={handleStudentSelection}
+                />
+                {member}
+              </div>
+            );
+          }
+          return null;
+        })}
+      </label>
+
+      <button
+        className="px-1 py-1 mx-1 bg-gray-600 text-xs hover:bg-gray-700 text-white rounded m-2 focus:outline-none"
+        onClick={handleCancelSelection}
+      >
+        Cancel Selection
+      </button>
+    </>
+  );
+};
+
+const Task = ({
+  task,
+  sub,
+  i,
+  addSubmission,
+  updateSubmission,
+  reloadSubmission,
+  status,
+  updateStatus,
+  classMembers,
+  name,
+}) => {
+
+  const [isSubmitted, setIsSubmitted] = useState(!!sub);
+  const [isGraded, setIsGraded] = useState(
+    sub && [0, 1, 2, 3, 4, 5].includes(sub.stars)
+  );
+
+  
+ const [selectedStudents, setSelectedStudents] = useState(() => {
+   const storedStudents = localStorage.getItem("selectedStudents");
+   return storedStudents ? JSON.parse(storedStudents) : [name];
+ });
+
+ const handleStudentSelection = (event) => {
+   const studentId = event.target.value;
+   if (event.target.checked) {
+     setSelectedStudents([...selectedStudents, studentId]);
+   } else {
+     setSelectedStudents(selectedStudents.filter((id) => id !== studentId));
+   }
+ };
+
+ useEffect(() => {
+   localStorage.setItem("selectedStudents", JSON.stringify(selectedStudents));
+ }, [selectedStudents]);
+
+  const handleCancelSelection = () => {
+    setSelectedStudents([name]); // clear the selectedStudents array
   };
      
   
@@ -746,7 +823,7 @@ const Task = ({
             {task.max_stars > 0 ? (
               <h1
                 className={`text-xl ml-auto sm:mr-4 whitespace-nowrap ${
-                  isGraded ? "text-red-600" : "text-gray-500"
+                  isGraded ? "text-yellow-600" : "text-gray-500"
                 }`}
               >
                 {isGraded ? sub.stars : "-"}/{task.max_stars} ★
@@ -793,40 +870,9 @@ const Task = ({
           ) : (
             <>
               {task.is_group && (
-                <>
-                  <div className="mt-2 mb-2">
-                      <p>Current members in team: </p>
-                      {selectedStudents.length === 0 && (<p className="text-gray-600">None</p>)}
-                    {selectedStudents.length !== 0 && selectedStudents.map((student) => (
-                      <li className="ml-4">{student}</li>
-                    ))}
-                  </div>
-
-                  <label>
-                    Select Group Members:
-                    {classMembers.map((member) => {
-                      if (!selectedStudents.includes(member)) {
-                        return (
-                          <div key={member}>
-                            <input
-                              className="mr-2"
-                              type="checkbox"
-                              value={member}
-                              onChange={handleStudentSelection}
-                            />
-                            {member}
-                          </div>
-                        );
-                      }
-                    })}
-                  </label>
-
-                  <button
-                    className="px-1 py-1 mx-1 bg-gray-600 text-xs hover:bg-gray-700 text-white rounded m-2 focus:outline-none"
-                    onClick={handleCancelSelection}
-                  >
-                    Cancel Selection
-                  </button>
+                  <>
+                    <GroupSelection name={name} classMembers={classMembers} taskId={task.id} />
+          
                 </>
               )}
               {!task.is_group && (
