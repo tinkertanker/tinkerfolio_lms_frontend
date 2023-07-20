@@ -87,18 +87,18 @@ const Layout = ({ children }) => {
 
         <meta
           property="og:image"
-          content="https://www.echoclass.com/main_logo_1.png"
+          content="https://www.tinkerfolio.com/main_logo_1.png"
         />
 
         <meta name="twitter:card" content="summary" key="twitter_card" />
         <meta
           name="twitter:site"
-          content="@themichaelchen"
+          content="@tinkertanker"
           key="twitter_site"
         />
         <meta
           name="twitter:image"
-          content="https://www.echoclass.com/main_logo_1.png"
+          content="https://www.tinkerfolio.com/main_logo_1.png"
           key="twitter_image"
         />
       </Head>

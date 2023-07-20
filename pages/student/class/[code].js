@@ -233,7 +233,7 @@ const Course = () => {
   return (
     <div>
       <Head>
-        <title>Student | EchoClass</title>
+        <title>Student | Tinkerfolio</title>
         <style>{`\
                         .blinking {\
                             animation:blinkingText 3s infinite;\
