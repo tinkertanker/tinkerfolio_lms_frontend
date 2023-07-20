@@ -50,7 +50,7 @@ const Project = () => {
     <div className="bg-metallic min-h-screen flex flex-col">
       <div className="w-full max-w-10xl p-6">
         <div className="flex items-center mb-4">
-          <Link legacyBehavior href="/">
+          <Link legacyBehavior href="/student/profile">
             <a className="flex items-center text-gray-500 hover:text-gray-600">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
