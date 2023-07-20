@@ -305,6 +305,7 @@ const Course = () => {
                     setSubmissionStatuses,
                     sendJsonMessage,
                     classMembers,
+                    name,
                   }}
                 />
               </div>
