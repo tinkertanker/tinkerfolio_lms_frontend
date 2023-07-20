@@ -112,7 +112,35 @@ const Register = () => {
 	};
 
 	useEffect(() => {
-		if (successfulLogin) router.push("/login");
+		if (successfulLogin) {
+      // automatic login
+      axios
+        .post(
+          process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE + "auth/token/",
+          {
+            username,
+            password,
+            userType,
+          },
+          { headers: { "Content-Type": "application/json" } }
+        )
+        .then((res) => {
+          setAuth({
+            loading: false,
+            isAuthenticated: true,
+            tokens: res.data,
+            userType,
+          });
+
+          router.push("/login");
+        })
+        .catch((error) => {
+          setFormError("Login failed. Please try again.");
+          setIsLoading(false);
+        });
+    } else {
+      setIsLoading(false);
+    }
 	}, [successfulLogin]);
 
 	return (
