@@ -1,6 +1,8 @@
 import { useRouter } from "next/router";
 import { useState, useEffect, useContext } from "react";
 import axios from "axios";
+import Link from "next/link";
+
 
 import { AuthContext } from "../../../contexts/Auth.Context";
 
@@ -47,6 +49,27 @@ const Project = () => {
   return (
     <div className="bg-metallic min-h-screen flex flex-col">
       <div className="w-full max-w-10xl p-6">
+        <div className="flex items-center mb-4">
+          <Link legacyBehavior href="/">
+            <a className="flex items-center text-gray-500 hover:text-gray-600">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6 mr-1"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+              Back
+            </a>
+          </Link>
+        </div>
         {submission ? (
           <div className="bg-white rounded-lg shadow-lg p-6">
             <h1 className="text-3xl font-semibold mb-4">
