@@ -1808,7 +1808,9 @@ const NewTask = ({
                 return false;
               }}
             >
-              <option value="" selected disabled></option>
+              <select defaultValue="" disabled>
+                <option value="" disabled></option>
+              </select>
               {classrooms
                 .filter((c) => c.name != classroom.name)
                 .map((c, i) => {
