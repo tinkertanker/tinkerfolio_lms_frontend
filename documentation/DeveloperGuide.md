@@ -19,9 +19,7 @@ The deployment of Tinkerfolio is made effortless with Heroku, a cloud platform t
 
 - Dockerization: Tinkerfolio is dockerized, providing an easy and consistent deployment process. 
 
-![](https://hackmd.io/_uploads/B11kOwP92.jpg)
-
-
+<kbd><img src="https://hackmd.io/_uploads/B11kOwP92.jpg"></kbd>
 
 # Setting Up
 Ensure that you have the required software and tools (e.g., Python, Node.js, Git, Heroku CLI).

@@ -301,7 +301,7 @@ Here, you can view all the work you have ever submitted, listed from the most re
 The name of the task, the classroom, and your submission will be listed, so that you can easily show it off to others! To return back to the portfolio page, you can click the "Portfolio" button at the top right, and to return to the home page, you can click the icon at the top left. 
 
 # FAQs
-1. **What sets Tinkerfolio apart from other LMS**
+1. **What sets Tinkerfolio apart from other LMS?**
     - Tinkerfolio is designed to be a lightweight LMS that is easy to use and navigate. There are plans to integrate other platforms such as Mastodon to allow for more seamless communication between teachers and students.
 
 2. **Can I change my username or password?**
