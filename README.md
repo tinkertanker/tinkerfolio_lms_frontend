@@ -6,7 +6,7 @@ Tinkerfolio is a dynamic learning management application developed by Tinkertank
 
 - For instructions on how to use Tinkerfolio, please visit [Tinkerfolio Instructions](https://github.com/tinkertanker/LMS_Frontend/blob/main/documentation/UserGuide.md).
 
-- For documentation and implementation details, please visit [Tinkerfolio Documentation](https://tinkerfolio.com/docs/).
+- For documentation and implementation details, please visit [Tinkerfolio Documentation](https://github.com/tinkertanker/LMS_Frontend/blob/main/documentation/DeveloperGuide.md).
 
 - The backend repository for Tinkerfolio can be found [here](https://github.com/tinkertanker/LMS_Backend/tree/main).
 

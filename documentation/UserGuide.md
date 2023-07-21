@@ -29,9 +29,17 @@ Additionally, take note of the following restrictions:
 `_`, `@`, `+`, `.` and `-` characters.
 - The name can have a maximum of 150 characters.
 
+>:warning: As a teacher, you would be prompted for a passcode. This is to prevent non-teachers from signing up as teachers. In the event the passcode is leaked, staff can reset it via the Heroku backend admin. 
+
+<kbd><img src="https://hackmd.io/_uploads/SkFxcvvq3.png"></kbd>
+
 Once complete, click the Register button to complete the registration process.
 
-After entering your information correctly, you will be directed to the Login page. If you are not, you can access the page [here](http://tinkerfolio.com/login). You should see something like this:
+Once complete, click the Register button to complete the registration process.
+
+After entering your information correctly, you will be automatically directed to the home page. 
+
+Should you log out and require to login again, visit the login page [here](http://tinkerfolio.com/login). You should see something like this:
 
 <kbd><img src="https://hackmd.io/_uploads/ByMt87Sth.png"></kbd>
 
@@ -100,12 +108,15 @@ To create a new task, you can click the red Task button. Here, you can either cr
     💡Each task <b>must</b> have a name, but does not need to have a description.
 </blockquote>
 
-    
+##### Types of Tasks
 A task can either be saved as a Draft, or immediately Published for all students to see. 
-    
-<kbd><img src="https://hackmd.io/_uploads/rJjUDQHtn.png"></kbd>
 
+A task could either be a group submission or individual submission. Selecting one of the options would be required. 
     
+<kbd><img src="https://hackmd.io/_uploads/S1pYjwv5n.png"></kbd>
+
+##### Import Tasks
+
 Should you wish to import tasks, you can click on the `Import Tasks` button. In this example, there are 4 total tasks in the “Active Class” classroom, with Task 2 saved as a draft, and all others are published. 
     
 <kbd><img src="https://hackmd.io/_uploads/BkctvmSth.png"></kbd>
@@ -158,6 +169,7 @@ If an image is submitted, it will also be displayed. You can choose to rate the 
     
 The review can **no longer be edited**, and the student can **no longer resubmit work**. Additionally, the corresponding icon under the Student column will be a darker shade of green.
     
+>:warning: The group submission for the same team would be identical (text uploaded by the group representative would be the same for all students in the team), however the teacher would still be required to grade them individually. This is to take account the case of possible difference in contribution of team members, and more personalised feedback. 
 
 ### Announcements
 
@@ -243,6 +255,8 @@ Note the difference between a graded and ungraded task: Graded tasks **cannot** 
 
 #### Submitting Tasks
 
+##### Individual Task
+
 To submit a task, click on the task. You should be able to see something similar. 
 
 <kbd><img src="https://hackmd.io/_uploads/Sy3BOHSFn.png"></kbd>
@@ -261,6 +275,13 @@ If you want to edit your submission, you can click on the green `Edit Submission
 
 The same interface will appear, allowing you to enter the new submission details. If you had previously submitted an image and now submit a text, the text will be added to the submission, and the image will still remain. The same will happen if you had already submitted text and decide to add an image. Changing the pre-existing text or image will replace the current text or image. 
 
+##### Group Task
+Students would be required to select their group members before submitting their task. The submission only takes in text and link, and  is **non-editable**. 
+
+>:warning: If you happen to reload the page while selecting team members, the selection would not be saved and it would be resetted. Hence, exercise caution. 
+
+<kbd><img src="https://hackmd.io/_uploads/SJeipDPch.png"></kbd>
+
 #### Reviewing Tasks
 
 Teachers can review your tasks and grade it and provide feedback. 
@@ -278,3 +299,23 @@ Here, you can view all the work you have ever submitted, listed from the most re
 <kbd><img src="https://github.com/tinkertanker/LMS_Frontend/assets/88123171/8ad6fb8a-7448-400c-82f6-24b7ef840cc1"></kbd>
 
 The name of the task, the classroom, and your submission will be listed, so that you can easily show it off to others! To return back to the portfolio page, you can click the "Portfolio" button at the top right, and to return to the home page, you can click the icon at the top left. 
+
+# FAQs
+1. **What sets Tinkerfolio apart from other LMS**
+    - Tinkerfolio is designed to be a lightweight LMS that is easy to use and navigate. There are plans to integrate other platforms such as Mastodon to allow for more seamless communication between teachers and students.
+
+2. **Can I change my username or password?**
+    - Currently, there is no way to change your username or password. If you need to change your username, please contact the admins of Tinkerfolio or staff.
+
+3. **Can I delete my account?**
+    - Currently, there is no way to delete your account. If you need to delete your account, please contact the admins of Tinkerfolio or staff.
+
+4. **What file types are supported for submissions?**
+    - For file submissions, you can only upload image files with the following file extensions: `.jpg`, `.png`, and `.jpeg`. Other file types would be accepted but may not be displayed properly.
+
+5. **What should I do if I see Disconnected or Uninitialized in the bottom status?**
+    - This is a known bug that occurs when the server is down or there are issues connecting the server. Please refresh the page and try again, or re-login. If the issue persists, please contact the admins of Tinkerfolio or staff.
+
+6. **Does Tinkerfolio support mobile devices?**
+    - Tinkerfolio is designed to be used on desktops and laptops. While it is possible to use Tinkerfolio on mobile devices, the experience may not be optimal.
+
