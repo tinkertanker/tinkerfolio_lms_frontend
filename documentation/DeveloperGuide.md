@@ -434,6 +434,10 @@ Additionally, the CI workflow includes checks for successful deployment on Herok
 ## User Acceptance Testing 
 UAT was conducted to assess the application's functionality and identify any bugs related to authentication and the creation of classrooms and courses.
 
+## Unit Tests
+Unit tests were written to test the functionality of the backend. This was done using the Django testing framework (Refer to `.\cores\tests` and `.\student_core\tests`). 
+
+Unit tests aid in the development process by ensuring that the application works as intended.
 # Design Considerations
 ## Handling Group Submission 
 Currently, each time a student selects other team members for their group submission, upon reloading the page, this would result in their selection being resetted. While implementing a local storage to preserve the state could mitigate this, it could cause potential clashes between groups. 
