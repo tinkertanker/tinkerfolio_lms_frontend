@@ -435,7 +435,11 @@ Additionally, the CI workflow includes checks for successful deployment on Herok
 UAT was conducted to assess the application's functionality and identify any bugs related to authentication and the creation of classrooms and courses.
 
 ## Unit Tests
-Unit tests were written to test the functionality of the backend. This was done using the Django testing framework (Refer to `.\cores\tests` and `.\student_core\tests`). 
+Unit tests were written to test the functionality of the backend. This was done using the Django testing framework (Refer to `.\accounts\tests`, `.\cores\tests` and `.\student_core\tests`). 
+
+For testing, go to the backend repository. Go to `settings.py` and use the first DATABASE default configuration. This is to use Django default lightweight SQLite database for testing.
+
+To run the tests, run `python3 manage.py test`.
 
 Unit tests aid in the development process by ensuring that the application works as intended.
 # Design Considerations
