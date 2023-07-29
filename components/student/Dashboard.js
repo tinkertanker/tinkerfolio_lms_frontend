@@ -1030,23 +1030,20 @@ const SubmissionForm = ({
     close();
   };
 
-  if (isUpdate) {
-    if (!editing) {
+    if (isUpdate) {
       if (!task.is_group) {
         return (
           <button
             className="mt-4 px-2 py-1 bg-green-600 hover:bg-green-700 text-white rounded m-2 focus:outline-none"
             onClick={() => {
               setEditing(true);
-            }
-            }
+            }}
           >
             Edit Submission
           </button>
         );
       }
-    }
-    else {
+    } else {
       return (
         <div className="w-full">
           <h2 className="text-xl pl-2 pt-4">Submit</h2>
@@ -1070,13 +1067,15 @@ const SubmissionForm = ({
                 name="description"
               />
             </div>
-            {!task.is_group && <div className="flex flex-row-reverse items-center">
-              <input
-                type="file"
-                className="bg-gray-400 text-white px-2 py-1 w-min text-sm rounded-lg"
-                onChange={(e) => setFileInput(e.target.files[0])}
-              />
-            </div>}
+            {!task.is_group && (
+              <div className="flex flex-row-reverse items-center">
+                <input
+                  type="file"
+                  className="bg-gray-400 text-white px-2 py-1 w-min text-sm rounded-lg"
+                  onChange={(e) => setFileInput(e.target.files[0])}
+                />
+              </div>
+            )}
             <button
               type="submit"
               className="mt-4 px-2 py-1 bg-green-600 hover:bg-green-700 text-white rounded focus:outline-none"
@@ -1087,5 +1086,4 @@ const SubmissionForm = ({
         </div>
       );
     }
-  }
 };
