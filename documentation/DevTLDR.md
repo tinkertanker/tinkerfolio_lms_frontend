@@ -23,7 +23,7 @@ NEXT_PUBLIC_ALLOWED_HTS=<heroku-app-url>,localhost,127.0.0.1
 
 - In the backend repository, run `pip3 install requirements` to install the required dependencies. 
 
-- Edit the config file (can reference values from env.docker)
+- Edit the config file (can reference values from `env.docker`)
 
 - Then, run `python3 manage.py runserver`. You can view the Django admin panel at `localhost:8000/admin`, with a superuser account (can be created using `python3 manage.py createsuperuser`)
 
