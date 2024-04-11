@@ -280,7 +280,43 @@ const Classroom = () => {
     const bulkAdd = (e) => {
         e.preventDefault();
         console.log("Submit");
-        console.log(formData.number);    
+        console.log(formData.number);
+        if(formData.number > 0 && formData.number <= 10){
+            getAccessToken().then((accessToken) => {
+            axios
+                .post(
+                process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
+                    "core/bulk/" +
+                    classroom.code + "/",
+                {
+                    number: formData.number,
+                    code: classroom.code,
+                },
+                {
+                    headers: { Authorization: "Bearer " + accessToken },
+                    params: {
+                        number: formData.number,
+                        code: classroom.code,
+                    }
+                }
+                )
+                .then((res) => {
+                    console.log("Success");
+                    /*
+                    setClassroom(res.data);
+                    setClassrooms([
+                        ...classrooms.filter((cr) => cr.id !== res.data.id),
+                        res.data,
+                    ]);
+                    */
+                })
+                .catch((res) => {
+                    console.log(res);
+                });
+            });
+        } else {
+            console.log("Invalid req");
+        }
     };
 
     return (
@@ -324,7 +360,7 @@ const Classroom = () => {
                     </div>
                     <div className="bg-white" style={{ marginTop: "100px" }}>
                         <form
-                            className="flex flex-col px-8 py-8 m-5 bg-white rounded-lg shadow-md w-1/2"
+                            className="flex flex-col justify-self-start px-8 py-8 m-5 bg-white rounded-lg shadow-md w-1/3"
                             onSubmit={bulkAdd}
                             >
                             <h1 className="font-bold text-2xl border-b-2 border-gray-300 focus:border-gray-500 my-2 mx-2">
