@@ -350,22 +350,6 @@ const Classroom = () => {
     });
   };
 
-  const deleteClass = (id) => {
-    getAccessToken().then((accessToken) => {
-      axios
-        .delete(
-          process.env.NEXT_PUBLIC_BACKEND_HTTP_BASE +
-            "core/classrooms/" +
-            id +
-            "/",
-          { headers: { Authorization: "Bearer " + accessToken } }
-        )
-        .then((res) => {
-          setClassrooms(classrooms.filter((cr) => cr.id !== id));
-        });
-    });
-  };
-
   const handleGoBack = () => {
     router.push("/teacher");
   };
@@ -424,10 +408,10 @@ const Classroom = () => {
                 height="20px"
                 width="20px"
               />
-              <p className="text-sm text-white pl-2"><Link href={"/teacher/bulk/" + classroom.code}>Bulk Add Students</Link></p>
+              <p className="text-sm text-white pl-2"><Link href={"/teacher/bulk/" + classroom.code}>Add Students</Link></p>
             </div>
             <StudentJoinInfo code={classroom.code} />
-            <SettingsMenu {...{ classroom, changeStatus, deleteClass }} />
+            <SettingsMenu {...{ classroom, changeStatus }} />
           </div>
           <div className="bg-white" style={{ marginTop: "22px" }}>
             <Dashboard
@@ -469,7 +453,7 @@ const Classroom = () => {
 
 export default Classroom;
 
-const SettingsMenu = ({ classroom, changeStatus, deleteClass }) => {
+const SettingsMenu = ({ classroom, changeStatus}) => {
   const [isCloseOnDocClick, setIsCloseOnDocClick] = useState(true);
 
   return (
@@ -498,16 +482,6 @@ const SettingsMenu = ({ classroom, changeStatus, deleteClass }) => {
               <option value={1}>Active</option>
               <option value={2}>Archive</option>
             </select>
-          </div>
-          <div className="flex flex-row items-center justify-center">
-            <DeleteClass
-              {...{
-                classroom,
-                deleteClass,
-                menuClose: close,
-                setIsCloseOnDocClick,
-              }}
-            />
           </div>
         </div>
       )}
@@ -699,58 +673,5 @@ const EditableClassName = ({
         </div>
       )}
     </section>
-  );
-};
-
-const DeleteClass = ({
-  classroom,
-  deleteClass,
-  setIsCloseOnDocClick,
-  menuClose,
-}) => {
-  return (
-    <CustomPopup
-      trigger={
-        <p className="font-base bg-transparent border border-red-400 text-red-500 px-2 w-4/5 my-4 hover:bg-red-100 rounded text-center cursor-pointer">
-          Delete Class
-        </p>
-      }
-      onOpen={() => setIsCloseOnDocClick(false)}
-      onClose={() => setIsCloseOnDocClick(true)}
-    >
-      {(close) => (
-        <div className="flex flex-col px-6 py-8 bg-white rounded-lg w-56 sm:w-80">
-          <h1 className="text-xl font-semibold text-center">Are you sure?</h1>
-          <p className="text-gray-500 mt-2">
-            This classroom and its students, tasks, and submissions cannot be
-            recovered.
-          </p>
-          <div className="flex flex-col mt-4">
-            <Link href="/teacher">
-              <button
-                className="focus:outline-none px-2 py-1 border border-red-300 text-red-500 hover:bg-red-100 hover:border-red-500 hover:text-red-700 rounded mb-2"
-                onClick={() => {
-                  deleteClass(classroom.id);
-                  close();
-                  menuClose();
-                }}
-              >
-                Delete
-              </button>
-            </Link>
-
-            <button
-              className="focus:outline-none px-2 py-1 border border-gray-300 hover:bg-gray-100 hover:border-gray-400 rounded"
-              onClick={() => {
-                close();
-                menuClose();
-              }}
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
-    </CustomPopup>
   );
 };
