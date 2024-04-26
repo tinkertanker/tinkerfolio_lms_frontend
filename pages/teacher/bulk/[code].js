@@ -30,6 +30,8 @@ const Classroom = () => {
     const [names, setNames] = useState();
     const [formData, setFormData] = useState({number: "",});
 
+    const [createdUsers, setCreatedUsers] = useState();
+
     const [loadingAddStudent, setLoadingAddStudent] = useState(false);
 
     const [wsURL, setWSURL] = useState(null);
@@ -302,13 +304,9 @@ const Classroom = () => {
                 )
                 .then((res) => {
                     console.log("Success");
-                    /*
-                    setClassroom(res.data);
-                    setClassrooms([
-                        ...classrooms.filter((cr) => cr.id !== res.data.id),
-                        res.data,
-                    ]);
-                    */
+                    console.log(res.data);
+                    if(createdUsers) setCreatedUsers(createdUsers.concat(res.data.users));
+                    else setCreatedUsers(res.data.users);
                 })
                 .catch((res) => {
                     console.log(res);
@@ -402,16 +400,29 @@ const Classroom = () => {
                             <thead>
                                 <tr className="border-2">
                                     <th className="border-r-2 px-2 py-2 w-16">
-                                        <p>Index</p>
+                                        <p>Username</p>
                                     </th>
                                     <th className="border-r-2 px-2 py-2 w-72">
-                                        <p>Student</p>
-                                    </th>
-                                    <th className="border-r-2 px-2 py-2 w-16">
-                                        <p className="text-xl">★</p>
+                                        <p>Password</p>
                                     </th>
                                 </tr>
                             </thead>
+                            <tbody>
+                            {
+                                createdUsers?.map((x, i)=>{
+                                    return(
+                                        <tr className='border-2'>
+                                            <td className='border-r-2 px-2 py-2 w-16'>
+                                                <p>{x.username}</p>
+                                            </td>
+                                            <td className='border-r-2 px-2 py-2 w-16'>
+                                                <p>{x.password}</p>
+                                            </td>
+                                        </tr>
+                                    )
+                                })
+                            }
+                            </tbody>
                         </table>
                     </div>
                     <div
