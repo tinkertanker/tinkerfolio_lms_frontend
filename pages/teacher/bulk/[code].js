@@ -292,12 +292,14 @@ const Classroom = () => {
                     classroom.code + "/",
                 {
                     number: formData.number,
+                    prefix: formData.prefix,
                     code: classroom.code,
                 },
                 {
                     headers: { Authorization: "Bearer " + accessToken },
                     params: {
                         number: formData.number,
+                        prefix: formData.prefix,
                         code: classroom.code,
                     }
                 }
@@ -362,8 +364,9 @@ const Classroom = () => {
                             onSubmit={bulkAdd}
                             >
                             <h1 className="font-bold text-2xl border-b-2 border-gray-300 focus:border-gray-500 my-2 mx-2">
-                                Add Students to class
+                                Create Student Accounts
                             </h1>
+                            <p>Quantity</p>
                             <input
                                 onChange={(e) =>
                                     setFormData({
@@ -375,6 +378,18 @@ const Classroom = () => {
                                 className="outline-none resize-none text-sm border-2 border-gray-300 focus:border-gray-500 py-2 px-2 mx-2 rounded-lg"
                                 value={formData.number}
                                 name="number"
+                            />
+                            <p>Prefix (e.g. <strong>webstudent</strong>1, <strong>webstudent</strong>2)</p>
+                            <input
+                                onChange={(e) =>
+                                    setFormData({
+                                    ...formData,
+                                    [e.target.name]: e.target.value,
+                                    })
+                                }
+                                className="outline-none resize-none text-sm border-2 border-gray-300 focus:border-gray-500 py-2 px-2 mx-2 rounded-lg"
+                                value={formData.prefix}
+                                name="prefix"
                             />
                             <div className="flex flex-row py-1 px-2 my-2 ml-auto justify-self-start rounded bg-gray-500 hover:bg-gray-400 cursor-pointer">
                                 <AddCircleOutline
