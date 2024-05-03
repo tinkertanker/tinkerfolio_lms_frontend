@@ -28,7 +28,7 @@ const Classroom = () => {
 
     const [classroom, setClassroom] = useState();
     const [names, setNames] = useState();
-    const [formData, setFormData] = useState({number: "",});
+    const [formData, setFormData] = useState({number: "", names: ""});
 
     const [createdUsers, setCreatedUsers] = useState();
 
@@ -292,14 +292,16 @@ const Classroom = () => {
                     classroom.code + "/",
                 {
                     number: formData.number,
-                    prefix: formData.prefix,
+                    prefix: (formData.prefix ? formData.prefix : ""),
+                    names: (formData.names ? formData.names : ""),
                     code: classroom.code,
                 },
                 {
                     headers: { Authorization: "Bearer " + accessToken },
                     params: {
                         number: formData.number,
-                        prefix: formData.prefix,
+                        prefix: (formData.prefix ? formData.prefix : ""),
+                        names: (formData.names ? formData.names : ""),
                         code: classroom.code,
                     }
                 }
@@ -358,9 +360,9 @@ const Classroom = () => {
                         />
                         <StudentJoinInfo code={classroom.code} />
                     </div>
-                    <div className="bg-white" style={{ marginTop: "100px" }}>
+                    <div className="bg-white flex flex-row" style={{ marginTop: "100px" }}>
                         <form
-                            className="flex flex-col justify-self-start px-8 py-8 m-5 bg-white rounded-lg shadow-md w-1/3"
+                            className="flex flex-col justify-self-start px-5 py-5 m-5 bg-white rounded-lg shadow-md w-1/3"
                             onSubmit={bulkAdd}
                             >
                             <h1 className="font-bold text-2xl border-b-2 border-gray-300 focus:border-gray-500 my-2 mx-2">
@@ -391,6 +393,19 @@ const Classroom = () => {
                                 value={formData.prefix}
                                 name="prefix"
                             />
+                            <p>Student Names (one on each line)</p>
+                            <textarea
+                                onChange={(e) =>
+                                    setFormData({
+                                    ...formData,
+                                    [e.target.name]: e.target.value,
+                                    })
+                                }
+                                rows="8"
+                                className="outline-none resize-none text-sm border-2 border-gray-300 focus:border-gray-500 py-2 px-2 mx-2 rounded-lg"
+                                value={formData.names}
+                                name="names"
+                            />
                             <div className="flex flex-row py-1 px-2 my-2 ml-auto justify-self-start rounded bg-gray-500 hover:bg-gray-400 cursor-pointer">
                                 <AddCircleOutline
                                     color="#ffffff"
@@ -404,20 +419,23 @@ const Classroom = () => {
                         </form>
                         {/* TABLE */}
                         <table
-                            className="block overflow-y-auto px-8 py-8 w-max min-w-full"
+                            className="block overflow-y-auto px-8 py-3"
                             style={{
                                 height: size.height - 173,
                                 borderSpacing: "50px",
-                                marginTop: "80px",
+                                marginTop: "50px",
                             }}
                         >
                             {/* Table headers */}
                             <thead>
                                 <tr className="border-2">
-                                    <th className="border-r-2 px-2 py-2 w-16">
+                                    <th className="border-r-2 px-2 py-2 w-20">
                                         <p>Username</p>
                                     </th>
-                                    <th className="border-r-2 px-2 py-2 w-72">
+                                    <th className="border-r-2 px-2 py-2 w-40">
+                                        <p>Student Name</p>
+                                    </th>
+                                    <th className="border-r-2 px-2 py-2 w-40">
                                         <p>Password</p>
                                     </th>
                                 </tr>
@@ -429,6 +447,9 @@ const Classroom = () => {
                                         <tr className='border-2'>
                                             <td className='border-r-2 px-2 py-2 w-16'>
                                                 <p>{x.username}</p>
+                                            </td>
+                                            <td className='border-r-2 px-2 py-2 w-16'>
+                                                <p>{x.name}</p>
                                             </td>
                                             <td className='border-r-2 px-2 py-2 w-16'>
                                                 <p>{x.password}</p>
