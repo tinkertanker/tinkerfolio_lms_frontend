@@ -265,7 +265,7 @@ const Classroom = () => {
     };
 
     const handleGoBack = () => {
-        router.push("/teacher");
+        router.push("/teacher/class/"+classroom.code);
     };
 
     const statusColor = {

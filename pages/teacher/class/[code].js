@@ -424,7 +424,7 @@ const Classroom = () => {
                 height="20px"
                 width="20px"
               />
-              <p className="text-sm text-white pl-2"><Link href={"/teacher/bulk/" + classroom.code}>Bulk Add Students</Link></p>
+              <p className="text-sm text-white pl-2"><Link href={"/teacher/bulk/" + classroom.code}>Create and Add Students</Link></p>
             </div>
             <StudentJoinInfo code={classroom.code} />
             <SettingsMenu {...{ classroom, changeStatus, deleteClass }} />
