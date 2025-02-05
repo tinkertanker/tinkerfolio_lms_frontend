@@ -28,7 +28,7 @@
     "tailwindcss": "^2.1.2"
   },
   "main": "index.js",
-  "repository": "https://github.com/tinkertanker/LMS_Frontend.git",
+  "repository": "https://github.com/tinkertanker/tinkerfolio_lms_frontend.git",
   "author": "sltsheryl <sltsheryl@gmail.com>",
   "license": "MIT"
 }

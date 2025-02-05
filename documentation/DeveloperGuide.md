@@ -26,8 +26,8 @@ Ensure that you have the required software and tools (e.g., Python, Node.js, Git
 
 Clone the following repositories. 
 
-- `git clone https://github.com/tinkertanker/LMS_Backend.git`
-- `git clone https://github.com/tinkertanker/LMS_Frontend.git`
+- `git clone https://github.com/tinkertanker/tinkerfolio_lms_backend.git`
+- `git clone https://github.com/tinkertanker/tinkerfolio_lms_frontend.git`
 
 To run the application locally: 
 - In the frontend repository, run `yarn` and then `yarn dev`. The app should be running at `localhost:3000`. 
