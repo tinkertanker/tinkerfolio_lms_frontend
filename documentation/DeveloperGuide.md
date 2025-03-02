@@ -39,7 +39,7 @@ NEXT_PUBLIC_BACKEND_WS_BASE=ws://127.0.0.1:8000/
 NEXT_PUBLIC_ALLOWED_HTS=<heroku-app-url>,localhost,127.0.0.1
 
 ```
-- In the backend repository, run `pip3 install requirements` to install the required dependencies. 
+- In the backend repository, run `pip install -r requirements.txt` to install the required dependencies. 
 - Then, run `python3 manage.py runserver`. You can view the backend databases at `localhost:8000/admin`, with a superuser account (can be created using `python3 manage.py createsuperuser`)
 
 - After making changes, push to Heroku remote branch using `git push heroku main:main` to see the changes take effect on the deployed app. (If you would like to push a certain branch-a to Heroku, you can do so with `git push heroku branch-a:main`)
