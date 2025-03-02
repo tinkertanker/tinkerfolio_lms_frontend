@@ -44,16 +44,10 @@ NEXT_PUBLIC_ALLOWED_HTS=<heroku-app-url>,localhost,127.0.0.1
 
 - After making changes, push to Heroku remote branch using `git push heroku main:main` to see the changes take effect on the deployed app. (If you would like to push a certain branch-a to Heroku, you can do so with `git push heroku branch-a:main`)
 
-## Development Workflow
+## Using Docker
+You can use Docker for the back-end. 
 
-### Database Migration
-In the event, there is a need to update and migrate the database, perform the following steps. 
-
-
-### Using Docker
-There is also the choice to deploy it with Docker. 
-
-1. To Dockerize, first ensure that you have [Docker installed in your host machine](https://www.docker.com/products/docker-desktop/), and that it is running. 
+1. First, ensure that you have [Docker installed in your host machine](https://www.docker.com/products/docker-desktop/), and that it is running. 
 2. Next, set up an `env.docker` file - you can use the `env.docker.sample` and insert the corresponding values there.
 3. Navigate to the folder in a terminal, then execute the following commands:
     ```
@@ -62,22 +56,23 @@ There is also the choice to deploy it with Docker.
     # after it comes up, and in a separate window
     docker ps
 
-    # look for the CONTAINER ID that corresponds to lms_backend-django
-
-    # suppose the CONTAINER ID is e1e3075d13f7
-    docker exec -it e1e3075d13f7 sh
-
-    # and when you're in, run the django migrations
-    python manage.py migrate
+    # run the django migrations
+    docker-compose exec django python manage.py migrate
 
     # also create a user so you can login to echoclass
-    python manage.py createsuperuser
+    docker-compose exec django python manage.py createsuperuser
     ```
     If changes are made to the `models.py` files, remember do run the command `python manage.py makemigrations`. 
 
 4. In all subsequent runs, just run the command `docker compose up`
 
+<!-- 
+## Development Workflow
 
+### Database Migration
+In the event, there is a need to update and migrate the database, perform the following steps. 
+
+ -->
 
 # Design
 
